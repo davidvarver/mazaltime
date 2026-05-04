@@ -1,4 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MAZAL TIME
+
+Next.js app for premium watch raffles, backed by Prisma and PostgreSQL.
+
+## Production Setup
+
+This project expects PostgreSQL in production. Do not use the old local SQLite
+`prisma/dev.db` URL on Vercel.
+
+Set these Vercel environment variables before deploying:
+
+- `DATABASE_URL`: PostgreSQL connection string, for example Neon.
+- `NEXTAUTH_SECRET`: long random secret.
+- `NEXTAUTH_URL`: `https://mazaltime.vercel.app`.
+- `NEXT_PUBLIC_APP_URL`: `https://mazaltime.vercel.app`.
+- `STRIPE_SECRET_KEY`: optional until real payments are enabled.
+- `STRIPE_WEBHOOK_SECRET`: optional until real payments are enabled.
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: optional until real payments are enabled.
+
+The build command runs:
+
+```bash
+prisma migrate deploy && prisma generate && next build
+```
+
+After the first successful deploy to a fresh database, seed the database once:
+
+```bash
+npx prisma db seed
+```
+
+The seed is idempotent for the initial active raffle, so rerunning it will not
+create duplicate active raffles.
 
 ## Getting Started
 
@@ -15,10 +47,6 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 

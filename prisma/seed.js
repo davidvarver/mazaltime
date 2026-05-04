@@ -19,8 +19,17 @@ async function main() {
   
   console.log('Admins seeded successfully.')
 
+  const existingActiveRaffle = await prisma.raffle.findFirst({
+    where: { isActive: true },
+  })
+
+  if (existingActiveRaffle) {
+    console.log('Active raffle already exists. Skipping initial raffle seed.')
+    return
+  }
+
   // Create an initial active raffle
-  const activeRaffle = await prisma.raffle.create({
+  await prisma.raffle.create({
     data: {
       title: 'MAZAL TIME - INFO OFICIAL',
       watchName: 'Rolex GMT-Master II "Batgirl"',

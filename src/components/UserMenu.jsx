@@ -1,19 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import styles from './UserMenu.module.css';
 
 export default function UserMenu() {
   const { data: session, status } = useSession();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Render nothing on the server pass to avoid hydration mismatch
-  if (!mounted || status === 'loading') {
+  if (status === 'loading') {
     return <div className={styles.placeholder} />;
   }
 

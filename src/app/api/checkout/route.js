@@ -34,7 +34,6 @@ export async function POST(req) {
         data: {
           status: 'SOLD',
           buyerName: name,
-          buyerEmail: email,
           buyerPhone: phone
         }
       });

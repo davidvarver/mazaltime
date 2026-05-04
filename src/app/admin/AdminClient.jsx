@@ -227,7 +227,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             <div className={styles.statsCard}>
               <h3>Finalizar Rifa Actual</h3>
               <p style={{fontSize:'0.85rem', color:'#ffb74d', marginBottom:'1rem'}}>
-                Esto archivará la rifa y la mostrará en "Rifas Pasadas".
+                Esto archivará la rifa y la mostrará en &quot;Rifas Pasadas&quot;.
               </p>
               <form onSubmit={handleEndRaffle} className={styles.editForm}>
                 <input type="number" min="0" max="99" placeholder="Número Ganador (0-99)" value={winningNumber} onChange={e => setWinningNumber(e.target.value)} required />
