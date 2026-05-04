@@ -4,10 +4,25 @@ const prisma = new PrismaClient()
 async function main() {
   // Create Admins
   const admins = [
-    { name: 'Dani', username: 'dani', password: 'password123' },
+    { name: 'Moni', username: 'moni', password: 'password123' },
     { name: 'Eliahu', username: 'eliahu', password: 'password123' },
     { name: 'Jaim', username: 'jaim', password: 'password123' },
   ]
+
+  const oldDani = await prisma.admin.findUnique({
+    where: { username: 'dani' },
+  })
+
+  const existingMoni = await prisma.admin.findUnique({
+    where: { username: 'moni' },
+  })
+
+  if (oldDani && !existingMoni) {
+    await prisma.admin.update({
+      where: { username: 'dani' },
+      data: { name: 'Moni', username: 'moni' },
+    })
+  }
 
   for (const admin of admins) {
     await prisma.admin.upsert({
