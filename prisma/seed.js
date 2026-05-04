@@ -38,45 +38,20 @@ async function main() {
     where: {
       isActive: false,
       watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+      title: 'MAZAL TIME - RIFA PASADA',
     },
   })
 
-  if (!samplePastRaffle) {
-    await prisma.raffle.create({
-      data: {
-        title: 'MAZAL TIME - RIFA PASADA',
-        watchName: 'Rolex Submariner Date Oyster 41mm 2026',
-        zodiacSign: 'Libra',
-        drawDate: new Date('2026-01-25T12:00:00.000Z'),
-        price1: 4200,
-        price2: 4000,
-        isActive: false,
-        winningNumber: 56,
-        tickets: {
-          create: Array.from({ length: 100 }).map((_, i) => ({
-            number: i,
-            status: i === 56 ? 'SOLD' : 'AVAILABLE'
-          }))
-        }
-      }
+  if (samplePastRaffle) {
+    await prisma.ticket.deleteMany({
+      where: { raffleId: samplePastRaffle.id },
     })
 
-    console.log('Sample past raffle created successfully.')
-  } else {
-    await prisma.raffle.update({
+    await prisma.raffle.delete({
       where: { id: samplePastRaffle.id },
-      data: { zodiacSign: 'Libra', winningNumber: 56 },
     })
 
-    await prisma.ticket.updateMany({
-      where: { raffleId: samplePastRaffle.id, number: 86 },
-      data: { status: 'AVAILABLE' },
-    })
-
-    await prisma.ticket.updateMany({
-      where: { raffleId: samplePastRaffle.id, number: 56 },
-      data: { status: 'SOLD' },
-    })
+    console.log('Sample past raffle removed successfully.')
   }
 
   const existingActiveRaffle = await prisma.raffle.findFirst({

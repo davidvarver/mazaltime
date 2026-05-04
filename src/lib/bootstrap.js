@@ -22,25 +22,6 @@ function buildInitialRaffle() {
   };
 }
 
-function buildSamplePastRaffle() {
-  return {
-    title: 'MAZAL TIME - RIFA PASADA',
-    watchName: 'Rolex Submariner Date Oyster 41mm 2026',
-    zodiacSign: 'Libra',
-    drawDate: new Date('2026-01-25T12:00:00.000Z'),
-    price1: 4200,
-    price2: 4000,
-    isActive: false,
-    winningNumber: 56,
-    tickets: {
-      create: Array.from({ length: 100 }, (_, number) => ({
-        number,
-        status: number === 56 ? 'SOLD' : 'AVAILABLE',
-      })),
-    },
-  };
-}
-
 export async function ensureDefaultData(prisma) {
   await prisma.$transaction(async (tx) => {
     const oldDani = await tx.admin.findUnique({
@@ -83,28 +64,18 @@ export async function ensureDefaultData(prisma) {
       where: {
         isActive: false,
         watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+        title: 'MAZAL TIME - RIFA PASADA',
       },
       select: { id: true },
     });
 
-    if (!samplePastRaffle) {
-      await tx.raffle.create({
-        data: buildSamplePastRaffle(),
+    if (samplePastRaffle) {
+      await tx.ticket.deleteMany({
+        where: { raffleId: samplePastRaffle.id },
       });
-    } else {
-      await tx.raffle.update({
+
+      await tx.raffle.delete({
         where: { id: samplePastRaffle.id },
-        data: { zodiacSign: 'Libra', winningNumber: 56 },
-      });
-
-      await tx.ticket.updateMany({
-        where: { raffleId: samplePastRaffle.id, number: 86 },
-        data: { status: 'AVAILABLE' },
-      });
-
-      await tx.ticket.updateMany({
-        where: { raffleId: samplePastRaffle.id, number: 56 },
-        data: { status: 'SOLD' },
       });
     }
   });
