@@ -26,16 +26,16 @@ function buildSamplePastRaffle() {
   return {
     title: 'MAZAL TIME - RIFA PASADA',
     watchName: 'Rolex Submariner Date Oyster 41mm 2026',
-    zodiacSign: 'Zodiaco',
+    zodiacSign: 'Libra',
     drawDate: new Date('2026-01-25T12:00:00.000Z'),
     price1: 4200,
     price2: 4000,
     isActive: false,
-    winningNumber: 86,
+    winningNumber: 56,
     tickets: {
       create: Array.from({ length: 100 }, (_, number) => ({
         number,
-        status: number === 86 ? 'SOLD' : 'AVAILABLE',
+        status: number === 56 ? 'SOLD' : 'AVAILABLE',
       })),
     },
   };
@@ -94,7 +94,17 @@ export async function ensureDefaultData(prisma) {
     } else {
       await tx.raffle.update({
         where: { id: samplePastRaffle.id },
-        data: { zodiacSign: 'Zodiaco' },
+        data: { zodiacSign: 'Libra', winningNumber: 56 },
+      });
+
+      await tx.ticket.updateMany({
+        where: { raffleId: samplePastRaffle.id, number: 86 },
+        data: { status: 'AVAILABLE' },
+      });
+
+      await tx.ticket.updateMany({
+        where: { raffleId: samplePastRaffle.id, number: 56 },
+        data: { status: 'SOLD' },
       });
     }
   });
