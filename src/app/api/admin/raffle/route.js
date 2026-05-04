@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 
 export async function PUT(req) {
   try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const data = await req.json();
     const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber } = data;
 
@@ -34,6 +39,10 @@ export async function PUT(req) {
 
 export async function POST(req) {
   try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const { title, watchName, zodiacSign, drawDate, price1, price2 } = await req.json();
 
     // Check if there's already an active raffle

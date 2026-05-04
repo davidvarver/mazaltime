@@ -1,43 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { ensureDefaultData } from '@/lib/bootstrap';
-import AdminClient from './AdminClient';
-
-export const revalidate = 0;
-
-async function getAdminData() {
-  try {
-    await ensureDefaultData(prisma);
-
-    const raffle = await prisma.raffle.findFirst({
-      where: { isActive: true },
-      include: {
-        tickets: {
-          orderBy: { number: 'asc' },
-          include: { admin: true, user: true }
-        }
-      }
-    });
-
-    const admins = await prisma.admin.findMany();
-
-    return { raffle, admins };
-  } catch (error) {
-    console.error('Admin page database error:', error);
-
-    return { raffle: null, admins: [] };
-  }
-}
+import { redirect } from 'next/navigation';
 
 export default async function AdminPage() {
-  const { raffle, admins } = await getAdminData();
-
-  return (
-    <div className="main-container" style={{ padding: '2rem' }}>
-      <AdminClient
-        raffle={raffle || null}
-        tickets={raffle ? raffle.tickets : []}
-        admins={admins}
-      />
-    </div>
-  );
+  redirect('/panel-socios');
 }

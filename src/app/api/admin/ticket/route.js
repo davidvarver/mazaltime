@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 
 export async function POST(req) {
   try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { raffleId, numbers, status, adminId, buyerName, buyerPhone } = body;
 

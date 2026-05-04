@@ -164,9 +164,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .adminSelector {
@@ -177,6 +186,19 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.logoutBtn {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-text-muted);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.logoutBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .gridContainer {

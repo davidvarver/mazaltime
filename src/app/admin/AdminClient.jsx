@@ -141,6 +141,11 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     } catch (err) { alert(err.message); }
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    window.location.href = '/panel-socios/login';
+  };
+
   // --- Derived values ---
   const parsedSaleNumbers = saleNumbers
     .split(/[\s,]+/)
@@ -166,18 +171,23 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     <div className={styles.container}>
       <header className={styles.header}>
         <h1 className={styles.title}>Panel de Control Mazal Time</h1>
-        <div className={styles.adminSelector}>
-          <label>Iniciaste como:</label>
-          <select
-            value={currentAdminId}
-            onChange={e => setCurrentAdminId(e.target.value)}
-            className={styles.select}
-          >
-            <option value="">-- Seleccionar Socio --</option>
-            {admins.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
-            ))}
-          </select>
+        <div className={styles.headerActions}>
+          <div className={styles.adminSelector}>
+            <label>Iniciaste como:</label>
+            <select
+              value={currentAdminId}
+              onChange={e => setCurrentAdminId(e.target.value)}
+              className={styles.select}
+            >
+              <option value="">-- Seleccionar Socio --</option>
+              {admins.map(a => (
+                <option key={a.id} value={a.id}>{a.name}</option>
+              ))}
+            </select>
+          </div>
+          <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
+            Cerrar sesión
+          </button>
         </div>
       </header>
 

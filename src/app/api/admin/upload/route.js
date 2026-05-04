@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
+import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 
 export async function POST(req) {
   try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file');
 
