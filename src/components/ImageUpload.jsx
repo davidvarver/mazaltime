@@ -24,8 +24,8 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
         method: 'POST',
         body: formData
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Error al subir la imagen');
 
       onUploaded(data.url);
     } catch (err) {

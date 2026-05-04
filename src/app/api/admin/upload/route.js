@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 
+async function fileToDataUrl(file) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  return `data:${file.type};base64,${buffer.toString('base64')}`;
+}
+
 export async function POST(req) {
   try {
     if (!getAdminSessionFromRequest(req)) {
@@ -29,6 +34,11 @@ export async function POST(req) {
     const ext = file.name.split('.').pop();
     const filename = `watches/watch_${Date.now()}.${ext}`;
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn('BLOB_READ_WRITE_TOKEN is not configured. Using data URL image fallback.');
+      return NextResponse.json({ url: await fileToDataUrl(file) });
+    }
+
     const blob = await put(filename, file, {
       access: 'public',
       contentType: file.type,
@@ -37,6 +47,8 @@ export async function POST(req) {
     return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Error al subir la imagen' }, { status: 500 });
+    return NextResponse.json({
+      error: error.message || 'Error al subir la imagen',
+    }, { status: 500 });
   }
 }
