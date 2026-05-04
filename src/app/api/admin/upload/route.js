@@ -39,10 +39,23 @@ export async function POST(req) {
       return NextResponse.json({ url: await fileToDataUrl(file) });
     }
 
-    const blob = await put(filename, file, {
-      access: 'public',
-      contentType: file.type,
-    });
+    let blob;
+
+    try {
+      blob = await put(filename, file, {
+        access: 'public',
+        contentType: file.type,
+      });
+    } catch (blobError) {
+      const message = blobError.message || '';
+
+      if (message.includes('Cannot use public access on a private store')) {
+        console.warn('Vercel Blob store is private. Using data URL image fallback.');
+        return NextResponse.json({ url: await fileToDataUrl(file) });
+      }
+
+      throw blobError;
+    }
 
     return NextResponse.json({ url: blob.url });
   } catch (error) {
