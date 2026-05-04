@@ -34,6 +34,36 @@ async function main() {
   
   console.log('Admins seeded successfully.')
 
+  const samplePastRaffle = await prisma.raffle.findFirst({
+    where: {
+      isActive: false,
+      watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+    },
+  })
+
+  if (!samplePastRaffle) {
+    await prisma.raffle.create({
+      data: {
+        title: 'MAZAL TIME - RIFA PASADA',
+        watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+        zodiacSign: 'Acorde al signo Zodiaco',
+        drawDate: new Date('2026-01-25T12:00:00.000Z'),
+        price1: 4200,
+        price2: 4000,
+        isActive: false,
+        winningNumber: 86,
+        tickets: {
+          create: Array.from({ length: 100 }).map((_, i) => ({
+            number: i,
+            status: i === 86 ? 'SOLD' : 'AVAILABLE'
+          }))
+        }
+      }
+    })
+
+    console.log('Sample past raffle created successfully.')
+  }
+
   const existingActiveRaffle = await prisma.raffle.findFirst({
     where: { isActive: true },
   })

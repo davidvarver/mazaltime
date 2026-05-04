@@ -22,6 +22,25 @@ function buildInitialRaffle() {
   };
 }
 
+function buildSamplePastRaffle() {
+  return {
+    title: 'MAZAL TIME - RIFA PASADA',
+    watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+    zodiacSign: 'Acorde al signo Zodiaco',
+    drawDate: new Date('2026-01-25T12:00:00.000Z'),
+    price1: 4200,
+    price2: 4000,
+    isActive: false,
+    winningNumber: 86,
+    tickets: {
+      create: Array.from({ length: 100 }, (_, number) => ({
+        number,
+        status: number === 86 ? 'SOLD' : 'AVAILABLE',
+      })),
+    },
+  };
+}
+
 export async function ensureDefaultData(prisma) {
   await prisma.$transaction(async (tx) => {
     const oldDani = await tx.admin.findUnique({
@@ -57,6 +76,20 @@ export async function ensureDefaultData(prisma) {
     if (!activeRaffle) {
       await tx.raffle.create({
         data: buildInitialRaffle(),
+      });
+    }
+
+    const samplePastRaffle = await tx.raffle.findFirst({
+      where: {
+        isActive: false,
+        watchName: 'Rolex Submariner Date Oyster 41mm 2026',
+      },
+      select: { id: true },
+    });
+
+    if (!samplePastRaffle) {
+      await tx.raffle.create({
+        data: buildSamplePastRaffle(),
       });
     }
   });

@@ -1,10 +1,13 @@
 import { prisma } from '@/lib/prisma';
+import { ensureDefaultData } from '@/lib/bootstrap';
 import HomeClient from '@/components/HomeClient';
 
 export const revalidate = 0; // Disable cache for prototype so ticket updates show immediately
 
 async function getHomeData() {
   try {
+    await ensureDefaultData(prisma);
+
     // Fetch the active raffle and its tickets
     const activeRaffle = await prisma.raffle.findFirst({
       where: { isActive: true },
