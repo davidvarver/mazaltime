@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 
 export async function POST(req) {
   try {
@@ -22,20 +21,15 @@ export async function POST(req) {
       return NextResponse.json({ error: 'La imagen no puede pesar más de 5MB.' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Save to /public/uploads/
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadsDir, { recursive: true });
-
     const ext = file.name.split('.').pop();
-    const filename = `watch_${Date.now()}.${ext}`;
-    const filepath = path.join(uploadsDir, filename);
-    await writeFile(filepath, buffer);
+    const filename = `watches/watch_${Date.now()}.${ext}`;
 
-    const url = `/uploads/${filename}`;
-    return NextResponse.json({ url });
+    const blob = await put(filename, file, {
+      access: 'public',
+      contentType: file.type,
+    });
+
+    return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Error al subir la imagen' }, { status: 500 });
