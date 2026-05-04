@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets   Ticket[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets   Ticket[]
+}
+
+model Raffle {
+  id          String   @id @default(cuid())
+  title       String
+  watchName   String
+  zodiacSign  String
+  drawDate    DateTime
+  price1      Int      // Price for 1 ticket in MXN
+  price2      Int      // Price for 2+ tickets in MXN
+  isActive    Boolean  @default(true)
+  winningNumber Int?
+  imageUrl    String?  // Uploaded watch photo URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  number      Int      // 0 to 99
+  status      String   @default("AVAILABLE") // AVAILABLE, SOLD
+  
+  // Relations
+  raffleId    String
+  raffle      Raffle   @relation(fields: [raffleId], references: [id])
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  // Manual buyer info (when admin assigns without user account)
+  buyerName   String?
+  buyerPhone  String?
+  pricePaid   Int?    // Actual price charged for this ticket (MXN)
+  
+  // Admin who assigned this manually (if applicable)
+  adminId     String?
+  admin       Admin?   @relation(fields: [adminId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([raffleId, number])
+}

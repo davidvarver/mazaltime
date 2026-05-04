@@ -1,0 +1,59 @@
+.authLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.placeholder {
+  width: 120px;
+  height: 36px;
+}
+
+.loginBtn {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.loginBtn:hover {
+  background-color: var(--color-primary);
+  color: #000;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.welcome {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.navLink {
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+}
+
+.logoutBtn {
+  background: transparent;
+  border: none;
+  color: #ff5252;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  text-decoration: underline;
+}
