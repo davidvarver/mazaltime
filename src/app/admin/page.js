@@ -1,10 +1,13 @@
 import { prisma } from '@/lib/prisma';
+import { ensureDefaultData } from '@/lib/bootstrap';
 import AdminClient from './AdminClient';
 
 export const revalidate = 0;
 
 async function getAdminData() {
   try {
+    await ensureDefaultData(prisma);
+
     const raffle = await prisma.raffle.findFirst({
       where: { isActive: true },
       include: {
