@@ -36,7 +36,7 @@
   left: 0;
   right: 0;
   padding: 1.5rem;
-  background: linear-gradient(to top, rgba(13, 13, 13, 1), rgba(13, 13, 13, 0));
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.96), rgba(5, 5, 5, 0));
   display: flex;
   justify-content: center;
   z-index: 100;

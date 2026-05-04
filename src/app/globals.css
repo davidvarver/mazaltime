@@ -1,7 +1,7 @@
 :root {
-  --color-bg: #0d0d0d;
-  --color-surface: #1a1a1a;
-  --color-surface-hover: #262626;
+  --color-bg: #050505;
+  --color-surface: rgba(15, 15, 15, 0.76);
+  --color-surface-hover: rgba(255, 215, 100, 0.12);
   --color-text: #ffffff;
   --color-text-muted: #a0a0a0;
   --color-primary: #d4af37; /* Gold for premium feel */
@@ -19,9 +19,9 @@
   --radius-full: 9999px;
   
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --shadow-gold: 0 0 15px rgba(212, 175, 55, 0.3);
+  --shadow-md: 0 14px 36px rgba(0, 0, 0, 0.38);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 0 22px rgba(212, 175, 55, 0.34);
 }
 
 * {
@@ -31,12 +31,54 @@
 }
 
 body {
-  background-color: var(--color-bg);
+  background:
+    radial-gradient(circle at 6% 0%, rgba(255, 211, 91, 0.34), transparent 20rem),
+    radial-gradient(circle at 94% 0%, rgba(255, 176, 38, 0.3), transparent 22rem),
+    radial-gradient(circle at 50% 105%, rgba(155, 88, 16, 0.34), transparent 28rem),
+    linear-gradient(135deg, #050505 0%, #0b0b0b 42%, #1a1207 100%);
   color: var(--color-text);
   font-family: var(--font-sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background-image:
+    radial-gradient(circle, rgba(255, 198, 65, 0.32) 1px, transparent 1.6px),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px, 42px 42px, 42px 42px;
+  mask-image:
+    radial-gradient(circle at 0% 0%, black, transparent 42%),
+    radial-gradient(circle at 100% 0%, black, transparent 40%),
+    radial-gradient(circle at 50% 100%, black, transparent 48%);
+  opacity: 0.72;
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 12% 92%, rgba(255, 218, 102, 0.72) 0 2px, rgba(255, 218, 102, 0.22) 3px, transparent 7px),
+    radial-gradient(circle at 86% 76%, rgba(255, 199, 61, 0.68) 0 2px, rgba(255, 199, 61, 0.2) 3px, transparent 8px),
+    radial-gradient(95% 70% at 50% 124%, transparent 56%, rgba(255, 211, 91, 0.24) 56.4%, transparent 57.2%),
+    radial-gradient(115% 85% at 48% 126%, transparent 59%, rgba(255, 173, 40, 0.42) 59.35%, transparent 60.15%),
+    radial-gradient(130% 90% at 53% 128%, transparent 63%, rgba(255, 230, 135, 0.18) 63.3%, transparent 64%),
+    linear-gradient(115deg, transparent 0 10%, rgba(255, 178, 39, 0.14) 10.35%, transparent 13%),
+    linear-gradient(300deg, transparent 0 8%, rgba(255, 214, 95, 0.16) 8.25%, transparent 11%);
+  filter: drop-shadow(0 0 18px rgba(212, 151, 32, 0.28));
+  opacity: 0.9;
 }
 
 a {
@@ -68,10 +110,11 @@ input:focus, textarea:focus, select:focus {
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(26, 26, 26, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 15, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 215, 100, 0.24);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
 /* Typography utilities */
