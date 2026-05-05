@@ -13,7 +13,9 @@ export default function UserMenu() {
   if (!session) {
     return (
       <div className={styles.authLinks}>
-        <Link href="/login" className={styles.loginBtn}>Iniciar Sesión</Link>
+        <Link href="/login" className={styles.loginBtn} aria-label="Iniciar sesi?n">
+          <span className={styles.avatarIcon} aria-hidden="true" />
+        </Link>
       </div>
     );
   }

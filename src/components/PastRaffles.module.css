@@ -2,6 +2,8 @@
   margin-top: 5rem;
   padding-top: 4rem;
   border-top: 1px solid rgba(212, 175, 55, 0.2);
+  width: 100%;
+  overflow: hidden;
 }
 
 .sectionHeader {
@@ -128,4 +130,74 @@
   font-weight: 900;
   color: var(--color-primary);
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+@media (max-width: 640px) {
+  .section {
+    margin-top: 3.5rem;
+    padding-top: 3rem;
+  }
+
+  .sectionHeader {
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 2.2rem;
+  }
+
+  .dividerLine {
+    min-width: 18px;
+    flex: 0 1 48px;
+  }
+
+  .sectionTitle {
+    min-width: 0;
+    max-width: calc(100vw - 2rem);
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(1.45rem, 8vw, 2.15rem);
+    line-height: 1.05;
+    letter-spacing: clamp(0.12rem, 2.6vw, 0.36rem);
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 1.35rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 430px;
+  }
+
+  .cardImage {
+    height: clamp(190px, 58vw, 260px);
+  }
+
+  .cardBody {
+    padding: 1.35rem 1.1rem 1rem;
+  }
+
+  .watchName {
+    font-size: clamp(1.15rem, 5.2vw, 1.65rem);
+    line-height: 1.15;
+  }
+
+  .drawDate,
+  .zodiac {
+    font-size: 1rem;
+  }
+
+  .winnerBox {
+    padding: 1rem 1.1rem;
+  }
+
+  .winnerLabel {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+  }
+
+  .winnerNumber {
+    font-size: 2.45rem;
+  }
 }

@@ -1,27 +1,62 @@
 .authLinks {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .placeholder {
-  width: 120px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
 }
 
 .loginBtn {
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: bold;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: rgba(12, 12, 12, 0.72);
+  border: 1px solid rgba(212, 175, 55, 0.34);
+  border-radius: 50%;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
   transition: all 0.2s;
 }
 
 .loginBtn:hover {
-  background-color: var(--color-primary);
-  color: #000;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.22);
+  transform: translateY(-1px);
+}
+
+.avatarIcon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.avatarIcon::before,
+.avatarIcon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid var(--color-primary);
+}
+
+.avatarIcon::before {
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.avatarIcon::after {
+  bottom: 0;
+  width: 18px;
+  height: 10px;
+  border-radius: 14px 14px 5px 5px;
+  border-bottom-color: transparent;
 }
 
 .menu {
@@ -56,4 +91,31 @@
 
 .logoutBtn:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .menu {
+    gap: 0.55rem;
+    justify-content: flex-end;
+  }
+
+  .welcome {
+    display: none;
+  }
+
+  .navLink,
+  .logoutBtn {
+    font-size: 0.75rem;
+  }
+
+  .loginBtn,
+  .placeholder {
+    width: 36px;
+    height: 36px;
+  }
+
+  .avatarIcon {
+    width: 18px;
+    height: 18px;
+  }
 }
