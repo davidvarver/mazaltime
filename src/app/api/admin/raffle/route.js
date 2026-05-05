@@ -89,3 +89,45 @@ export async function POST(req) {
     return NextResponse.json({ error: 'Error al crear la nueva rifa' }, { status: 500 });
   }
 }
+
+export async function DELETE(req) {
+  try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID de rifa requerido' }, { status: 400 });
+    }
+
+    const raffle = await prisma.raffle.findUnique({
+      where: { id },
+      select: { isActive: true },
+    });
+
+    if (!raffle) {
+      return NextResponse.json({ error: 'Rifa no encontrada' }, { status: 404 });
+    }
+
+    if (raffle.isActive) {
+      return NextResponse.json({ error: 'No se puede eliminar una rifa activa' }, { status: 400 });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.ticket.deleteMany({
+        where: { raffleId: id },
+      });
+
+      await tx.raffle.delete({
+        where: { id },
+      });
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting raffle:', error);
+    return NextResponse.json({ error: 'Error al eliminar la rifa' }, { status: 500 });
+  }
+}

@@ -4,11 +4,18 @@ import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import styles from './AdminClient.module.css';
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins }) {
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [] }) {
   const router = useRouter();
   const [currentAdminId, setCurrentAdminId] = useState('');
   const [tickets, setTickets] = useState(initialTickets);
   const [raffle] = useState(initialRaffle);
+  const [pastRaffleForms, setPastRaffleForms] = useState(() =>
+    pastRaffles.map(pastRaffle => ({
+      ...pastRaffle,
+      drawDate: pastRaffle.drawDate ? new Date(pastRaffle.drawDate).toISOString().split('T')[0] : '',
+      winningNumber: pastRaffle.winningNumber ?? '',
+    }))
+  );
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
@@ -144,6 +151,64 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' });
     window.location.href = '/panel-socios/login';
+  };
+
+  const updatePastRaffleForm = (id, updates) => {
+    setPastRaffleForms(prev =>
+      prev.map(pastRaffle => pastRaffle.id === id ? { ...pastRaffle, ...updates } : pastRaffle)
+    );
+  };
+
+  const handleUpdatePastRaffle = async (e, pastRaffle) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch('/api/admin/raffle', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: pastRaffle.id,
+          title: pastRaffle.title,
+          watchName: pastRaffle.watchName,
+          zodiacSign: pastRaffle.zodiacSign,
+          drawDate: pastRaffle.drawDate,
+          price1: pastRaffle.price1,
+          price2: pastRaffle.price2,
+          winningNumber: pastRaffle.winningNumber,
+          imageUrl: pastRaffle.imageUrl,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al actualizar la rifa pasada');
+
+      alert('Rifa pasada actualizada correctamente');
+      router.refresh();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeletePastRaffle = async (pastRaffle) => {
+    const confirmed = confirm(`¿Eliminar permanentemente "${pastRaffle.watchName}" y todos sus boletos?`);
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch('/api/admin/raffle', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: pastRaffle.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al eliminar la rifa pasada');
+
+      setPastRaffleForms(prev => prev.filter(item => item.id !== pastRaffle.id));
+      alert('Rifa pasada eliminada correctamente');
+      router.refresh();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   // --- Derived values ---
@@ -374,6 +439,83 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           </div>
         </div>
       )}
+
+      <section className={styles.pastRafflesSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Rifas Pasadas</h2>
+          <p>Edita la información que se muestra en ganadores anteriores o elimina una rifa archivada.</p>
+        </div>
+
+        {pastRaffleForms.length === 0 ? (
+          <div className={styles.emptyState}>Todavía no hay rifas pasadas.</div>
+        ) : (
+          <div className={styles.pastRafflesGrid}>
+            {pastRaffleForms.map(pastRaffle => (
+              <form
+                key={pastRaffle.id}
+                onSubmit={e => handleUpdatePastRaffle(e, pastRaffle)}
+                className={`${styles.pastRaffleCard} glass`}
+              >
+                <ImageUpload
+                  currentUrl={pastRaffle.imageUrl}
+                  onUploaded={url => updatePastRaffleForm(pastRaffle.id, { imageUrl: url })}
+                />
+                <input
+                  type="text"
+                  placeholder="Título"
+                  value={pastRaffle.title || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { title: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Nombre del reloj"
+                  value={pastRaffle.watchName || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { watchName: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Signo"
+                  value={pastRaffle.zodiacSign || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { zodiacSign: e.target.value })}
+                />
+                <input
+                  type="date"
+                  value={pastRaffle.drawDate || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { drawDate: e.target.value })}
+                />
+                <div className={styles.inlineFields}>
+                  <input
+                    type="number"
+                    min="0"
+                    max="99"
+                    placeholder="Ganador"
+                    value={pastRaffle.winningNumber}
+                    onChange={e => updatePastRaffleForm(pastRaffle.id, { winningNumber: e.target.value })}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Precio 1"
+                    value={pastRaffle.price1 || ''}
+                    onChange={e => updatePastRaffleForm(pastRaffle.id, { price1: parseInt(e.target.value, 10) })}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Precio 2+"
+                    value={pastRaffle.price2 || ''}
+                    onChange={e => updatePastRaffleForm(pastRaffle.id, { price2: parseInt(e.target.value, 10) })}
+                  />
+                </div>
+                <div className={styles.pastRaffleActions}>
+                  <button type="submit" className={styles.saveBtn}>Guardar</button>
+                  <button type="button" className={styles.endBtn} onClick={() => handleDeletePastRaffle(pastRaffle)}>
+                    Eliminar
+                  </button>
+                </div>
+              </form>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
