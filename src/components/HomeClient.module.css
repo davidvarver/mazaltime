@@ -22,6 +22,16 @@
   width: min(760px, calc(100vw - 2rem));
   height: 138px;
   overflow: hidden;
+  isolation: isolate;
+}
+
+.logoMark::before {
+  content: "";
+  position: absolute;
+  inset: 8% 4%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.16), transparent 68%);
+  filter: blur(18px);
 }
 
 .logoMark img {
@@ -29,6 +39,8 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 46%, rgba(0, 0, 0, 0.9) 58%, transparent 78%);
+  mask-image: radial-gradient(ellipse at center, #000 46%, rgba(0, 0, 0, 0.9) 58%, transparent 78%);
 }
 
 .header > :last-child {
