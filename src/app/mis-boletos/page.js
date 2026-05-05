@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import styles from './mis-boletos.module.css';
 import UserMenu from '@/components/UserMenu';
+import { formatDateOnly } from '@/lib/dateOnly';
 
 export const revalidate = 0;
 
@@ -58,7 +59,7 @@ export default async function MisBoletosPage() {
                 <h2>{raffle.title}</h2>
                 <p className={styles.watchName}>{raffle.watchName}</p>
                 <p className={styles.drawDate}>
-                  Sorteo: {new Date(raffle.drawDate).toLocaleDateString('es-MX')} - {raffle.zodiacSign}
+                  Sorteo: {formatDateOnly(raffle.drawDate)} - {raffle.zodiacSign}
                 </p>
               </div>
               <div className={styles.ticketsSection}>

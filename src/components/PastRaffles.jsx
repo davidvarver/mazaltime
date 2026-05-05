@@ -1,4 +1,5 @@
 import styles from './PastRaffles.module.css';
+import { formatDateOnly } from '@/lib/dateOnly';
 
 export default function PastRaffles({ pastRaffles }) {
   return (
@@ -24,9 +25,7 @@ export default function PastRaffles({ pastRaffles }) {
               <h3 className={styles.watchName}>{raffle.watchName}</h3>
               <p className={styles.raffleTitle}>{raffle.title}</p>
               <p className={styles.drawDate}>
-                Sorteo: {new Date(raffle.drawDate).toLocaleDateString('es-MX', {
-                  year: 'numeric', month: 'long', day: 'numeric'
-                })}
+                Sorteo: {formatDateOnly(raffle.drawDate)}
               </p>
               <p className={styles.zodiac}>Signo: {raffle.zodiacSign}</p>
             </div>

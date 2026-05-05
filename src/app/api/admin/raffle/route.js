@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAdminSessionFromRequest } from '@/lib/adminAuth';
+import { parseDateOnlyForStorage } from '@/lib/dateOnly';
 
 export async function PUT(req) {
   try {
@@ -19,7 +20,15 @@ export async function PUT(req) {
     if (title !== undefined) updateData.title = title;
     if (watchName !== undefined) updateData.watchName = watchName;
     if (zodiacSign !== undefined) updateData.zodiacSign = zodiacSign;
-    if (drawDate !== undefined) updateData.drawDate = new Date(drawDate);
+    if (drawDate !== undefined) {
+      const parsedDrawDate = parseDateOnlyForStorage(drawDate);
+
+      if (!parsedDrawDate) {
+        return NextResponse.json({ error: 'Fecha de sorteo requerida' }, { status: 400 });
+      }
+
+      updateData.drawDate = parsedDrawDate;
+    }
     if (price1 !== undefined) updateData.price1 = parseInt(price1, 10);
     if (price2 !== undefined) updateData.price2 = parseInt(price2, 10);
     if (isActive !== undefined) updateData.isActive = isActive;
@@ -55,6 +64,12 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Ya existe una rifa activa. Finalízala antes de crear otra.' }, { status: 400 });
     }
 
+    const parsedDrawDate = parseDateOnlyForStorage(drawDate);
+
+    if (!parsedDrawDate) {
+      return NextResponse.json({ error: 'Fecha de sorteo requerida' }, { status: 400 });
+    }
+
     // Use transaction to create raffle and its 100 tickets
     const result = await prisma.$transaction(async (tx) => {
       const newRaffle = await tx.raffle.create({
@@ -62,7 +77,7 @@ export async function POST(req) {
           title,
           watchName,
           zodiacSign,
-          drawDate: new Date(drawDate),
+          drawDate: parsedDrawDate,
           price1: parseInt(price1, 10),
           price2: parseInt(price2, 10),
           imageUrl: imageUrl || null,

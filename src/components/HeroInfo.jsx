@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import styles from './HeroInfo.module.css';
+import { formatDateOnly } from '@/lib/dateOnly';
 
 export default function HeroInfo({ raffle, tickets = [] }) {
   if (!raffle) return null;
@@ -8,12 +9,17 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
   const soldTickets = Math.max(totalTickets - availableTickets, 0);
   const progress = Math.round((soldTickets / totalTickets) * 100);
-  const drawDate = new Date(raffle.drawDate);
-  const shortDate = drawDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
-  const fullDate = drawDate.toLocaleDateString('es-MX', {
+  const shortDate = formatDateOnly(raffle.drawDate, { day: 'numeric', month: 'short' });
+  const fullDate = formatDateOnly(raffle.drawDate, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+  });
+  const weekdayDate = formatDateOnly(raffle.drawDate, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return (
@@ -59,12 +65,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
             <span className={styles.icon}>📅</span>
             <p>
               Fecha:{' '}
-              {drawDate.toLocaleDateString('es-MX', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {weekdayDate}
             </p>
           </div>
           <div className={styles.detailItem}>

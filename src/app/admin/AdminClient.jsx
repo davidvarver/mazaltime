@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
+import { getDateOnlyValue } from '@/lib/dateOnly';
 import styles from './AdminClient.module.css';
 
 export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [] }) {
@@ -12,7 +13,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const [pastRaffleForms, setPastRaffleForms] = useState(() =>
     pastRaffles.map(pastRaffle => ({
       ...pastRaffle,
-      drawDate: pastRaffle.drawDate ? new Date(pastRaffle.drawDate).toISOString().split('T')[0] : '',
+      drawDate: getDateOnlyValue(pastRaffle.drawDate),
       winningNumber: pastRaffle.winningNumber ?? '',
     }))
   );
@@ -290,7 +291,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="text" placeholder="Título" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
                 <input type="text" placeholder="Nombre del Reloj" value={editRaffleData.watchName} onChange={e => setEditRaffleData({...editRaffleData, watchName: e.target.value})} />
                 <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
-                <input type="date" value={editRaffleData.drawDate ? new Date(editRaffleData.drawDate).toISOString().split('T')[0] : ''} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
+                <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
                 <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
                 <input type="number" placeholder="Precio 2+ boletos" value={editRaffleData.price2} onChange={e => setEditRaffleData({...editRaffleData, price2: parseInt(e.target.value)})} />
                 <ImageUpload currentUrl={editRaffleData.imageUrl} onUploaded={url => setEditRaffleData({...editRaffleData, imageUrl: url})} />
