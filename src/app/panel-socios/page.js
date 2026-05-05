@@ -52,6 +52,7 @@ export default async function SociosPanelPage() {
         tickets={raffle ? raffle.tickets : []}
         admins={admins}
         pastRaffles={pastRaffles}
+        loggedAdminId={adminSession.id}
       />
     </div>
   );

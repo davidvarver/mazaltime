@@ -5,9 +5,11 @@ import ImageUpload from '@/components/ImageUpload';
 import { getDateOnlyValue } from '@/lib/dateOnly';
 import styles from './AdminClient.module.css';
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [] }) {
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '' }) {
   const router = useRouter();
-  const [currentAdminId, setCurrentAdminId] = useState('');
+  const [currentAdminId, setCurrentAdminId] = useState(() =>
+    admins.some(admin => admin.id === loggedAdminId) ? loggedAdminId : ''
+  );
   const [tickets, setTickets] = useState(initialTickets);
   const [raffle] = useState(initialRaffle);
   const [pastRaffleForms, setPastRaffleForms] = useState(() =>
