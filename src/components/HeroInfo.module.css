@@ -1,6 +1,6 @@
 .heroContainer {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   margin: 2rem auto;
   max-width: 900px;
   border-radius: var(--radius-lg);
@@ -12,50 +12,89 @@
   -webkit-backdrop-filter: blur(14px);
 }
 
-@media (min-width: 768px) {
-  .heroContainer {
-    flex-direction: row;
-  }
+.heroHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 215, 100, 0.16);
+}
+
+.eyebrow {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.title {
+  color: var(--color-text);
+  font-size: clamp(1.45rem, 5vw, 2.45rem);
+  line-height: 1.05;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.dateLine {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.progressBlock {
+  min-width: 150px;
+  padding-top: 0.35rem;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #fff7d0, var(--color-primary));
+  border-radius: inherit;
+}
+
+.progressBlock strong {
+  color: var(--color-text);
+  font-size: 0.95rem;
 }
 
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: 300px;
+  min-height: 340px;
+  aspect-ratio: 4 / 5;
   background-color: #000;
 }
 
 @media (min-width: 768px) {
   .imageWrapper {
-    width: 50%;
-    height: auto;
-    min-height: 400px;
+    min-height: 520px;
+    aspect-ratio: 16 / 10;
   }
 }
 
 .infoContent {
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: 100%;
 }
 
-@media (min-width: 768px) {
-  .infoContent {
-    width: 50%;
-  }
-}
-
-.title {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
 .subtitle {
-  font-size: 1.75rem;
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
   color: var(--color-text);
   margin-bottom: 1.5rem;
 }
@@ -75,11 +114,41 @@
 
 .icon {
   font-size: 1.25rem;
+  line-height: 1.25;
 }
 
 .detailItem p {
   color: var(--color-text-muted);
   font-size: 0.95rem;
+}
+
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1rem;
+}
+
+.statsBar div {
+  padding: 1rem 0.75rem;
+  text-align: center;
+}
+
+.statsBar div + div {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statsBar strong {
+  display: block;
+  color: var(--color-primary);
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  line-height: 1;
+}
+
+.statsBar span {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
 }
 
 .pricing {
@@ -97,4 +166,14 @@
 .pricing span {
   font-weight: bold;
   color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .heroHeader {
+    flex-direction: column;
+  }
+
+  .progressBlock {
+    width: 100%;
+  }
 }

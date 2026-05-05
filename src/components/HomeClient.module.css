@@ -6,7 +6,7 @@
 }
 
 .header {
-  padding: 1rem 0;
+  padding: 0.5rem 0 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,13 +14,17 @@
   margin-bottom: 2rem;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 4px;
-  background: linear-gradient(135deg, #f5d76e, var(--color-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.logoMark {
+  position: relative;
+  width: min(280px, 62vw);
+  height: 92px;
+}
+
+.logoMark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .noRaffle {

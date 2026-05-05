@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import HeroInfo from './HeroInfo';
 import NumberGrid from './NumberGrid';
 import CheckoutModal from './CheckoutModal';
@@ -74,13 +75,21 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.logo}>MAZAL TIME</div>
+        <div className={styles.logoMark}>
+          <Image
+            src="/mazal-time-logo.png"
+            alt="Mazal Time"
+            width={280}
+            height={160}
+            priority
+          />
+        </div>
         <UserMenu />
       </header>
 
       {raffle ? (
         <>
-          <HeroInfo raffle={raffle} />
+          <HeroInfo raffle={raffle} tickets={tickets} />
           
           <NumberGrid 
             tickets={tickets} 
