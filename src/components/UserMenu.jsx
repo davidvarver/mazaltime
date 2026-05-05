@@ -13,8 +13,16 @@ export default function UserMenu() {
   if (!session) {
     return (
       <div className={styles.authLinks}>
-        <Link href="/login" className={styles.loginBtn} aria-label="Iniciar sesi?n">
-          <span className={styles.avatarIcon} aria-hidden="true" />
+        <Link href="/login" className={styles.loginBtn} aria-label="Iniciar sesión">
+          <svg
+            className={styles.avatarIcon}
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
+          </svg>
         </Link>
       </div>
     );

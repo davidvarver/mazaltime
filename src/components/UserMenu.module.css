@@ -29,34 +29,12 @@
 }
 
 .avatarIcon {
-  position: relative;
   width: 20px;
   height: 20px;
-  display: block;
-}
-
-.avatarIcon::before,
-.avatarIcon::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 2px solid var(--color-primary);
-}
-
-.avatarIcon::before {
-  top: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.avatarIcon::after {
-  bottom: 0;
-  width: 18px;
-  height: 10px;
-  border-radius: 14px 14px 5px 5px;
-  border-bottom-color: transparent;
+  stroke: var(--color-primary);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .menu {

@@ -7,7 +7,9 @@
 
 .header {
   position: relative;
-  padding: 0.25rem 0 1.15rem;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 0.35rem clamp(1rem, 4vw, 2.5rem) 1.15rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,20 +19,21 @@
 
 .logoMark {
   position: relative;
-  width: min(420px, 74vw);
-  height: 118px;
+  width: min(760px, calc(100vw - 2rem));
+  height: 138px;
+  overflow: hidden;
 }
 
 .logoMark img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: left center;
+  object-fit: cover;
+  object-position: center;
 }
 
 .header > :last-child {
   position: absolute;
-  right: 0;
+  right: clamp(1rem, 4vw, 2.5rem);
   top: 50%;
   transform: translateY(-50%);
 }
@@ -106,16 +109,20 @@
   }
 
   .header {
-    padding: 0 2.75rem 0.9rem;
+    padding: 0.25rem 3.85rem 0.95rem;
     margin-bottom: 1.35rem;
   }
 
   .logoMark {
-    width: min(300px, 76vw);
-    height: 82px;
+    width: calc(100vw - 2rem);
+    height: 112px;
   }
 
   .logoMark img {
     object-position: center;
+  }
+
+  .header > :last-child {
+    right: 1rem;
   }
 }
