@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 import HeroInfo from './HeroInfo';
@@ -16,6 +16,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tickets, setTickets] = useState(initialTickets);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const totalTickets = tickets.length || 100;
   const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
@@ -32,6 +33,13 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       setIsModalOpen(true);
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSubmitCheckout = async (formData, numbers) => {
     try {
@@ -76,46 +84,44 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
   return (
     <div className={styles.pageShell}>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${isScrolled ? styles.headerCompact : ''}`}>
         <div className={styles.headerInner}>
           <a href="#inicio" className={styles.brand} aria-label="Mazal Time inicio">
-            <span className={styles.brandIcon}>MT</span>
-            <span>
-              <Image
-                src="/mazal-time-logo.png"
-                alt="Mazal Time"
-                width={260}
-                height={80}
-                priority
-              />
-              <small>Sorteos premium con garant&iacute;a</small>
-            </span>
+            <Image
+              src="/mazal-time-logo.png"
+              alt="Mazal Time"
+              width={420}
+              height={130}
+              priority
+            />
           </a>
 
+          <UserMenu />
+        </div>
+
+        <div className={styles.navBar}>
           <nav className={styles.nav} aria-label="Navegacion principal">
             <a href="#inicio">Inicio</a>
             <a href="#rifa-activa">Sorteo activo</a>
             <a href="#numeros">N&uacute;meros</a>
             <a href="#ganadores">Ganadores</a>
           </nav>
-
-          <UserMenu />
         </div>
       </header>
 
       <main id="inicio">
         <section className={styles.trustBand}>
-          <div><strong>{'\u{1F3AB}'} {totalTickets} boletos</strong><span>por edici&oacute;n</span></div>
+          <div><strong>{totalTickets} boletos</strong><span>por edici&oacute;n</span></div>
           {raffle?.lotteryUrl ? (
             <a href={raffle.lotteryUrl} target="_blank" rel="noreferrer" aria-label="Abrir sorteo oficial de Loter&iacute;a Nacional">
-              <strong>{'\u{1F6E1}\uFE0F'} Sorteo transparente</strong>
+              <strong>Sorteo transparente</strong>
               <span>ver resultado oficial</span>
             </a>
           ) : (
-            <div><strong>{'\u{1F6E1}\uFE0F'} Sorteo transparente</strong><span>con resultado verificable</span></div>
+            <div><strong>Sorteo transparente</strong><span>con resultado verificable</span></div>
           )}
           <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="Abrir WhatsApp de Mazal Time">
-            <strong>{'\u{1F4AC}'} Atenci&oacute;n directa</strong>
+            <strong>Atenci&oacute;n directa</strong>
             <span>por WhatsApp</span>
           </a>
         </section>
@@ -123,7 +129,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         {raffle && (
           <>
             <section id="rifa-activa" className={styles.sectionIntro}>
-              <span>{'\u231A'} Sorteo activo</span>
+              <span>Sorteo activo</span>
               <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
             </section>
 
@@ -133,22 +139,22 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
         <section className={styles.infoAccordion}>
           <details>
-            <summary>{'\u{1F91D}'} &iquest;C&oacute;mo funciona?</summary>
+            <summary>&iquest;C&oacute;mo funciona?</summary>
             <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
           </details>
 
           <details>
-            <summary>{'\u{1F64C}'} &iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
+            <summary>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
             <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
           </details>
 
           <details>
-            <summary>{'\u{1F3C5}'} &iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
+            <summary>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
             <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
           </details>
 
           <details>
-            <summary>{'\u231A'} &iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
+            <summary>&iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
             <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
           </details>
         </section>
@@ -177,7 +183,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               <div className={styles.floatingAction}>
                 <div className={styles.checkoutBar}>
                   <div>
-                    <span>{'\u{1F39F}\uFE0F'} Tus n&uacute;meros</span>
+                    <span>Tus n&uacute;meros</span>
                     <strong>{selectedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}</strong>
                   </div>
                   <div>
@@ -185,7 +191,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                     <strong>${selectedTotal.toLocaleString()} MXN</strong>
                   </div>
                   <button className={styles.checkoutBtn} onClick={handleOpenCheckout}>
-                    {'\u{1F6D2}'} Comprar ahora
+                    Comprar ahora
                   </button>
                 </div>
               </div>
@@ -226,7 +232,11 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         </div>
         <div>
           <span>Legal</span>
-          <p>Bases del sorteo, privacidad y t&eacute;rminos disponibles bajo solicitud.</p>
+          <div className={styles.legalLinks}>
+            <a href="/bases">Bases del sorteo</a>
+            <a href="/privacidad">Privacidad</a>
+            <a href="/terminos">T&eacute;rminos</a>
+          </div>
         </div>
       </footer>
 
@@ -237,7 +247,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         rel="noreferrer"
         aria-label="Abrir WhatsApp"
       >
-        {'\u260E'}
+        WA
       </a>
     </div>
   );
