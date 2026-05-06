@@ -520,9 +520,13 @@
   border-radius: 50%;
   background: #25d366;
   color: #fff;
-  font-size: 1.8rem;
-  font-weight: 900;
   box-shadow: 0 14px 30px rgba(37, 211, 102, 0.34);
+}
+
+.whatsappFloat svg {
+  width: 31px;
+  height: 31px;
+  fill: currentColor;
 }
 
 .footer {
