@@ -35,6 +35,8 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const totalTickets = tickets.length || 100;
   const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
   const soldTickets = Math.max(totalTickets - availableTickets, 0);
+  const selectedPrice = raffle && selectedNumbers.length >= 2 ? raffle.price2 : raffle?.price1 || 0;
+  const selectedTotal = selectedNumbers.length * selectedPrice;
 
   const handleSelectNumber = (numbers) => {
     setSelectedNumbers(numbers);
@@ -123,18 +125,18 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       <main id="inicio">
         <section className={styles.heroSection}>
           <div className={styles.heroCopy}>
-            <span className={styles.badge}>Edicion activa 2026</span>
+            <span className={styles.badge}>✨ Edición activa 2026</span>
             <h1>Gana un reloj de lujo con una experiencia clara y segura.</h1>
             <p>
-              Elige tus numeros, participa en el sorteo oficial y revisa el avance en tiempo real.
-              Mazal Time combina lujo, transparencia y atencion personalizada.
+              🎟️ Elige tus números, participa en el sorteo oficial y revisa el avance en tiempo real.
+              Mazal Time combina lujo, transparencia y atención personalizada.
             </p>
             <div className={styles.heroActions}>
               <button type="button" className={styles.primaryBtn} onClick={scrollToNumbers}>
-                Elegir mi numero
+                🎫 Elegir mi número
               </button>
               <a href="https://wa.me/525530182177" className={styles.secondaryBtn} target="_blank" rel="noreferrer">
-                Contactar por WhatsApp
+                💬 Contactar por WhatsApp
               </a>
             </div>
             <div className={styles.heroStats}>
@@ -145,38 +147,51 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           </div>
 
           <div className={styles.heroImageCard}>
-            <Image
-              src={raffle?.imageUrl || '/rolex_demo.png'}
-              alt={raffle?.watchName || 'Reloj Mazal Time'}
-              fill
-              sizes="(max-width: 780px) 100vw, 520px"
-              style={{ objectFit: 'cover' }}
-              priority
-              unoptimized={!!raffle?.imageUrl}
-            />
+            <div className={styles.previewImage}>
+              <Image
+                src={raffle?.imageUrl || '/rolex_demo.png'}
+                alt={raffle?.watchName || 'Reloj Mazal Time'}
+                fill
+                sizes="(max-width: 780px) 100vw, 520px"
+                style={{ objectFit: 'cover' }}
+                priority
+                unoptimized={!!raffle?.imageUrl}
+              />
+              <div className={styles.imageGlow} />
+            </div>
+            <div className={styles.previewBadge}>🔥 Sorteo activo</div>
+            <div className={styles.previewInfo}>
+              <span>Premio destacado</span>
+              <strong>{raffle?.watchName || 'Reloj de lujo'}</strong>
+              <small>Desde ${raffle?.price1?.toLocaleString() || '0'} MXN por número</small>
+            </div>
+            <div className={styles.previewMiniStats}>
+              <div><strong>{availableTickets}</strong><span>Libres</span></div>
+              <div><strong>{countdown.days}</strong><span>Días</span></div>
+            </div>
           </div>
         </section>
 
         <section className={styles.countdownSection} aria-label="Cuenta regresiva del sorteo">
-          <span>Proximo sorteo en vivo</span>
+          <span>🔥 Próximo sorteo en vivo</span>
           <div className={styles.countdownBox}>
-            <div><strong>{countdown.days}</strong><small>Dias</small></div>
+            <div><strong>{countdown.days}</strong><small>Días</small></div>
             <div><strong>{countdown.hours}</strong><small>Horas</small></div>
             <div><strong>{countdown.minutes}</strong><small>Min</small></div>
           </div>
         </section>
 
         <section className={styles.trustBand}>
-          <div><strong>+100 boletos</strong><span>por edicion</span></div>
-          <div><strong>Sorteo transparente</strong><span>con resultado verificable</span></div>
-          <div><strong>Atencion directa</strong><span>por WhatsApp</span></div>
+          <div><strong>🎫 +100 boletos</strong><span>por edición</span></div>
+          <div><strong>🛡️ Sorteo transparente</strong><span>con resultado verificable</span></div>
+          <div><strong>💬 Atención directa</strong><span>por WhatsApp</span></div>
         </section>
 
         {raffle ? (
           <>
             <section id="rifa-activa" className={styles.sectionIntro}>
-              <span>Sorteo activo</span>
-              <h2>Selecciona tu numero favorito y participa</h2>
+              <span>⌚ Sorteo activo</span>
+              <h2>Selecciona tu número favorito y participa</h2>
             </section>
 
             <HeroInfo raffle={raffle} tickets={tickets} />
@@ -190,9 +205,19 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
             {selectedNumbers.length > 0 && (
               <div className={styles.floatingAction}>
-                <button className={styles.checkoutBtn} onClick={handleOpenCheckout}>
-                  Comprar {selectedNumbers.length} {selectedNumbers.length === 1 ? 'numero' : 'numeros'}
-                </button>
+                <div className={styles.checkoutBar}>
+                  <div>
+                    <span>🎟️ Tus números</span>
+                    <strong>{selectedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}</strong>
+                  </div>
+                  <div>
+                    <span>Total estimado</span>
+                    <strong>${selectedTotal.toLocaleString()} MXN</strong>
+                  </div>
+                  <button className={styles.checkoutBtn} onClick={handleOpenCheckout}>
+                    🛒 Comprar ahora
+                  </button>
+                </div>
               </div>
             )}
 
