@@ -10,7 +10,7 @@ export async function PUT(req) {
     }
 
     const data = await req.json();
-    const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl } = data;
+    const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, lotteryUrl } = data;
 
     if (!id) {
       return NextResponse.json({ error: 'ID de rifa requerido' }, { status: 400 });
@@ -34,6 +34,7 @@ export async function PUT(req) {
     if (isActive !== undefined) updateData.isActive = isActive;
     if (winningNumber !== undefined) updateData.winningNumber = winningNumber ? parseInt(winningNumber, 10) : null;
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
+    if (lotteryUrl !== undefined) updateData.lotteryUrl = lotteryUrl || null;
 
     const updatedRaffle = await prisma.raffle.update({
       where: { id },
@@ -53,7 +54,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl } = await req.json();
+    const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl, lotteryUrl } = await req.json();
 
     // Check if there's already an active raffle
     const activeRaffle = await prisma.raffle.findFirst({
@@ -81,6 +82,7 @@ export async function POST(req) {
           price1: parseInt(price1, 10),
           price2: parseInt(price2, 10),
           imageUrl: imageUrl || null,
+          lotteryUrl: lotteryUrl || null,
           isActive: true
         }
       });

@@ -13,7 +13,7 @@
 .imageWrapper {
   position: relative;
   min-height: 520px;
-  background: #fcf9f2;
+  background: #fff;
 }
 
 .liveBadge {
@@ -150,8 +150,16 @@
   color: #172632;
 }
 
-.details span {
+.details span,
+.details a {
   color: #667085;
+}
+
+.details a {
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-color: rgba(212, 175, 55, 0.45);
+  text-underline-offset: 4px;
 }
 
 .datePill {

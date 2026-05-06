@@ -229,8 +229,7 @@
   text-align: center;
 }
 
-.trustBand div + div,
-.trustBand div + a {
+.trustBand > * + * {
   border-left: 1px solid var(--line);
 }
 
@@ -603,8 +602,7 @@
     grid-template-columns: 1fr;
   }
 
-  .trustBand div + div,
-  .trustBand div + a {
+  .trustBand > * + * {
     border-left: 0;
     border-top: 1px solid var(--line);
   }

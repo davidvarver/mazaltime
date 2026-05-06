@@ -22,7 +22,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
-    title: '', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: ''
+    title: '', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', lotteryUrl: ''
   });
 
   // End raffle
@@ -36,7 +36,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRaffleData, setNewRaffleData] = useState({
-    title: 'MAZAL TIME', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: ''
+    title: 'MAZAL TIME', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', lotteryUrl: ''
   });
 
   // --- Handlers ---
@@ -179,6 +179,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           price2: pastRaffle.price2,
           winningNumber: pastRaffle.winningNumber,
           imageUrl: pastRaffle.imageUrl,
+          lotteryUrl: pastRaffle.lotteryUrl,
         }),
       });
 
@@ -296,6 +297,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
                 <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
                 <input type="number" placeholder="Precio 2+ boletos" value={editRaffleData.price2} onChange={e => setEditRaffleData({...editRaffleData, price2: parseInt(e.target.value)})} />
+                <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
                 <ImageUpload currentUrl={editRaffleData.imageUrl} onUploaded={url => setEditRaffleData({...editRaffleData, imageUrl: url})} />
                 <button type="submit" className={styles.saveBtn}>Guardar Cambios</button>
               </form>
@@ -417,6 +419,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
                   <input type="number" required placeholder="Precio 1 Boleto (MXN)" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
                   <input type="number" required placeholder="Precio 2+ Boletos (MXN)" value={newRaffleData.price2} onChange={e => setNewRaffleData({...newRaffleData, price2: parseInt(e.target.value)})} />
+                  <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
                   <ImageUpload currentUrl={newRaffleData.imageUrl} onUploaded={url => setNewRaffleData({...newRaffleData, imageUrl: url})} />
                   <button type="submit" className={styles.saveBtn}>Crear Rifa y Activar</button>
                 </form>
@@ -436,6 +439,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
               <input type="number" required placeholder="Precio 1 Boleto" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
               <input type="number" required placeholder="Precio 2+ Boletos" value={newRaffleData.price2} onChange={e => setNewRaffleData({...newRaffleData, price2: parseInt(e.target.value)})} />
+              <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
               <ImageUpload currentUrl={newRaffleData.imageUrl} onUploaded={url => setNewRaffleData({...newRaffleData, imageUrl: url})} />
               <button type="submit" className={styles.saveBtn} style={{marginTop:'1rem'}}>Crear Rifa y Activar</button>
             </form>
@@ -480,6 +484,12 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   placeholder="Signo"
                   value={pastRaffle.zodiacSign || ''}
                   onChange={e => updatePastRaffleForm(pastRaffle.id, { zodiacSign: e.target.value })}
+                />
+                <input
+                  type="url"
+                  placeholder="Link sorteo Loter&iacute;a Nacional"
+                  value={pastRaffle.lotteryUrl || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { lotteryUrl: e.target.value })}
                 />
                 <input
                   type="date"

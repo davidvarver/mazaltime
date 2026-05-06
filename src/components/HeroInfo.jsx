@@ -68,7 +68,16 @@ export default function HeroInfo({ raffle, tickets = [] }) {
 
         <div className={styles.details}>
           <div><strong>Fecha</strong><span>{weekdayDate}</span></div>
-          <div><strong>Sorteo</strong><span>{raffle.zodiacSign} - Loteria Nacional</span></div>
+          <div>
+            <strong>Sorteo</strong>
+            {raffle.lotteryUrl ? (
+              <a href={raffle.lotteryUrl} target="_blank" rel="noreferrer">
+                {raffle.zodiacSign} - Loter&iacute;a Nacional
+              </a>
+            ) : (
+              <span>{raffle.zodiacSign} - Loter&iacute;a Nacional</span>
+            )}
+          </div>
           <div><strong>Boletaje</strong><span>{availableTickets} disponibles de {totalTickets}</span></div>
           <div><strong>Regla</strong><span>El sorteo se realiza al vender minimo el 85%</span></div>
         </div>

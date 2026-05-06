@@ -102,18 +102,6 @@
   cursor: not-allowed;
 }
 
-.sold::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  top: 50%;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
-  transform: translateY(-50%);
-}
-
 .dot.available { background: #f8f3e8; border: 1px solid #d4af37; }
 .dot.selected { background: #050505; border: none; }
 .dot.sold { background: #9b9488; border: none; }
