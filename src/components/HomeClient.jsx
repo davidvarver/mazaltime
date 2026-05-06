@@ -125,52 +125,19 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       </header>
 
       <main id="inicio">
-        <section className={styles.heroSection}>
-          <div className={styles.heroCopy}>
-            <span className={styles.badge}>{'\u2728'} Edici&oacute;n activa 2026</span>
-            <h1>Gana un reloj de lujo con una experiencia clara y segura.</h1>
-            <p>
-              {'\u{1F39F}\uFE0F'} Elige tus n&uacute;meros, participa en el sorteo oficial y revisa el avance en tiempo real.
-              Mazal Time combina lujo, transparencia y atenci&oacute;n personalizada.
-            </p>
-            <div className={styles.heroActions}>
-              <button type="button" className={styles.primaryBtn} onClick={scrollToNumbers}>
-                {'\u{1F3AB}'} Elegir mi n&uacute;mero
-              </button>
-              <a href={WHATSAPP_URL} className={styles.secondaryBtn} target="_blank" rel="noreferrer">
-                {'\u{1F4AC}'} Contactar por WhatsApp
-              </a>
-            </div>
-            <div className={styles.heroStats}>
-              <div><strong>{availableTickets}</strong><span>Disponibles</span></div>
-              <div><strong>{soldTickets}</strong><span>Vendidos</span></div>
-              <div><strong>{totalTickets}</strong><span>Boletos</span></div>
-            </div>
+        <section className={styles.compactIntro}>
+          <div>
+            <span>{'\u2728'} Edici&oacute;n activa 2026</span>
+            <h1>{raffle?.title || 'Mazal Time'}</h1>
+            <p>{raffle?.watchName || 'Sorteo premium de reloj de lujo'}</p>
           </div>
-
-          <div className={styles.heroImageCard}>
-            <div className={styles.previewImage}>
-              <Image
-                src={raffle?.imageUrl || '/rolex_demo.png'}
-                alt={raffle?.watchName || 'Reloj Mazal Time'}
-                fill
-                sizes="(max-width: 780px) 100vw, 520px"
-                style={{ objectFit: 'cover' }}
-                priority
-                unoptimized={!!raffle?.imageUrl}
-              />
-              <div className={styles.imageGlow} />
-            </div>
-            <div className={styles.previewBadge}>{'\u{1F525}'} Sorteo activo</div>
-            <div className={styles.previewInfo}>
-              <span>Premio destacado</span>
-              <strong>{raffle?.watchName || 'Reloj de lujo'}</strong>
-              <small>Desde ${raffle?.price1?.toLocaleString() || '0'} MXN por n&uacute;mero</small>
-            </div>
-            <div className={styles.previewMiniStats}>
-              <div><strong>{availableTickets}</strong><span>Libres</span></div>
-              <div><strong>{countdown.days}</strong><span>D&iacute;as</span></div>
-            </div>
+          <div className={styles.compactActions}>
+            <button type="button" className={styles.primaryBtn} onClick={scrollToNumbers}>
+              {'\u{1F3AB}'} Elegir n&uacute;mero
+            </button>
+            <a href={WHATSAPP_URL} className={styles.secondaryBtn} target="_blank" rel="noreferrer">
+              {'\u{1F4AC}'} WhatsApp
+            </a>
           </div>
         </section>
 
