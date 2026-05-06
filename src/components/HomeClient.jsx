@@ -156,6 +156,17 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           <div><strong>{'\u{1F4AC}'} Atenci&oacute;n directa</strong><span>por WhatsApp</span></div>
         </section>
 
+        {raffle && (
+          <>
+            <section id="rifa-activa" className={styles.sectionIntro}>
+              <span>{'\u231A'} Sorteo activo</span>
+              <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
+            </section>
+
+            <HeroInfo raffle={raffle} tickets={tickets} />
+          </>
+        )}
+
         <section className={styles.infoAccordion}>
           <details>
             <summary>{'\u{1F91D}'} &iquest;C&oacute;mo funciona?</summary>
@@ -180,13 +191,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
         {raffle ? (
           <>
-            <section id="rifa-activa" className={styles.sectionIntro}>
-              <span>{'\u231A'} Sorteo activo</span>
-              <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
-            </section>
-
-            <HeroInfo raffle={raffle} tickets={tickets} />
-
             <section id="numeros">
               <NumberGrid
                 tickets={tickets}
