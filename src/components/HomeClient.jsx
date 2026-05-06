@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useMemo, useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
@@ -8,6 +8,8 @@ import CheckoutModal from './CheckoutModal';
 import UserMenu from './UserMenu';
 import PastRaffles from './PastRaffles';
 import styles from './HomeClient.module.css';
+
+const WHATSAPP_URL = 'https://wa.me/525523138175';
 
 function getCountdownParts(drawDate) {
   if (!drawDate) return { days: '00', hours: '00', minutes: '00' };
@@ -107,14 +109,14 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 height={80}
                 priority
               />
-              <small>Sorteos premium con garantia</small>
+              <small>Sorteos premium con garant&iacute;a</small>
             </span>
           </a>
 
           <nav className={styles.nav} aria-label="Navegacion principal">
             <a href="#inicio">Inicio</a>
             <a href="#rifa-activa">Sorteo activo</a>
-            <a href="#numeros">Numeros</a>
+            <a href="#numeros">N&uacute;meros</a>
             <a href="#ganadores">Ganadores</a>
           </nav>
 
@@ -125,18 +127,18 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       <main id="inicio">
         <section className={styles.heroSection}>
           <div className={styles.heroCopy}>
-            <span className={styles.badge}>✨ Edición activa 2026</span>
+            <span className={styles.badge}>{'\u2728'} Edici&oacute;n activa 2026</span>
             <h1>Gana un reloj de lujo con una experiencia clara y segura.</h1>
             <p>
-              🎟️ Elige tus números, participa en el sorteo oficial y revisa el avance en tiempo real.
-              Mazal Time combina lujo, transparencia y atención personalizada.
+              {'\u{1F39F}\uFE0F'} Elige tus n&uacute;meros, participa en el sorteo oficial y revisa el avance en tiempo real.
+              Mazal Time combina lujo, transparencia y atenci&oacute;n personalizada.
             </p>
             <div className={styles.heroActions}>
               <button type="button" className={styles.primaryBtn} onClick={scrollToNumbers}>
-                🎫 Elegir mi número
+                {'\u{1F3AB}'} Elegir mi n&uacute;mero
               </button>
-              <a href="https://wa.me/525530182177" className={styles.secondaryBtn} target="_blank" rel="noreferrer">
-                💬 Contactar por WhatsApp
+              <a href={WHATSAPP_URL} className={styles.secondaryBtn} target="_blank" rel="noreferrer">
+                {'\u{1F4AC}'} Contactar por WhatsApp
               </a>
             </div>
             <div className={styles.heroStats}>
@@ -159,65 +161,65 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               />
               <div className={styles.imageGlow} />
             </div>
-            <div className={styles.previewBadge}>🔥 Sorteo activo</div>
+            <div className={styles.previewBadge}>{'\u{1F525}'} Sorteo activo</div>
             <div className={styles.previewInfo}>
               <span>Premio destacado</span>
               <strong>{raffle?.watchName || 'Reloj de lujo'}</strong>
-              <small>Desde ${raffle?.price1?.toLocaleString() || '0'} MXN por número</small>
+              <small>Desde ${raffle?.price1?.toLocaleString() || '0'} MXN por n&uacute;mero</small>
             </div>
             <div className={styles.previewMiniStats}>
               <div><strong>{availableTickets}</strong><span>Libres</span></div>
-              <div><strong>{countdown.days}</strong><span>Días</span></div>
+              <div><strong>{countdown.days}</strong><span>D&iacute;as</span></div>
             </div>
           </div>
         </section>
 
         <section className={styles.countdownSection} aria-label="Cuenta regresiva del sorteo">
-          <span>🔥 Próximo sorteo en vivo</span>
+          <span>{'\u{1F525}'} Pr&oacute;ximo sorteo en vivo</span>
           <div className={styles.countdownBox}>
-            <div><strong>{countdown.days}</strong><small>Días</small></div>
+            <div><strong>{countdown.days}</strong><small>D&iacute;as</small></div>
             <div><strong>{countdown.hours}</strong><small>Horas</small></div>
             <div><strong>{countdown.minutes}</strong><small>Min</small></div>
           </div>
         </section>
 
         <section className={styles.trustBand}>
-          <div><strong>🎫 +100 boletos</strong><span>por edición</span></div>
-          <div><strong>🛡️ Sorteo transparente</strong><span>con resultado verificable</span></div>
-          <div><strong>💬 Atención directa</strong><span>por WhatsApp</span></div>
+          <div><strong>{'\u{1F3AB}'} +100 boletos</strong><span>por edici&oacute;n</span></div>
+          <div><strong>{'\u{1F6E1}\uFE0F'} Sorteo transparente</strong><span>con resultado verificable</span></div>
+          <div><strong>{'\u{1F4AC}'} Atenci&oacute;n directa</strong><span>por WhatsApp</span></div>
         </section>
 
         <section className={styles.infoAccordion}>
           <p className={styles.accordionIntro}>
-            Da clic en los cuadros desplegables para conocer todos los detalles del sorteo ??
+            Da clic en los cuadros desplegables para conocer todos los detalles del sorteo {'\u{1F447}'}
           </p>
 
           <details>
-            <summary>?? ?C?mo funciona?</summary>
-            <p>Elige uno o varios n?meros disponibles, registra tus datos y finaliza tu participaci?n. Te confirmaremos tus boletos y quedar?n apartados para el sorteo.</p>
+            <summary>{'\u{1F91D}'} &iquest;C&oacute;mo funciona?</summary>
+            <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
           </details>
 
           <details>
-            <summary>?? ?Cu?ndo ser? el sorteo?</summary>
-            <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m?nimo requerido, te avisaremos cualquier ajuste con anticipaci?n.</p>
+            <summary>{'\u{1F64C}'} &iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
+            <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
           </details>
 
           <details>
-            <summary>?? ?C?mo se decidir? al ganador?</summary>
-            <p>El ganador se determina con el n?mero correspondiente al sorteo indicado, usando un resultado verificable para que todos puedan revisar la transparencia.</p>
+            <summary>{'\u{1F3C5}'} &iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
+            <p>El ganador se determina con el n&uacute;mero correspondiente al sorteo indicado, usando un resultado verificable para que todos puedan revisar la transparencia.</p>
           </details>
 
           <details>
-            <summary>? ?C?mo entregar?s el reloj?</summary>
-            <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env?o asegurado, seg?n la ubicaci?n y acuerdo con el participante.</p>
+            <summary>{'\u231A'} &iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
+            <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
           </details>
         </section>
 
         {raffle ? (
           <>
             <section id="rifa-activa" className={styles.sectionIntro}>
-              <span>⌚ Sorteo activo</span>
-              <h2>Selecciona tu número favorito y participa</h2>
+              <span>{'\u231A'} Sorteo activo</span>
+              <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
             </section>
 
             <HeroInfo raffle={raffle} tickets={tickets} />
@@ -230,7 +232,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             </section>
 
             <section className={styles.paymentStrip} aria-label="Formas de pago">
-              <p>Comprar es f?cil, r?pido y seguro.</p>
+              <p>Comprar es f&aacute;cil, r&aacute;pido y seguro.</p>
               <div>
                 <span>VISA</span>
                 <span>Mastercard</span>
@@ -243,7 +245,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               <div className={styles.floatingAction}>
                 <div className={styles.checkoutBar}>
                   <div>
-                    <span>🎟️ Tus números</span>
+                    <span>{'\u{1F39F}\uFE0F'} Tus n&uacute;meros</span>
                     <strong>{selectedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}</strong>
                   </div>
                   <div>
@@ -251,7 +253,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                     <strong>${selectedTotal.toLocaleString()} MXN</strong>
                   </div>
                   <button className={styles.checkoutBtn} onClick={handleOpenCheckout}>
-                    🛒 Comprar ahora
+                    {'\u{1F6D2}'} Comprar ahora
                   </button>
                 </div>
               </div>
@@ -270,7 +272,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         ) : (
           <div className={styles.noRaffle}>
             <p>No hay una rifa activa en este momento.</p>
-            <p className={styles.noRaffleSubtext}>Siguenos en redes para enterarte cuando lancemos la proxima.</p>
+            <p className={styles.noRaffleSubtext}>S&iacute;guenos en redes para enterarte cuando lancemos la pr&oacute;xima.</p>
           </div>
         )}
 
@@ -284,26 +286,26 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       <footer className={styles.footer}>
         <div>
           <strong>Mazal Time</strong>
-          <p>Sorteos premium de relojes de lujo en Mexico.</p>
+          <p>Sorteos premium de relojes de lujo en M&eacute;xico.</p>
         </div>
         <div>
           <span>Contacto</span>
-          <a href="https://wa.me/525530182177" target="_blank" rel="noreferrer">WhatsApp directo</a>
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">WhatsApp directo</a>
         </div>
         <div>
           <span>Legal</span>
-          <p>Bases del sorteo, privacidad y terminos disponibles bajo solicitud.</p>
+          <p>Bases del sorteo, privacidad y t&eacute;rminos disponibles bajo solicitud.</p>
         </div>
       </footer>
 
       <a
-        href="https://wa.me/525530182177"
+        href={WHATSAPP_URL}
         className={styles.whatsappFloat}
         target="_blank"
         rel="noreferrer"
         aria-label="Abrir WhatsApp"
       >
-        ?
+        {'\u260E'}
       </a>
     </div>
   );
