@@ -20,7 +20,7 @@ export default function LoginPage() {
       const res = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
       });
 
       if (res?.error) {
@@ -38,24 +38,26 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.card} glass`}>
-        <h2>Iniciar Sesión</h2>
+      <div className={styles.card}>
+        <div className={styles.brandMark}>Mazal Time</div>
+        <span className={styles.eyebrow}>Acceso cliente</span>
+        <h2>Iniciar sesi&oacute;n</h2>
         {error && <div className={styles.error}>{error}</div>}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <label>Correo Electrónico</label>
-            <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+            <label>Correo electr&oacute;nico</label>
+            <input type="email" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
           </div>
           <div className={styles.formGroup}>
-            <label>Contraseña</label>
-            <input type="password" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+            <label>Contrase&ntilde;a</label>
+            <input type="password" required value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
           </div>
           <button type="submit" disabled={loading} className={styles.submitBtn}>
             {loading ? 'Iniciando...' : 'Entrar'}
           </button>
         </form>
         <p className={styles.footerText}>
-          ¿No tienes cuenta? <Link href="/registro" className={styles.link}>Regístrate</Link>
+          &iquest;No tienes cuenta? <Link href="/registro" className={styles.link}>Reg&iacute;strate</Link>
         </p>
       </div>
     </div>

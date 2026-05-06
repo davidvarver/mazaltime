@@ -20,7 +20,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
@@ -29,15 +29,14 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Error al registrar');
       }
 
-      // Automatically sign in after successful registration
       const signInRes = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
       });
 
       if (signInRes?.error) {
-        throw new Error('Error al iniciar sesión automáticamente');
+        throw new Error('Error al iniciar sesi&oacute;n autom&aacute;ticamente');
       }
 
       router.push('/');
@@ -51,32 +50,34 @@ export default function RegisterPage() {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.card} glass`}>
-        <h2>Crear Cuenta</h2>
+      <div className={styles.card}>
+        <div className={styles.brandMark}>Mazal Time</div>
+        <span className={styles.eyebrow}>Nueva cuenta</span>
+        <h2>Crear cuenta</h2>
         {error && <div className={styles.error}>{error}</div>}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <label>Nombre Completo</label>
-            <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+            <label>Nombre completo</label>
+            <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
           </div>
           <div className={styles.formGroup}>
-            <label>Correo Electrónico</label>
-            <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+            <label>Correo electr&oacute;nico</label>
+            <input type="email" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
           </div>
           <div className={styles.formGroup}>
-            <label>Teléfono (Opcional)</label>
-            <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+            <label>Tel&eacute;fono (opcional)</label>
+            <input type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
           </div>
           <div className={styles.formGroup}>
-            <label>Contraseña</label>
-            <input type="password" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+            <label>Contrase&ntilde;a</label>
+            <input type="password" required value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
           </div>
           <button type="submit" disabled={loading} className={styles.submitBtn}>
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
         <p className={styles.footerText}>
-          ¿Ya tienes cuenta? <Link href="/login" className={styles.link}>Inicia Sesión</Link>
+          &iquest;Ya tienes cuenta? <Link href="/login" className={styles.link}>Inicia sesi&oacute;n</Link>
         </p>
       </div>
     </div>

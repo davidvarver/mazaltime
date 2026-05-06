@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo iniciar sesión');
+      if (!res.ok) throw new Error(data.error || 'No se pudo iniciar sesi&oacute;n');
 
       router.push('/panel-socios');
       router.refresh();
@@ -35,8 +35,10 @@ export default function AdminLoginPage() {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.card} glass`}>
-        <h2>Acceso Socios</h2>
+      <div className={styles.card}>
+        <div className={styles.brandMark}>Mazal Time</div>
+        <span className={styles.eyebrow}>Panel privado</span>
+        <h2>Acceso socios</h2>
         {error && <div className={styles.error}>{error}</div>}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
@@ -50,7 +52,7 @@ export default function AdminLoginPage() {
             />
           </div>
           <div className={styles.formGroup}>
-            <label>Contraseña</label>
+            <label>Contrase&ntilde;a</label>
             <input
               type="password"
               required

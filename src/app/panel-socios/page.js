@@ -46,7 +46,7 @@ export default async function SociosPanelPage() {
   const { raffle, admins, pastRaffles } = await getPanelData();
 
   return (
-    <div className="main-container" style={{ padding: '2rem' }}>
+    <div>
       <AdminClient
         raffle={raffle || null}
         tickets={raffle ? raffle.tickets : []}

@@ -254,7 +254,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </select>
           </div>
           <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
-            Cerrar sesión
+            Cerrar sesi&oacute;n
           </button>
         </div>
       </header>
@@ -288,9 +288,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
             {/* Editar rifa */}
             <div className={styles.statsCard}>
-              <h3>Editar Información de Rifa</h3>
+              <h3>Editar informaci&oacute;n de rifa</h3>
               <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
-                <input type="text" placeholder="Título" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
+                <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
                 <input type="text" placeholder="Nombre del Reloj" value={editRaffleData.watchName} onChange={e => setEditRaffleData({...editRaffleData, watchName: e.target.value})} />
                 <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
                 <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
@@ -305,10 +305,10 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             <div className={styles.statsCard}>
               <h3>Finalizar Rifa Actual</h3>
               <p style={{fontSize:'0.85rem', color:'#ffb74d', marginBottom:'1rem'}}>
-                Esto archivará la rifa y la mostrará en &quot;Rifas Pasadas&quot;.
+                Esto archivar&aacute; la rifa y la mostrar&aacute; en &quot;Rifas Pasadas&quot;.
               </p>
               <form onSubmit={handleEndRaffle} className={styles.editForm}>
-                <input type="number" min="0" max="99" placeholder="Número Ganador (0-99)" value={winningNumber} onChange={e => setWinningNumber(e.target.value)} required />
+                <input type="number" min="0" max="99" placeholder="N&uacute;mero ganador (0-99)" value={winningNumber} onChange={e => setWinningNumber(e.target.value)} required />
                 <button type="submit" className={styles.endBtn}>Archivar Rifa (Finalizar)</button>
               </form>
             </div>
@@ -317,14 +317,14 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           {/* Botón Venta Manual */}
           <div className={styles.saleBar}>
             <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
-              💵 Registrar Venta Manual (Efectivo / Transferencia)
+              Registrar venta manual (efectivo / transferencia)
             </button>
             {!currentAdminId && <span className={styles.saleHint}>Selecciona tu socio primero</span>}
           </div>
 
           {/* Tabla de boletos */}
           <div className={styles.tableCard}>
-            <h3>Gestión de Boletos</h3>
+            <h3>Gesti&oacute;n de boletos</h3>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead>
@@ -332,7 +332,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                     <th>#</th>
                     <th>Estado</th>
                     <th>Cliente</th>
-                    <th>Teléfono</th>
+                    <th>Tel&eacute;fono</th>
                     <th>Precio</th>
                     <th>Socio</th>
                     <th>Liberar</th>
@@ -368,28 +368,28 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           {/* Bulk Sale Modal */}
           {saleModal && (
             <div className={styles.modalOverlay}>
-              <div className={`${styles.modalBox} glass`}>
-                <h3>💵 Registrar Venta Manual</h3>
+              <div className={styles.modalBox}>
+                <h3>Registrar venta manual</h3>
                 <p className={styles.modalSub}>
-                  Escribe los números separados por comas o espacios.<br />
-                  El precio se calcula automáticamente.
+                  Escribe los n&uacute;meros separados por comas o espacios.<br />
+                  El precio se calcula autom&aacute;ticamente.
                 </p>
                 <form onSubmit={handleSaleSubmit} className={styles.editForm}>
                   <input
                     type="text" required
-                    placeholder="Números (ej: 05, 23, 41)"
+                    placeholder="N&uacute;meros (ej: 05, 23, 41)"
                     value={saleNumbers}
                     onChange={e => setSaleNumbers(e.target.value)}
                   />
                   {parsedSaleNumbers.length > 0 && (
                     <div className={styles.saleSummary}>
-                      <span>🎫 {parsedSaleNumbers.length} número{parsedSaleNumbers.length > 1 ? 's' : ''}</span>
+                      <span>{parsedSaleNumbers.length} n&uacute;mero{parsedSaleNumbers.length > 1 ? 's' : ''}</span>
                       <span>{parsedSaleNumbers.length >= 2 ? `Precio grupal: $${raffle.price2.toLocaleString()} c/u` : `Precio individual: $${raffle.price1.toLocaleString()}`}</span>
                       <strong className={styles.saleTotal}>Total: ${saleTotal.toLocaleString()} MXN</strong>
                     </div>
                   )}
                   <input type="text" required placeholder="Nombre completo del comprador" value={saleForm.name} onChange={e => setSaleForm({...saleForm, name: e.target.value})} />
-                  <input type="tel" required placeholder="Teléfono / WhatsApp" value={saleForm.phone} onChange={e => setSaleForm({...saleForm, phone: e.target.value})} />
+                  <input type="tel" required placeholder="Tel&eacute;fono / WhatsApp" value={saleForm.phone} onChange={e => setSaleForm({...saleForm, phone: e.target.value})} />
                   <div className={styles.modalActions}>
                     <button type="button" onClick={() => setSaleModal(false)} className={styles.endBtn}>Cancelar</button>
                     <button type="submit" className={styles.saveBtn}>Confirmar Venta</button>
@@ -402,7 +402,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           {/* Create New Raffle */}
           <div className={styles.createSection}>
             <button className={styles.createToggleBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
-              {showCreateForm ? '✕ Cancelar' : '+ Crear Nueva Rifa'}
+              {showCreateForm ? 'Cancelar' : '+ Crear nueva rifa'}
             </button>
             {showCreateForm && (
               <div className={`${styles.statsCard} ${styles.createFormCard}`}>
@@ -411,7 +411,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   Solo puede haber una rifa activa a la vez.
                 </p>
                 <form onSubmit={handleCreateRaffle} className={styles.editForm}>
-                  <input type="text" required placeholder="Título (ej: MAZAL TIME)" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
+                  <input type="text" required placeholder="T&iacute;tulo (ej: MAZAL TIME)" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
                   <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
                   <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
@@ -430,7 +430,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             <h2>No hay una rifa activa</h2>
             <p style={{marginBottom:'1rem', color:'var(--color-text-muted)'}}>Llena los datos para lanzar la siguiente rifa.</p>
             <form onSubmit={handleCreateRaffle} className={styles.editForm}>
-              <input type="text" required placeholder="Título" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
+              <input type="text" required placeholder="T&iacute;tulo" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
               <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
               <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
@@ -446,18 +446,18 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       <section className={styles.pastRafflesSection}>
         <div className={styles.sectionHeader}>
           <h2>Rifas Pasadas</h2>
-          <p>Edita la información que se muestra en ganadores anteriores o elimina una rifa archivada.</p>
+          <p>Edita la informaci&oacute;n que se muestra en ganadores anteriores o elimina una rifa archivada.</p>
         </div>
 
         {pastRaffleForms.length === 0 ? (
-          <div className={styles.emptyState}>Todavía no hay rifas pasadas.</div>
+          <div className={styles.emptyState}>Todav&iacute;a no hay rifas pasadas.</div>
         ) : (
           <div className={styles.pastRafflesGrid}>
             {pastRaffleForms.map(pastRaffle => (
               <form
                 key={pastRaffle.id}
                 onSubmit={e => handleUpdatePastRaffle(e, pastRaffle)}
-                className={`${styles.pastRaffleCard} glass`}
+                className={styles.pastRaffleCard}
               >
                 <ImageUpload
                   currentUrl={pastRaffle.imageUrl}
