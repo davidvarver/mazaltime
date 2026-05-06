@@ -190,10 +190,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         </section>
 
         <section className={styles.infoAccordion}>
-          <p className={styles.accordionIntro}>
-            Da clic en los cuadros desplegables para conocer todos los detalles del sorteo {'\u{1F447}'}
-          </p>
-
           <details>
             <summary>{'\u{1F91D}'} &iquest;C&oacute;mo funciona?</summary>
             <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
