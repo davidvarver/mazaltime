@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import Image from 'next/image';
 import HeroInfo from './HeroInfo';
@@ -11,29 +11,12 @@ import styles from './HomeClient.module.css';
 
 const WHATSAPP_URL = 'https://wa.me/525523138175';
 
-function getCountdownParts(drawDate) {
-  if (!drawDate) return { days: '00', hours: '00', minutes: '00' };
-
-  const target = new Date(drawDate).getTime();
-  const diff = Math.max(target - Date.now(), 0);
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-
-  return {
-    days: String(days).padStart(2, '0'),
-    hours: String(hours).padStart(2, '0'),
-    minutes: String(minutes).padStart(2, '0'),
-  };
-}
-
 export default function HomeClient({ raffle, initialTickets, pastRaffles = [] }) {
   const { data: session } = useSession();
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tickets, setTickets] = useState(initialTickets);
 
-  const countdown = useMemo(() => getCountdownParts(raffle?.drawDate), [raffle?.drawDate]);
   const totalTickets = tickets.length || 100;
   const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
   const soldTickets = Math.max(totalTickets - availableTickets, 0);
@@ -128,7 +111,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         <section className={styles.compactIntro}>
           <div>
             <span>{'\u2728'} Edici&oacute;n activa 2026</span>
-            <h1>{raffle?.title || 'Mazal Time'}</h1>
+            <h1>Mazal Time</h1>
             <p>{raffle?.watchName || 'Sorteo premium de reloj de lujo'}</p>
           </div>
           <div className={styles.compactActions}>
@@ -138,15 +121,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href={WHATSAPP_URL} className={styles.secondaryBtn} target="_blank" rel="noreferrer">
               {'\u{1F4AC}'} WhatsApp
             </a>
-          </div>
-        </section>
-
-        <section className={styles.countdownSection} aria-label="Cuenta regresiva del sorteo">
-          <span>{'\u{1F525}'} Pr&oacute;ximo sorteo en vivo</span>
-          <div className={styles.countdownBox}>
-            <div><strong>{countdown.days}</strong><small>D&iacute;as</small></div>
-            <div><strong>{countdown.hours}</strong><small>Horas</small></div>
-            <div><strong>{countdown.minutes}</strong><small>Min</small></div>
           </div>
         </section>
 
@@ -180,7 +154,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
           <details>
             <summary>{'\u{1F3C5}'} &iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
-            <p>El ganador se determina con el n&uacute;mero correspondiente al sorteo indicado, usando un resultado verificable para que todos puedan revisar la transparencia.</p>
+            <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
           </details>
 
           <details>
@@ -201,10 +175,11 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <section className={styles.paymentStrip} aria-label="Formas de pago">
               <p>Comprar es f&aacute;cil, r&aacute;pido y seguro.</p>
               <div>
-                <span>VISA</span>
-                <span>Mastercard</span>
-                <span>AMEX</span>
-                <span>Transferencia</span>
+                <span className={`${styles.paymentLogo} ${styles.visaLogo}`}>VISA</span>
+                <span className={`${styles.paymentLogo} ${styles.mastercardLogo}`}><i />Mastercard</span>
+                <span className={`${styles.paymentLogo} ${styles.amexLogo}`}>AMEX</span>
+                <span className={`${styles.paymentLogo} ${styles.oxxoLogo}`}>OXXO</span>
+                <span className={`${styles.paymentLogo} ${styles.transferLogo}`}>Transferencia</span>
               </div>
             </section>
 

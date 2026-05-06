@@ -282,7 +282,7 @@
 }
 
 .infoAccordion summary::after {
-  content: "⌄";
+  content: "v";
   color: #59616d;
   font-size: 1.2rem;
   transition: transform 0.2s ease;
@@ -409,19 +409,84 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.7rem;
+  gap: 0.85rem;
 }
 
-.paymentStrip span {
-  min-width: 105px;
-  padding: 0.65rem 0.85rem;
+.paymentLogo {
+  min-width: 118px;
+  min-height: 56px;
+  padding: 0.65rem 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #e6dccd;
-  border-radius: 10px;
+  border-radius: 14px;
   background: #fff;
   color: #0c2d3f;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 900;
-  box-shadow: 0 10px 20px rgba(12, 45, 63, 0.06);
+  letter-spacing: -0.02em;
+  box-shadow: 0 12px 24px rgba(12, 45, 63, 0.07);
+}
+
+.visaLogo {
+  color: #1434cb;
+  font-size: 1.15rem;
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+
+.mastercardLogo {
+  gap: 0.45rem;
+  color: #231f20;
+}
+
+.mastercardLogo i {
+  position: relative;
+  width: 28px;
+  height: 18px;
+  display: inline-block;
+}
+
+.mastercardLogo i::before,
+.mastercardLogo i::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.mastercardLogo i::before {
+  left: 0;
+  background: #eb001b;
+}
+
+.mastercardLogo i::after {
+  right: 0;
+  background: rgba(247, 158, 27, 0.86);
+}
+
+.amexLogo {
+  background: linear-gradient(180deg, #4eb3e8, #1f7fbf);
+  color: #fff;
+  border-color: #98d7f5;
+  font-size: 1rem;
+}
+
+.oxxoLogo {
+  background: linear-gradient(180deg, #f8d648 0%, #f7ca1f 100%);
+  color: #d71920;
+  border: 3px solid #d71920;
+  box-shadow: 0 0 0 3px #fff inset, 0 12px 24px rgba(215, 25, 32, 0.12);
+  font-size: 1.12rem;
+  letter-spacing: 0.02em;
+}
+
+.transferLogo {
+  color: #0c2d3f;
+  background: linear-gradient(180deg, #ffffff, #f9f3e9);
 }
 
 .whatsappFloat {
@@ -563,3 +628,4 @@
     height: 52px;
   }
 }
+
