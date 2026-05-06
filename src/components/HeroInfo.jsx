@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import styles from './HeroInfo.module.css';
 import { formatDateOnly } from '@/lib/dateOnly';
 
@@ -9,7 +9,6 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
   const soldTickets = Math.max(totalTickets - availableTickets, 0);
   const progress = Math.round((soldTickets / totalTickets) * 100);
-  const shortDate = formatDateOnly(raffle.drawDate, { day: 'numeric', month: 'short' });
   const fullDate = formatDateOnly(raffle.drawDate, {
     day: 'numeric',
     month: 'long',
@@ -23,21 +22,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   });
 
   return (
-    <div className={`${styles.heroContainer} glass`}>
-      <div className={styles.heroHeader}>
-        <div>
-          <p className={styles.eyebrow}>Rifa activa</p>
-          <h1 className={styles.title}>{raffle.title}</h1>
-          <p className={styles.dateLine}>{fullDate}</p>
-        </div>
-        <div className={styles.progressBlock}>
-          <div className={styles.progressTrack}>
-            <span style={{ width: `${Math.min(progress, 100)}%` }} />
-          </div>
-          <strong>{progress}% vendido</strong>
-        </div>
-      </div>
-
+    <article className={styles.heroContainer}>
       <div className={styles.imageWrapper}>
         <Image
           src={raffle.imageUrl || '/rolex_demo.png'}
@@ -47,52 +32,47 @@ export default function HeroInfo({ raffle, tickets = [] }) {
           priority
           unoptimized={!!raffle.imageUrl}
         />
+        <span className={styles.liveBadge}>Rifa activa</span>
       </div>
 
       <div className={styles.infoContent}>
+        <p className={styles.eyebrow}>Mazal Time presenta</p>
         <h2 className={styles.subtitle}>{raffle.watchName}</h2>
+        <p className={styles.raffleTitle}>{raffle.title}</p>
+
+        <div className={styles.priceRow}>
+          <div>
+            <span>Desde</span>
+            <strong>${raffle.price1.toLocaleString()} MXN</strong>
+            <small>por numero</small>
+          </div>
+          <div>
+            <span>2 o mas</span>
+            <strong>${raffle.price2.toLocaleString()} MXN</strong>
+            <small>cada uno</small>
+          </div>
+        </div>
+
+        <div className={styles.progressArea}>
+          <div className={styles.progressLabel}>
+            <span>Boletos vendidos</span>
+            <strong>{soldTickets}/{totalTickets}</strong>
+          </div>
+          <div className={styles.progressTrack}>
+            <span style={{ width: `${Math.min(progress, 100)}%` }} />
+          </div>
+          <p>{progress}% vendido</p>
+        </div>
 
         <div className={styles.details}>
-          <div className={styles.detailItem}>
-            <span className={styles.icon}>🎫</span>
-            <p>{totalTickets} números (00-99)</p>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.icon}>🏆</span>
-            <p>Sorteo: {raffle.zodiacSign} - Lotería Nacional</p>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.icon}>📅</span>
-            <p>
-              Fecha:{' '}
-              {weekdayDate}
-            </p>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.icon}>⚠️</span>
-            <p>El sorteo se realizará al vender mínimo el 85%</p>
-          </div>
+          <div><strong>Fecha</strong><span>{weekdayDate}</span></div>
+          <div><strong>Sorteo</strong><span>{raffle.zodiacSign} - Loteria Nacional</span></div>
+          <div><strong>Boletaje</strong><span>{availableTickets} disponibles de {totalTickets}</span></div>
+          <div><strong>Regla</strong><span>El sorteo se realiza al vender minimo el 85%</span></div>
         </div>
 
-        <div className={styles.statsBar}>
-          <div>
-            <strong>{availableTickets}</strong>
-            <span>Disponibles</span>
-          </div>
-          <div>
-            <strong>${raffle.price1.toLocaleString()}</strong>
-            <span>Por número</span>
-          </div>
-          <div>
-            <strong>{shortDate}</strong>
-            <span>Sorteo</span>
-          </div>
-        </div>
-
-        <div className={styles.pricing}>
-          <p><span>2 o más:</span> ${raffle.price2.toLocaleString()} MXN c/u</p>
-        </div>
+        <div className={styles.datePill}>Sorteo: {fullDate}</div>
       </div>
-    </div>
+    </article>
   );
 }
