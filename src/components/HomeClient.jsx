@@ -107,7 +107,10 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         <section className={styles.trustBand}>
           <div><strong>{'\u{1F3AB}'} +100 boletos</strong><span>por edici&oacute;n</span></div>
           <div><strong>{'\u{1F6E1}\uFE0F'} Sorteo transparente</strong><span>con resultado verificable</span></div>
-          <div><strong>{'\u{1F4AC}'} Atenci&oacute;n directa</strong><span>por WhatsApp</span></div>
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="Abrir WhatsApp de Mazal Time">
+            <strong>{'\u{1F4AC}'} Atenci&oacute;n directa</strong>
+            <span>por WhatsApp</span>
+          </a>
         </section>
 
         {raffle && (

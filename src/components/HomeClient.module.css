@@ -223,17 +223,20 @@
   overflow: hidden;
 }
 
-.trustBand div {
+.trustBand div,
+.trustBand a {
   padding: 1.2rem;
   text-align: center;
 }
 
-.trustBand div + div {
+.trustBand div + div,
+.trustBand div + a {
   border-left: 1px solid var(--line);
 }
 
 .trustBand strong,
-.trustBand span {
+.trustBand span,
+.trustBand a {
   display: block;
 }
 
@@ -245,6 +248,14 @@
 .trustBand span {
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.trustBand a {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.trustBand a:hover {
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .infoAccordion {
@@ -592,7 +603,8 @@
     grid-template-columns: 1fr;
   }
 
-  .trustBand div + div {
+  .trustBand div + div,
+  .trustBand div + a {
     border-left: 0;
     border-top: 1px solid var(--line);
   }
