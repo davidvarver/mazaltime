@@ -1,18 +1,18 @@
 .heroContainer {
-  width: min(1080px, calc(100% - 32px));
-  margin: 0 auto 2.5rem;
+  width: min(1120px, 100%);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
   overflow: hidden;
   border: 1px solid #f2e6d2;
-  border-radius: 34px;
+  border-radius: 34px 34px 0 0;
   background: #fff;
   box-shadow: 0 20px 48px rgba(23, 38, 50, 0.09);
 }
 
 .imageWrapper {
   position: relative;
-  min-height: 520px;
+  min-height: 570px;
   background: #fff;
 }
 
@@ -178,18 +178,18 @@
   }
 
   .imageWrapper {
-    min-height: 420px;
+    min-height: 460px;
   }
 }
 
 @media (max-width: 560px) {
   .heroContainer {
-    width: calc(100% - 24px);
-    border-radius: 28px;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
   }
 
   .imageWrapper {
-    min-height: 360px;
+    min-height: 390px;
   }
 
   .priceRow {

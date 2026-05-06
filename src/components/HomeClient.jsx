@@ -127,37 +127,37 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         </section>
 
         {raffle && (
-          <>
-            <section id="rifa-activa" className={styles.sectionIntro}>
+          <section id="rifa-activa" className={styles.raffleExperience}>
+            <div className={styles.sectionIntro}>
               <span>Sorteo activo</span>
               <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
-            </section>
+            </div>
 
             <HeroInfo raffle={raffle} tickets={tickets} />
-          </>
+
+            <div className={styles.infoAccordion}>
+              <details>
+                <summary>&iquest;C&oacute;mo funciona?</summary>
+                <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
+              </details>
+
+              <details>
+                <summary>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
+                <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
+              </details>
+
+              <details>
+                <summary>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
+                <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
+              </details>
+
+              <details>
+                <summary>&iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
+                <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
+              </details>
+            </div>
+          </section>
         )}
-
-        <section className={styles.infoAccordion}>
-          <details>
-            <summary>&iquest;C&oacute;mo funciona?</summary>
-            <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
-          </details>
-
-          <details>
-            <summary>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
-            <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
-          </details>
-
-          <details>
-            <summary>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
-            <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
-          </details>
-
-          <details>
-            <summary>&iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
-            <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
-          </details>
-        </section>
 
         {raffle ? (
           <>
