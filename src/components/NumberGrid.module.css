@@ -1,5 +1,5 @@
 .gridContainer {
-  width: min(1040px, calc(100% - 32px));
+  width: min(1220px, calc(100% - 24px));
   margin: 1.6rem auto 2rem;
   padding: clamp(1.2rem, 3vw, 2rem);
   overflow: hidden;
@@ -51,14 +51,16 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
   gap: 8px;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: repeat(10, 1fr);
-    gap: 10px;
+    gap: 9px;
   }
 }
 
@@ -66,7 +68,7 @@
   position: relative;
   aspect-ratio: 1;
   border-radius: 16px;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 900;
   display: flex;
   align-items: center;
@@ -108,7 +110,7 @@
 
 @media (max-width: 560px) {
   .gridContainer {
-    width: calc(100% - 24px);
+    width: calc(100% - 16px);
     border-radius: 28px;
     padding: 1.25rem 0.8rem;
   }
