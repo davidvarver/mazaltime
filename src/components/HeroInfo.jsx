@@ -20,17 +20,19 @@ export default function HeroInfo({ raffle, tickets = [] }) {
     month: 'long',
     day: 'numeric',
   });
+  const isBatgirl = /batgirl|gmt-master/i.test(raffle.watchName || '');
+  const imageSrc = isBatgirl ? '/rolex-batgirl.png' : (raffle.imageUrl || '/rolex_demo.png');
 
   return (
     <article className={styles.heroContainer}>
       <div className={styles.imageWrapper}>
         <Image
-          src={raffle.imageUrl || '/rolex_demo.png'}
+          src={imageSrc}
           alt={raffle.watchName}
           fill
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'contain' }}
           priority
-          unoptimized={!!raffle.imageUrl}
+          unoptimized={!!raffle.imageUrl && !isBatgirl}
         />
         <span className={styles.liveBadge}>Rifa activa</span>
       </div>

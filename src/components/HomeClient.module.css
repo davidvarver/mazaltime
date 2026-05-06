@@ -479,8 +479,8 @@
 .oxxoLogo {
   background: linear-gradient(180deg, #f8d648 0%, #f7ca1f 100%);
   color: #d71920;
-  border: 3px solid #d71920;
-  box-shadow: 0 0 0 3px #fff inset, 0 12px 24px rgba(215, 25, 32, 0.12);
+  border-color: #f0d65a;
+  box-shadow: 0 12px 24px rgba(215, 25, 32, 0.08);
   font-size: 1.12rem;
   letter-spacing: 0.02em;
 }
