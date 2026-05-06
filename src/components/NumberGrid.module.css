@@ -2,6 +2,7 @@
   width: min(1080px, calc(100% - 32px));
   margin: 2rem auto;
   padding: clamp(1.4rem, 4vw, 2.4rem);
+  overflow: hidden;
   border: 1px solid #f2e6d2;
   border-radius: 34px;
   background: #fff;
@@ -12,7 +13,8 @@
   text-align: center;
   color: #172632;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-size: clamp(1.65rem, 4vw, 2.6rem);
+  line-height: 1.08;
   margin-bottom: 0.5rem;
 }
 
@@ -61,6 +63,7 @@
 }
 
 .numberBtn {
+  position: relative;
   aspect-ratio: 1;
   border-radius: 16px;
   font-size: 1rem;
@@ -85,11 +88,11 @@
 }
 
 .selected {
-  background: #d4af37;
-  border: 1px solid #d4af37;
-  color: #0c2d3f;
+  background: #050505;
+  border: 1px solid #050505;
+  color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 14px 26px rgba(212, 175, 55, 0.34);
+  box-shadow: 0 14px 26px rgba(5, 5, 5, 0.28);
 }
 
 .sold {
@@ -99,17 +102,51 @@
   cursor: not-allowed;
 }
 
+.sold::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 50%;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+
 .dot.available { background: #f8f3e8; border: 1px solid #d4af37; }
-.dot.selected { background: #d4af37; border: none; }
+.dot.selected { background: #050505; border: none; }
 .dot.sold { background: #9b9488; border: none; }
 
 @media (max-width: 560px) {
   .gridContainer {
     width: calc(100% - 24px);
     border-radius: 28px;
+    padding: 1.25rem 0.8rem;
+  }
+
+  .title {
+    font-size: clamp(1.7rem, 9vw, 2.25rem);
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .statusLegend {
+    gap: 0.7rem;
+  }
+
+  .legendItem {
+    font-size: 0.78rem;
   }
 
   .grid {
     grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .numberBtn {
+    border-radius: 14px;
+    font-size: 0.92rem;
   }
 }

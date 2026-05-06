@@ -33,10 +33,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
     }
   };
 
-  const scrollToNumbers = () => {
-    document.getElementById('numeros')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   const handleSubmitCheckout = async (formData, numbers) => {
     try {
       if (!session) {
@@ -108,22 +104,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
       </header>
 
       <main id="inicio">
-        <section className={styles.compactIntro}>
-          <div>
-            <span>{'\u2728'} Edici&oacute;n activa 2026</span>
-            <h1>Mazal Time</h1>
-            <p>{raffle?.watchName || 'Sorteo premium de reloj de lujo'}</p>
-          </div>
-          <div className={styles.compactActions}>
-            <button type="button" className={styles.primaryBtn} onClick={scrollToNumbers}>
-              {'\u{1F3AB}'} Elegir n&uacute;mero
-            </button>
-            <a href={WHATSAPP_URL} className={styles.secondaryBtn} target="_blank" rel="noreferrer">
-              {'\u{1F4AC}'} WhatsApp
-            </a>
-          </div>
-        </section>
-
         <section className={styles.trustBand}>
           <div><strong>{'\u{1F3AB}'} +100 boletos</strong><span>por edici&oacute;n</span></div>
           <div><strong>{'\u{1F6E1}\uFE0F'} Sorteo transparente</strong><span>con resultado verificable</span></div>
