@@ -187,6 +187,32 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           <div><strong>💬 Atención directa</strong><span>por WhatsApp</span></div>
         </section>
 
+        <section className={styles.infoAccordion}>
+          <p className={styles.accordionIntro}>
+            Da clic en los cuadros desplegables para conocer todos los detalles del sorteo ??
+          </p>
+
+          <details>
+            <summary>?? ?C?mo funciona?</summary>
+            <p>Elige uno o varios n?meros disponibles, registra tus datos y finaliza tu participaci?n. Te confirmaremos tus boletos y quedar?n apartados para el sorteo.</p>
+          </details>
+
+          <details>
+            <summary>?? ?Cu?ndo ser? el sorteo?</summary>
+            <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m?nimo requerido, te avisaremos cualquier ajuste con anticipaci?n.</p>
+          </details>
+
+          <details>
+            <summary>?? ?C?mo se decidir? al ganador?</summary>
+            <p>El ganador se determina con el n?mero correspondiente al sorteo indicado, usando un resultado verificable para que todos puedan revisar la transparencia.</p>
+          </details>
+
+          <details>
+            <summary>? ?C?mo entregar?s el reloj?</summary>
+            <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env?o asegurado, seg?n la ubicaci?n y acuerdo con el participante.</p>
+          </details>
+        </section>
+
         {raffle ? (
           <>
             <section id="rifa-activa" className={styles.sectionIntro}>
@@ -201,6 +227,16 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 tickets={tickets}
                 onSelectNumber={handleSelectNumber}
               />
+            </section>
+
+            <section className={styles.paymentStrip} aria-label="Formas de pago">
+              <p>Comprar es f?cil, r?pido y seguro.</p>
+              <div>
+                <span>VISA</span>
+                <span>Mastercard</span>
+                <span>AMEX</span>
+                <span>Transferencia</span>
+              </div>
             </section>
 
             {selectedNumbers.length > 0 && (
@@ -259,6 +295,16 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           <p>Bases del sorteo, privacidad y terminos disponibles bajo solicitud.</p>
         </div>
       </footer>
+
+      <a
+        href="https://wa.me/525530182177"
+        className={styles.whatsappFloat}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Abrir WhatsApp"
+      >
+        ?
+      </a>
     </div>
   );
 }

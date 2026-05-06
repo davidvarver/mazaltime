@@ -16,6 +16,14 @@
   margin-bottom: 0.5rem;
 }
 
+.subtitle {
+  text-align: center;
+  color: #667085;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+}
+
 .statusLegend {
   display: flex;
   justify-content: center;
