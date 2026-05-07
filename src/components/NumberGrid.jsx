@@ -29,7 +29,7 @@ export default function NumberGrid({ tickets, onSelectNumber }) {
 
   return (
     <div className={styles.gridContainer}>
-      <h3 className={styles.title}>Elige tu boleto &amp; agrega al carrito</h3>
+      <h3 className={styles.title}>Elige tu boleto y agrega al carrito</h3>
       <p className={styles.subtitle}>N&uacute;meros disponibles</p>
       <div className={styles.statusLegend}>
         <div className={styles.legendItem}><div className={`${styles.dot} ${styles.available}`}></div> Disponible</div>

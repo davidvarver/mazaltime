@@ -30,10 +30,8 @@ export default function HeroInfo({ raffle, tickets = [] }) {
         <span className={styles.liveBadge}>Rifa activa</span>
       </div>
 
-      <div className={styles.infoContent}>
-        <p className={styles.eyebrow}>Mazal Time presenta</p>
+        <div className={styles.infoContent}>
         <h2 className={styles.subtitle}>{raffle.watchName || raffle.title}</h2>
-        <p className={styles.raffleTitle}>Mazal Time</p>
 
         <div className={styles.priceRow}>
           <div>

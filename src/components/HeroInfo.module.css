@@ -37,30 +37,12 @@
   justify-content: center;
 }
 
-.eyebrow {
-  color: #a8812f;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-
 .subtitle {
   color: #172632;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2rem, 5vw, 3.5rem);
   line-height: 1.02;
   letter-spacing: -0.045em;
-  margin-bottom: 0.55rem;
-}
-
-.raffleTitle {
-  color: #d4af37;
-  font-size: 0.9rem;
-  font-weight: 900;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
   margin-bottom: 1.5rem;
 }
 
@@ -201,17 +183,8 @@
     padding: 1.15rem;
   }
 
-  .eyebrow {
-    margin-bottom: 0.45rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.13em;
-  }
-
   .subtitle {
     font-size: clamp(2rem, 10vw, 2.55rem);
-  }
-
-  .raffleTitle {
     margin-bottom: 1rem;
   }
 
