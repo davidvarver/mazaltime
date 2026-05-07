@@ -466,6 +466,34 @@
   margin-bottom: 1.25rem;
 }
 
+.sectionHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sectionHeaderRow .sectionHeader {
+  margin-bottom: 0;
+}
+
+.exportBtn {
+  min-height: 44px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.88rem;
+  font-weight: 900;
+  box-shadow: 0 12px 24px rgba(212, 175, 55, 0.22);
+}
+
 .emptyState {
   padding: 1.25rem;
 }
@@ -516,8 +544,13 @@
 
   .logoutBtn,
   .saleBtn,
-  .createToggleBtn {
+  .createToggleBtn,
+  .exportBtn {
     width: 100%;
+  }
+
+  .sectionHeaderRow {
+    flex-direction: column;
   }
 
   .modalActions,

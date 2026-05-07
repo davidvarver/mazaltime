@@ -382,9 +382,14 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           </div>
 
           <div className={styles.tableCard}>
-            <div className={styles.sectionHeader}>
-              <h3>Base de compradores</h3>
-              <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
+            <div className={styles.sectionHeaderRow}>
+              <div className={styles.sectionHeader}>
+                <h3>Base de compradores</h3>
+                <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
+              </div>
+              <a href="/api/admin/buyers/export" className={styles.exportBtn}>
+                Descargar Excel
+              </a>
             </div>
             <div className={styles.buyerSummaryGrid}>
               <div className={styles.buyerMetric}>
