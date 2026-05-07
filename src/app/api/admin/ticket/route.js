@@ -9,7 +9,7 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { raffleId, numbers, status, adminId, buyerName, buyerPhone } = body;
+    const { raffleId, numbers, status, adminId, buyerName, buyerPhone, notes } = body;
     const allowedStatuses = new Set(['AVAILABLE', 'SOLD']);
 
     if (!raffleId || !numbers || !Array.isArray(numbers) || numbers.length === 0 || !status || !adminId) {
@@ -49,6 +49,7 @@ export async function POST(req) {
     if (status === 'SOLD') {
       updateData.buyerName = buyerName;
       updateData.buyerPhone = buyerPhone;
+      updateData.notes = notes?.trim() || null;
       updateData.pricePaid = pricePaid;
     }
 
@@ -56,6 +57,7 @@ export async function POST(req) {
       updateData.user = { disconnect: true };
       updateData.buyerName = null;
       updateData.buyerPhone = null;
+      updateData.notes = null;
       updateData.pricePaid = null;
       updateData.stripeSessionId = null;
       updateData.reservedAt = null;
@@ -75,6 +77,32 @@ export async function POST(req) {
     return NextResponse.json({ tickets: updatedTickets });
   } catch (error) {
     console.error('Admin update error:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    if (!getAdminSessionFromRequest(req)) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { ticketId, notes } = body;
+
+    if (!ticketId) {
+      return NextResponse.json({ error: 'Falta el boleto a actualizar' }, { status: 400 });
+    }
+
+    const updatedTicket = await prisma.ticket.update({
+      where: { id: ticketId },
+      data: { notes: notes?.trim() || null },
+      include: { admin: true, user: true },
+    });
+
+    return NextResponse.json({ ticket: updatedTicket });
+  } catch (error) {
+    console.error('Admin ticket note update error:', error);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }

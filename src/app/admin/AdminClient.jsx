@@ -33,7 +33,10 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   // Bulk sale modal
   const [saleModal, setSaleModal] = useState(false);
   const [saleNumbers, setSaleNumbers] = useState('');
-  const [saleForm, setSaleForm] = useState({ name: '', phone: '' });
+  const [saleForm, setSaleForm] = useState({ name: '', phone: '', notes: '' });
+  const [noteDrafts, setNoteDrafts] = useState(() =>
+    Object.fromEntries(initialTickets.map(ticket => [ticket.id, ticket.notes || '']))
+  );
 
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -111,13 +114,17 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         const updated = data.tickets.find(u => u.number === t.number);
         return updated || t;
       }));
+      setNoteDrafts(prev => ({
+        ...prev,
+        ...Object.fromEntries(data.tickets.map(ticket => [ticket.id, ticket.notes || ''])),
+      }));
     } catch (err) { alert(err.message); }
   };
 
   const handleOpenSale = () => {
     if (!currentAdminId) { alert('Selecciona tu cuenta primero.'); return; }
     setSaleNumbers('');
-    setSaleForm({ name: '', phone: '' });
+    setSaleForm({ name: '', phone: '', notes: '' });
     setSaleModal(true);
   };
 
@@ -146,7 +153,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           adminId: currentAdminId,
           raffleId: raffle.id,
           buyerName: saleForm.name,
-          buyerPhone: saleForm.phone
+          buyerPhone: saleForm.phone,
+          notes: saleForm.notes
         })
       });
       const data = await res.json();
@@ -155,8 +163,28 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         const updated = data.tickets.find(u => u.number === t.number);
         return updated || t;
       }));
+      setNoteDrafts(prev => ({
+        ...prev,
+        ...Object.fromEntries(data.tickets.map(ticket => [ticket.id, ticket.notes || ''])),
+      }));
       setSaleModal(false);
     } catch (err) { alert(err.message); }
+  };
+
+  const handleSaveNote = async (ticketId) => {
+    try {
+      const res = await fetch('/api/admin/ticket', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId, notes: noteDrafts[ticketId] || '' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setTickets(prev => prev.map(ticket => ticket.id === ticketId ? data.ticket : ticket));
+      setNoteDrafts(prev => ({ ...prev, [ticketId]: data.ticket.notes || '' }));
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleUpdateRaffle = async (e) => {
@@ -483,6 +511,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                     <th>Tel&eacute;fono</th>
                     <th>Precio</th>
                     <th>Socio</th>
+                    <th>Notas</th>
                     <th>Liberar</th>
                   </tr>
                 </thead>
@@ -499,6 +528,25 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                       <td>{ticket.user?.phone || ticket.buyerPhone || '-'}</td>
                       <td>{ticket.pricePaid ? `$${ticket.pricePaid.toLocaleString()}` : (ticket.status === 'SOLD' ? `$${raffle.price1.toLocaleString()}` : '-')}</td>
                       <td>{ticket.admin?.name || '-'}</td>
+                      <td className={styles.notesCell}>
+                        {ticket.status === 'SOLD' ? (
+                          <div className={styles.noteEditor}>
+                            <textarea
+                              value={noteDrafts[ticket.id] || ''}
+                              placeholder="Ej: pendiente, pag&oacute; en efectivo, transferencia..."
+                              onChange={e => setNoteDrafts(prev => ({ ...prev, [ticket.id]: e.target.value }))}
+                              rows={2}
+                            />
+                            <button
+                              type="button"
+                              className={styles.noteSaveBtn}
+                              onClick={() => handleSaveNote(ticket.id)}
+                            >
+                              Guardar nota
+                            </button>
+                          </div>
+                        ) : '-'}
+                      </td>
                       <td>
                         {ticket.status === 'SOLD' && (
                           <button className={styles.liberateBtn} onClick={() => handleLiberate(ticket.number)} disabled={!currentAdminId}>
@@ -538,6 +586,12 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   )}
                   <input type="text" required placeholder="Nombre completo del comprador" value={saleForm.name} onChange={e => setSaleForm({...saleForm, name: e.target.value})} />
                   <input type="tel" required placeholder="Tel&eacute;fono / WhatsApp" value={saleForm.phone} onChange={e => setSaleForm({...saleForm, phone: e.target.value})} />
+                  <textarea
+                    placeholder="Anotaciones opcionales (pendiente, efectivo, transferencia, abono...)"
+                    value={saleForm.notes}
+                    onChange={e => setSaleForm({...saleForm, notes: e.target.value})}
+                    rows={3}
+                  />
                   <div className={styles.modalActions}>
                     <button type="button" onClick={() => setSaleModal(false)} className={styles.endBtn}>Cancelar</button>
                     <button type="submit" className={styles.saveBtn}>Confirmar Venta</button>

@@ -44,7 +44,7 @@ export async function GET(req) {
 
     const buyers = buildBuyerInsights(soldTickets, activeRaffle?.id);
     const rows = [
-      ['Cliente', 'Etiqueta', 'Telefono', 'Correo', 'Rifas participadas', 'Boletos total', 'Gastado total MXN', 'Compro esta rifa', 'Boletos esta rifa', 'Gastado esta rifa MXN', 'Ultima compra', 'Rifa activa'],
+      ['Cliente', 'Etiqueta', 'Telefono', 'Correo', 'Rifas participadas', 'Boletos total', 'Gastado total MXN', 'Compro esta rifa', 'Boletos esta rifa', 'Gastado esta rifa MXN', 'Ultima compra', 'Rifa activa', 'Notas'],
       ...buyers.map(buyer => [
         buyer.name,
         buyer.customerStatusLabel,
@@ -58,6 +58,7 @@ export async function GET(req) {
         buyer.currentSpent,
         formatDate(buyer.lastPurchaseAt),
         activeRaffle?.watchName || '',
+        buyer.notesText || '',
       ]),
     ];
 

@@ -62,6 +62,7 @@
 .select,
 .adminSelector select,
 .editForm input,
+.editForm textarea,
 .pastRaffleCard input {
   width: 100%;
   min-height: 48px;
@@ -77,9 +78,16 @@
 .select:focus,
 .adminSelector select:focus,
 .editForm input:focus,
+.editForm textarea:focus,
 .pastRaffleCard input:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.13);
+}
+
+.editForm textarea {
+  min-height: 92px;
+  resize: vertical;
+  font-family: inherit;
 }
 
 .logoutBtn,
@@ -350,6 +358,45 @@
 .numberCell {
   color: var(--navy);
   font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.notesCell {
+  min-width: 260px;
+  white-space: normal !important;
+}
+
+.noteEditor {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.noteEditor textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #e6dccd;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+}
+
+.noteEditor textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.13);
+}
+
+.noteSaveBtn {
+  width: fit-content;
+  min-height: 34px;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(12, 45, 63, 0.16);
+  border-radius: 999px;
+  background: #fffcf5;
+  color: var(--navy);
+  font-size: 0.78rem;
   font-weight: 900;
 }
 

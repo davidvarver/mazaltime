@@ -64,6 +64,7 @@ model Ticket {
   // Manual buyer info (when admin assigns without user account)
   buyerName   String?
   buyerPhone  String?
+  notes       String?
   pricePaid   Int?    // Actual price charged for this ticket (MXN)
   stripeSessionId String?
   reservedAt  DateTime?

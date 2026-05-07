@@ -18,6 +18,7 @@
         currentTickets: 0,
         currentSpent: 0,
         raffles: new Set(),
+        notes: [],
         lastPurchaseAt: ticket.updatedAt,
       });
     }
@@ -28,6 +29,11 @@
     buyer.totalTickets += 1;
     buyer.totalSpent += paid;
     buyer.raffles.add(ticket.raffleId);
+
+    if (ticket.notes) {
+      const numberLabel = String(ticket.number).padStart(2, '0');
+      buyer.notes.push(`#${numberLabel}: ${ticket.notes}`);
+    }
 
     if (ticket.raffleId === activeRaffleId) {
       buyer.currentTickets += 1;
@@ -53,8 +59,10 @@
         boughtCurrent,
         customerStatus: isNew ? 'NEW' : isRecurring ? 'RECURRING' : isInactive ? 'INACTIVE' : 'HISTORICAL',
         customerStatusLabel: isNew ? 'Nuevo' : isRecurring ? 'Recurrente' : isInactive ? 'Inactivo' : 'Historico',
+        notesText: buyer.notes.join(' | '),
         lastPurchaseAt: buyer.lastPurchaseAt?.toISOString?.() || null,
         raffles: undefined,
+        notes: undefined,
       };
     })
     .sort((a, b) => b.totalSpent - a.totalSpent);
