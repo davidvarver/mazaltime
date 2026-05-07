@@ -10,8 +10,10 @@ export async function releaseExpiredReservations(raffleId) {
   return prisma.ticket.updateMany({
     where: {
       ...(raffleId ? { raffleId } : {}),
-      status: 'RESERVED',
-      reservedAt: { lt: getReservationCutoff() },
+      OR: [
+        { status: 'RESERVED', reservedAt: { lt: getReservationCutoff() } },
+        { status: 'RESERVED', userId: null },
+      ],
     },
     data: {
       status: 'AVAILABLE',

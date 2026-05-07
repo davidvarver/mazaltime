@@ -95,12 +95,48 @@ export async function POST(req) {
     const unitPrice = normalizedNumbers.length >= 2 ? raffle.price2 : raffle.price1;
     const appUrl = getAppUrl();
 
+    const previousReservations = await prisma.ticket.findMany({
+      where: {
+        raffleId,
+        number: { in: normalizedNumbers },
+        status: 'RESERVED',
+        userId: checkoutUser.id,
+        stripeSessionId: { not: null },
+      },
+      select: { stripeSessionId: true },
+      distinct: ['stripeSessionId'],
+    });
+
+    await Promise.all(previousReservations.map(async ({ stripeSessionId }) => {
+      try {
+        await stripe.checkout.sessions.expire(stripeSessionId);
+      } catch (error) {
+        console.warn('No se pudo expirar una sesión anterior de Stripe:', error.message);
+      }
+    }));
+
+    await prisma.ticket.updateMany({
+      where: {
+        raffleId,
+        number: { in: normalizedNumbers },
+        status: 'RESERVED',
+        userId: checkoutUser.id,
+      },
+      data: {
+        status: 'AVAILABLE',
+        userId: null,
+        pricePaid: null,
+        stripeSessionId: null,
+        reservedAt: null,
+      },
+    });
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       locale: 'es-419',
       success_url: `${appUrl}/mis-boletos?success=true`,
-      cancel_url: `${appUrl}/?canceled=true`,
+      cancel_url: `${appUrl}/api/stripe/cancel?session_id={CHECKOUT_SESSION_ID}`,
       customer_email: checkoutUser.email,
       expires_at: Math.floor(Date.now() / 1000) + STRIPE_SESSION_MINUTES * 60,
       metadata: {
@@ -131,6 +167,7 @@ export async function POST(req) {
       },
       data: {
         status: 'RESERVED',
+        userId: checkoutUser.id,
         pricePaid: unitPrice,
         stripeSessionId: checkoutSession.id,
         reservedAt: now,
