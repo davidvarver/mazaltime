@@ -131,7 +131,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               </details>
 
               <details>
-                <summary>&iquest;C&oacute;mo entregar&aacute;s el reloj?</summary>
+                <summary>&iquest;C&oacute;mo entregamos el reloj?</summary>
                 <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
               </details>
             </div>
