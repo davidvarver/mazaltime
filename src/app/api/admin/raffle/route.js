@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getAdminSessionFromRequest } from '@/lib/adminAuth';
+import { getAuthorizedAdmin } from '@/lib/adminGuard';
 import { parseDateOnlyForStorage } from '@/lib/dateOnly';
 
 function parsePositivePrice(value) {
@@ -35,9 +35,8 @@ function normalizeGalleryImages(value) {
 
 export async function PUT(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const data = await req.json();
     const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, galleryImages, lotteryUrl } = data;
@@ -114,9 +113,8 @@ export async function PUT(req) {
 
 export async function POST(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl, galleryImages, lotteryUrl } = await req.json();
 
@@ -196,9 +194,8 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const { id } = await req.json();
 

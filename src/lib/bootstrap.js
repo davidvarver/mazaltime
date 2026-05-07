@@ -53,14 +53,14 @@ export async function ensureDefaultData(prisma) {
     for (const admin of adminsWithHashedPasswords) {
       const existingAdmin = await tx.admin.findUnique({
         where: { username: admin.username },
-        select: { id: true, password: true },
+        select: { id: true, password: true, mustChangePassword: true },
       });
 
       if (existingAdmin) {
         if (existingAdmin.password === admin.password) {
           await tx.admin.update({
             where: { id: existingAdmin.id },
-            data: { password: admin.hashedPassword },
+            data: { password: admin.hashedPassword, mustChangePassword: true },
           });
         }
 

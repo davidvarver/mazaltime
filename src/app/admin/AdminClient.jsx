@@ -7,11 +7,9 @@ import styles from './AdminClient.module.css';
 
 const MAX_GALLERY_IMAGES = 4;
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', buyerInsights = [] }) {
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', loggedAdminName = '', buyerInsights = [] }) {
   const router = useRouter();
-  const [currentAdminId, setCurrentAdminId] = useState(() =>
-    admins.some(admin => admin.id === loggedAdminId) ? loggedAdminId : ''
-  );
+  const currentAdminId = loggedAdminId;
   const [tickets, setTickets] = useState(initialTickets);
   const [raffle] = useState(initialRaffle);
   const [pastRaffleForms, setPastRaffleForms] = useState(() =>
@@ -332,16 +330,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         <div className={styles.headerActions}>
           <div className={styles.adminSelector}>
             <label>Iniciaste como:</label>
-            <select
-              value={currentAdminId}
-              onChange={e => setCurrentAdminId(e.target.value)}
-              className={styles.select}
-            >
-              <option value="">-- Seleccionar Socio --</option>
-              {admins.map(a => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
+            <strong className={styles.lockedAdminName}>{loggedAdminName || 'Socio'}</strong>
           </div>
           <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
             Cerrar sesi&oacute;n

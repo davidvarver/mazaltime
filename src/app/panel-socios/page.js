@@ -8,7 +8,7 @@ import AdminClient from '../admin/AdminClient';
 
 export const revalidate = 0;
 
-async function getPanelData() {
+async function getPanelData(adminSession) {
   try {
     await ensureDefaultData(prisma);
 
@@ -23,6 +23,12 @@ async function getPanelData() {
     });
 
     const admins = await prisma.admin.findMany();
+    const loggedAdmin = adminSession?.id
+      ? await prisma.admin.findUnique({
+        where: { id: adminSession.id },
+        select: { id: true, name: true, username: true, mustChangePassword: true },
+      })
+      : null;
     const pastRaffles = await prisma.raffle.findMany({
       where: { isActive: false },
       orderBy: { drawDate: 'desc' },
@@ -39,11 +45,11 @@ async function getPanelData() {
       orderBy: { updatedAt: 'desc' },
     });
 
-    return { raffle, admins, pastRaffles, buyerInsights: buildBuyerInsights(soldTickets, raffle?.id) };
+    return { raffle, admins, pastRaffles, loggedAdmin, buyerInsights: buildBuyerInsights(soldTickets, raffle?.id) };
   } catch (error) {
     console.error('Admin panel database error:', error);
 
-    return { raffle: null, admins: [], pastRaffles: [], buyerInsights: [] };
+    return { raffle: null, admins: [], pastRaffles: [], loggedAdmin: null, buyerInsights: [] };
   }
 }
 
@@ -55,7 +61,15 @@ export default async function SociosPanelPage() {
     redirect('/panel-socios/login');
   }
 
-  const { raffle, admins, pastRaffles, buyerInsights } = await getPanelData();
+  const { raffle, admins, pastRaffles, loggedAdmin, buyerInsights } = await getPanelData(adminSession);
+
+  if (!loggedAdmin) {
+    redirect('/panel-socios/login');
+  }
+
+  if (loggedAdmin.mustChangePassword) {
+    redirect('/panel-socios/cambiar-contrasena');
+  }
 
   return (
     <div>
@@ -65,6 +79,7 @@ export default async function SociosPanelPage() {
         admins={admins}
         pastRaffles={pastRaffles}
         loggedAdminId={adminSession.id}
+        loggedAdminName={loggedAdmin.name}
         buyerInsights={buyerInsights}
       />
     </div>

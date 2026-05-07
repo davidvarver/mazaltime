@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'No se pudo iniciar sesi&oacute;n');
 
-      router.push('/panel-socios');
+      router.push(data.mustChangePassword ? '/panel-socios/cambiar-contrasena' : '/panel-socios');
       router.refresh();
     } catch (err) {
       setError(err.message);

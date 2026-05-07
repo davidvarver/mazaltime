@@ -43,6 +43,7 @@ export async function POST(req) {
 
     const response = NextResponse.json({
       success: true,
+      mustChangePassword: admin.mustChangePassword,
       admin: { id: admin.id, name: admin.name, username: admin.username },
     });
 

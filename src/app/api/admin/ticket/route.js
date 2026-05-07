@@ -1,18 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getAdminSessionFromRequest } from '@/lib/adminAuth';
+import { getAuthorizedAdmin } from '@/lib/adminGuard';
 
 export async function POST(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { admin, error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const body = await req.json();
-    const { raffleId, numbers, status, adminId, buyerName, buyerPhone, notes } = body;
+    const { raffleId, numbers, status, buyerName, buyerPhone, notes } = body;
     const allowedStatuses = new Set(['AVAILABLE', 'SOLD']);
 
-    if (!raffleId || !numbers || !Array.isArray(numbers) || numbers.length === 0 || !status || !adminId) {
+    if (!raffleId || !numbers || !Array.isArray(numbers) || numbers.length === 0 || !status) {
       return NextResponse.json({ error: 'Faltan datos requeridos' }, { status: 400 });
     }
 
@@ -43,7 +42,7 @@ export async function POST(req) {
 
     const updateData = {
       status,
-      admin: { connect: { id: adminId } },
+      admin: { connect: { id: admin.id } },
     };
 
     if (status === 'SOLD') {
@@ -83,9 +82,8 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const body = await req.json();
     const { ticketId, notes } = body;

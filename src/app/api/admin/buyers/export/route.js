@@ -1,6 +1,6 @@
 ﻿import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getAdminSessionFromRequest } from '@/lib/adminAuth';
+import { getAuthorizedAdmin } from '@/lib/adminGuard';
 import { buildBuyerInsights } from '@/lib/buyerInsights';
 
 function csvCell(value) {
@@ -22,9 +22,8 @@ function formatDate(value) {
 
 export async function GET(req) {
   try {
-    if (!getAdminSessionFromRequest(req)) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
+    const { error: authError } = await getAuthorizedAdmin(req);
+    if (authError) return authError;
 
     const activeRaffle = await prisma.raffle.findFirst({
       where: { isActive: true },
