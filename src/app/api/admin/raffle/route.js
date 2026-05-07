@@ -19,6 +19,20 @@ function normalizeOptionalUrl(value) {
   }
 }
 
+function normalizeGalleryImages(value) {
+  if (!Array.isArray(value)) return [];
+
+  const normalizedImages = [];
+
+  for (const image of value) {
+    const normalizedImage = normalizeOptionalUrl(image);
+    if (!normalizedImage) return null;
+    if (!normalizedImages.includes(normalizedImage)) normalizedImages.push(normalizedImage);
+  }
+
+  return normalizedImages.slice(0, 4);
+}
+
 export async function PUT(req) {
   try {
     if (!getAdminSessionFromRequest(req)) {
@@ -26,7 +40,7 @@ export async function PUT(req) {
     }
 
     const data = await req.json();
-    const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, lotteryUrl } = data;
+    const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, galleryImages, lotteryUrl } = data;
 
     if (!id) {
       return NextResponse.json({ error: 'ID de rifa requerido' }, { status: 400 });
@@ -75,6 +89,11 @@ export async function PUT(req) {
       if (imageUrl && !normalizedImageUrl) return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
       updateData.imageUrl = normalizedImageUrl;
     }
+    if (galleryImages !== undefined) {
+      const normalizedGalleryImages = normalizeGalleryImages(galleryImages);
+      if (!normalizedGalleryImages) return NextResponse.json({ error: 'Galería de imágenes inválida' }, { status: 400 });
+      updateData.galleryImages = normalizedGalleryImages;
+    }
     if (lotteryUrl !== undefined) {
       const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
       if (lotteryUrl && !normalizedLotteryUrl) return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
@@ -99,7 +118,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl, lotteryUrl } = await req.json();
+    const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl, galleryImages, lotteryUrl } = await req.json();
 
     // Check if there's already an active raffle
     const activeRaffle = await prisma.raffle.findFirst({
@@ -119,6 +138,7 @@ export async function POST(req) {
     const parsedPrice1 = parsePositivePrice(price1);
     const parsedPrice2 = parsePositivePrice(price2);
     const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
+    const normalizedGalleryImages = normalizeGalleryImages(galleryImages || []);
     const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
 
     if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2) {
@@ -133,6 +153,10 @@ export async function POST(req) {
       return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
     }
 
+    if (!normalizedGalleryImages) {
+      return NextResponse.json({ error: 'Galería de imágenes inválida' }, { status: 400 });
+    }
+
     // Use transaction to create raffle and its 100 tickets
     const result = await prisma.$transaction(async (tx) => {
       const newRaffle = await tx.raffle.create({
@@ -144,6 +168,7 @@ export async function POST(req) {
           price1: parsedPrice1,
           price2: parsedPrice2,
           imageUrl: normalizedImageUrl,
+          galleryImages: normalizedGalleryImages,
           lotteryUrl: normalizedLotteryUrl,
           isActive: true
         }

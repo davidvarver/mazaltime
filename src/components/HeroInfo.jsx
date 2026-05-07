@@ -14,23 +14,46 @@ export default function HeroInfo({ raffle, tickets = [] }) {
     year: 'numeric',
   });
   const isBatgirl = /batgirl|gmt-master/i.test(raffle.watchName || '');
-  const imageSrc = isBatgirl ? '/rolex-batgirl.png' : (raffle.imageUrl || '/rolex_demo.png');
+  const imageSrc = raffle.imageUrl || (isBatgirl ? '/rolex-batgirl.png' : '/rolex_demo.png');
+  const galleryImages = Array.isArray(raffle.galleryImages) ? raffle.galleryImages : [];
+  const displayImages = [imageSrc, ...galleryImages]
+    .filter(Boolean)
+    .filter((image, index, images) => images.indexOf(image) === index);
 
   return (
     <article className={styles.heroContainer}>
-      <div className={styles.imageWrapper}>
-        <Image
-          src={imageSrc}
-          alt={raffle.watchName}
-          fill
-          style={{ objectFit: 'contain' }}
-          priority
-          unoptimized={!!raffle.imageUrl && !isBatgirl}
-        />
-        <span className={styles.liveBadge}>Rifa activa</span>
+      <div className={styles.imageColumn}>
+        <div className={styles.imageWrapper}>
+          <Image
+            src={imageSrc}
+            alt={raffle.watchName}
+            fill
+            style={{ objectFit: 'contain' }}
+            priority
+            unoptimized={!!raffle.imageUrl}
+          />
+          <span className={styles.liveBadge}>Rifa activa</span>
+        </div>
+
+        {displayImages.length > 1 && (
+          <div className={styles.galleryStrip} aria-label="Fotos del reloj">
+            {displayImages.map((image, index) => (
+              <div key={image} className={styles.galleryThumb}>
+                <Image
+                  src={image}
+                  alt={`${raffle.watchName} foto ${index + 1}`}
+                  fill
+                  sizes="96px"
+                  style={{ objectFit: 'cover' }}
+                  unoptimized={image.startsWith('http')}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-        <div className={styles.infoContent}>
+      <div className={styles.infoContent}>
         <h2 className={styles.subtitle}>{raffle.watchName || raffle.title}</h2>
 
         <div className={styles.priceRow}>

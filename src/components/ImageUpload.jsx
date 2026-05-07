@@ -11,7 +11,6 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Local preview instantly
     const localUrl = URL.createObjectURL(file);
     setPreview(localUrl);
     setLoading(true);
@@ -22,7 +21,7 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
 
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Error al subir la imagen');
@@ -33,6 +32,7 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
       setPreview(currentUrl || null);
     } finally {
       setLoading(false);
+      e.target.value = '';
     }
   };
 
@@ -47,7 +47,7 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
           <img src={preview} alt="Foto del reloj" className={styles.preview} />
         ) : (
           <div className={styles.placeholder}>
-            <span className={styles.icon}>📷</span>
+            <span className={styles.icon}>Foto</span>
             <span>Haz clic para subir foto del reloj</span>
             <span className={styles.hint}>JPG, PNG, WebP · Máx 5MB</span>
           </div>
@@ -55,13 +55,13 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
       </div>
       {preview && (
         <button type="button" className={styles.changeBtn} onClick={() => inputRef.current?.click()}>
-          {loading ? 'Subiendo...' : '🔄 Cambiar foto'}
+          {loading ? 'Subiendo...' : 'Cambiar foto'}
         </button>
       )}
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleChange}
         style={{ display: 'none' }}
       />

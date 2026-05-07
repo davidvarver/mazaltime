@@ -116,37 +116,41 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <HeroInfo raffle={raffle} tickets={tickets} />
 
             <div className={styles.infoAccordion}>
-              <details open={openFaq === 'como-funciona'}>
-                <summary onClick={event => {
-                  event.preventDefault();
-                  setOpenFaq(current => current === 'como-funciona' ? null : 'como-funciona');
-                }}>&iquest;C&oacute;mo funciona?</summary>
-                <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
-              </details>
+              <div className={styles.faqGroup}>
+                <details open={openFaq === 'como-funciona'}>
+                  <summary onClick={event => {
+                    event.preventDefault();
+                    setOpenFaq(current => current === 'como-funciona' ? null : 'como-funciona');
+                  }}>&iquest;C&oacute;mo funciona?</summary>
+                  <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
+                </details>
 
-              <details open={openFaq === 'fecha-sorteo'}>
-                <summary onClick={event => {
-                  event.preventDefault();
-                  setOpenFaq(current => current === 'fecha-sorteo' ? null : 'fecha-sorteo');
-                }}>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
-                <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
-              </details>
+                <details open={openFaq === 'fecha-sorteo'}>
+                  <summary onClick={event => {
+                    event.preventDefault();
+                    setOpenFaq(current => current === 'fecha-sorteo' ? null : 'fecha-sorteo');
+                  }}>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
+                  <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
+                </details>
+              </div>
 
-              <details open={openFaq === 'ganador'}>
-                <summary onClick={event => {
-                  event.preventDefault();
-                  setOpenFaq(current => current === 'ganador' ? null : 'ganador');
-                }}>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
-                <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
-              </details>
+              <div className={styles.faqGroup}>
+                <details open={openFaq === 'ganador'}>
+                  <summary onClick={event => {
+                    event.preventDefault();
+                    setOpenFaq(current => current === 'ganador' ? null : 'ganador');
+                  }}>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
+                  <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
+                </details>
 
-              <details open={openFaq === 'entrega'}>
-                <summary onClick={event => {
-                  event.preventDefault();
-                  setOpenFaq(current => current === 'entrega' ? null : 'entrega');
-                }}>&iquest;C&oacute;mo entregamos el reloj?</summary>
-                <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
-              </details>
+                <details open={openFaq === 'entrega'}>
+                  <summary onClick={event => {
+                    event.preventDefault();
+                    setOpenFaq(current => current === 'entrega' ? null : 'entrega');
+                  }}>&iquest;C&oacute;mo entregamos el reloj?</summary>
+                  <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
+                </details>
+              </div>
             </div>
           </section>
         )}
