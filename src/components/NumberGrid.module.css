@@ -104,6 +104,9 @@
   border: 1px solid #d8d0c2;
   color: #9b9488;
   cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(23, 38, 50, 0.58);
 }
 
 .dot.available { background: #f8f3e8; border: 1px solid #d4af37; }
