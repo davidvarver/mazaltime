@@ -607,12 +607,12 @@
 @media (max-width: 640px) {
   .pageShell {
     margin: 0;
-    padding-top: 128px;
+    padding-top: 112px;
   }
 
   .headerInner {
     width: calc(100% - 24px);
-    min-height: 88px;
+    min-height: 76px;
     gap: 0.75rem;
   }
 
@@ -621,17 +621,29 @@
   }
 
   .brand img {
-    width: clamp(210px, 64vw, 300px);
+    width: clamp(190px, 58vw, 260px);
   }
 
   .headerCompact .brand img {
-    width: clamp(180px, 52vw, 240px);
+    width: clamp(160px, 48vw, 210px);
+  }
+
+  .headerCompact .headerInner {
+    min-height: 64px;
   }
 
   .nav {
     justify-content: flex-start;
+    gap: 1.3rem;
+    min-height: 34px;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+
+  .nav a {
+    font-size: 0.76rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
   }
 
   .nav::-webkit-scrollbar {
@@ -660,7 +672,10 @@
   }
 
   .trustBand {
+    width: calc(100% - 24px);
     grid-template-columns: 1fr;
+    margin-top: 1rem;
+    border-radius: 22px;
   }
 
   .trustBand > * + * {
@@ -668,13 +683,51 @@
     border-top: 1px solid var(--line);
   }
 
+  .trustBand div,
+  .trustBand a {
+    padding: 0.8rem 1rem;
+  }
+
+  .trustBand strong {
+    font-size: 0.98rem;
+  }
+
+  .trustBand span {
+    font-size: 0.78rem;
+  }
+
   .infoAccordion {
     width: 100%;
     border-radius: 0 0 24px 24px;
+    padding: 0.95rem 1rem;
+  }
+
+  .infoAccordion summary {
+    padding: 0.9rem 0;
+    font-size: 1.08rem;
+  }
+
+  .infoAccordion details p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .sectionIntro {
+    width: calc(100% - 16px);
+    margin-bottom: 0.9rem;
+  }
+
+  .sectionIntro span {
+    font-size: 0.68rem;
+  }
+
+  .sectionIntro h2 {
+    font-size: clamp(1.55rem, 8vw, 2.1rem);
   }
 
   .raffleExperience {
     width: calc(100% - 16px);
+    margin-top: 1.55rem;
     border-radius: 30px;
     padding: 0.7rem;
   }

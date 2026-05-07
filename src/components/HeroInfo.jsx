@@ -7,18 +7,11 @@ export default function HeroInfo({ raffle, tickets = [] }) {
 
   const totalTickets = tickets.length || 100;
   const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
-  const availableTickets = Math.max(totalTickets - soldTickets, 0);
   const progress = Math.round((soldTickets / totalTickets) * 100);
   const fullDate = formatDateOnly(raffle.drawDate, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  });
-  const weekdayDate = formatDateOnly(raffle.drawDate, {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
   });
   const isBatgirl = /batgirl|gmt-master/i.test(raffle.watchName || '');
   const imageSrc = isBatgirl ? '/rolex-batgirl.png' : (raffle.imageUrl || '/rolex_demo.png');
@@ -67,7 +60,6 @@ export default function HeroInfo({ raffle, tickets = [] }) {
         </div>
 
         <div className={styles.details}>
-          <div><strong>Fecha</strong><span>{weekdayDate}</span></div>
           <div>
             <strong>Sorteo</strong>
             {raffle.lotteryUrl ? (
@@ -78,8 +70,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
               <span>{raffle.zodiacSign} - Loter&iacute;a Nacional</span>
             )}
           </div>
-          <div><strong>Boletaje</strong><span>{availableTickets} disponibles de {totalTickets}</span></div>
-          <div><strong>Regla</strong><span>El sorteo se realiza al vender minimo el 85%</span></div>
+          <div className={styles.ruleDetail}><strong>Regla</strong><span>El sorteo se realiza al vender m&iacute;nimo el 85%</span></div>
         </div>
 
         <div className={styles.datePill}>Sorteo: {fullDate}</div>
