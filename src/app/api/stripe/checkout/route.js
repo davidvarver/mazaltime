@@ -67,6 +67,7 @@ export async function POST(req) {
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
+      locale: 'es-419',
       success_url: `${appUrl}/mis-boletos?success=true`,
       cancel_url: `${appUrl}/?canceled=true`,
       customer_email: session.user.email,
@@ -81,7 +82,7 @@ export async function POST(req) {
           price_data: {
             currency: 'mxn',
             product_data: {
-              name: `${raffle.watchName || raffle.title}`,
+              name: `Mazal Time - ${raffle.watchName || raffle.title}`,
               description: `Boleto(s): ${normalizedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}`,
             },
             unit_amount: unitPrice * 100,
