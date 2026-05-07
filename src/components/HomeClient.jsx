@@ -160,7 +160,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 onClick={handleOpenCheckout}
                 disabled={selectedNumbers.length === 0}
               >
-                {selectedNumbers.length > 0 ? 'Comprar ahora' : 'Elige un n&uacute;mero para pagar'}
+                {selectedNumbers.length > 0 ? 'Comprar ahora' : 'Elige un número para pagar'}
               </button>
             </section>
 
