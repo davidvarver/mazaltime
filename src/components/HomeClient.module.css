@@ -673,27 +673,30 @@
 
   .trustBand {
     width: calc(100% - 24px);
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
     margin-top: 1rem;
-    border-radius: 22px;
+    border-radius: 20px;
   }
 
   .trustBand > * + * {
-    border-left: 0;
-    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    border-top: 0;
   }
 
   .trustBand div,
   .trustBand a {
-    padding: 0.8rem 1rem;
+    padding: 0.72rem 0.35rem;
   }
 
   .trustBand strong {
-    font-size: 0.98rem;
+    font-size: 0.78rem;
+    line-height: 1.1;
   }
 
   .trustBand span {
-    font-size: 0.78rem;
+    margin-top: 0.18rem;
+    font-size: 0.64rem;
+    line-height: 1.15;
   }
 
   .infoAccordion {
