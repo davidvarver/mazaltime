@@ -88,13 +88,23 @@ function buildBuyerInsights(soldTickets, activeRaffleId) {
   }
 
   return [...buyers.values()]
-    .map(buyer => ({
-      ...buyer,
-      rafflesParticipated: buyer.raffles.size,
-      boughtCurrent: buyer.currentTickets > 0,
-      lastPurchaseAt: buyer.lastPurchaseAt?.toISOString?.() || null,
-      raffles: undefined,
-    }))
+    .map((buyer) => {
+      const rafflesParticipated = buyer.raffles.size;
+      const boughtCurrent = buyer.currentTickets > 0;
+      const isNew = boughtCurrent && rafflesParticipated === 1;
+      const isRecurring = boughtCurrent && rafflesParticipated > 1;
+      const isInactive = !boughtCurrent && buyer.totalTickets > 0;
+
+      return {
+        ...buyer,
+        rafflesParticipated,
+        boughtCurrent,
+        customerStatus: isNew ? 'NEW' : isRecurring ? 'RECURRING' : isInactive ? 'INACTIVE' : 'HISTORICAL',
+        customerStatusLabel: isNew ? 'Nuevo' : isRecurring ? 'Recurrente' : isInactive ? 'Inactivo' : 'Histórico',
+        lastPurchaseAt: buyer.lastPurchaseAt?.toISOString?.() || null,
+        raffles: undefined,
+      };
+    })
     .sort((a, b) => b.totalSpent - a.totalSpent);
 }
 

@@ -236,6 +236,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     .reduce((sum, t) => sum + (t.pricePaid || (raffle?.price1 || 0)), 0);
   const buyersThisRaffle = buyerInsights.filter(buyer => buyer.boughtCurrent);
   const previousBuyersMissing = buyerInsights.filter(buyer => !buyer.boughtCurrent && buyer.totalTickets > 0);
+  const newBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'NEW');
+  const recurringBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'RECURRING');
+  const inactiveBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'INACTIVE');
 
   // --- Render ---
   return (
@@ -333,8 +336,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <strong>{buyersThisRaffle.length}</strong>
               </div>
               <div className={styles.buyerMetric}>
-                <span>Faltan esta vez</span>
-                <strong>{previousBuyersMissing.length}</strong>
+                <span>Nuevos</span>
+                <strong>{newBuyers.length}</strong>
+              </div>
+              <div className={styles.buyerMetric}>
+                <span>Recurrentes</span>
+                <strong>{recurringBuyers.length}</strong>
+              </div>
+              <div className={styles.buyerMetric}>
+                <span>Inactivos esta vez</span>
+                <strong>{inactiveBuyers.length || previousBuyersMissing.length}</strong>
               </div>
             </div>
             <div className={styles.tableWrapper}>
@@ -342,6 +353,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <thead>
                   <tr>
                     <th>Cliente</th>
+                    <th>Etiqueta</th>
                     <th>Contacto</th>
                     <th>Rifas</th>
                     <th>Boletos total</th>
@@ -352,11 +364,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <tbody>
                   {buyerInsights.length === 0 ? (
                     <tr>
-                      <td colSpan="6">Todav&iacute;a no hay compradores registrados.</td>
+                      <td colSpan="7">Todav&iacute;a no hay compradores registrados.</td>
                     </tr>
                   ) : buyerInsights.map(buyer => (
                     <tr key={buyer.key}>
                       <td>{buyer.name}</td>
+                      <td>
+                        <span className={`${styles.customerTag} ${styles[`customer${buyer.customerStatus}`]}`}>
+                          {buyer.customerStatusLabel}
+                        </span>
+                      </td>
                       <td>
                         <div>{buyer.phone || '-'}</div>
                         <small>{buyer.email || '-'}</small>

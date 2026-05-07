@@ -301,7 +301,8 @@
 }
 
 .statusBadge,
-.badge {
+.badge,
+.customerTag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -309,6 +310,36 @@
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 900;
+}
+
+.customerTag {
+  min-width: 96px;
+  border: 1px solid transparent;
+  letter-spacing: 0.02em;
+}
+
+.customerNEW {
+  border-color: rgba(46, 125, 50, 0.2);
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+}
+
+.customerRECURRING {
+  border-color: rgba(212, 175, 55, 0.42);
+  background: rgba(212, 175, 55, 0.16);
+  color: #8a6a17;
+}
+
+.customerINACTIVE {
+  border-color: rgba(185, 28, 28, 0.2);
+  background: rgba(185, 28, 28, 0.08);
+  color: #b91c1c;
+}
+
+.customerHISTORICAL {
+  border-color: rgba(12, 45, 63, 0.16);
+  background: rgba(12, 45, 63, 0.08);
+  color: var(--navy);
 }
 
 .available {
