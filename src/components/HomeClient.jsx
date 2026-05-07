@@ -19,8 +19,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const [isScrolled, setIsScrolled] = useState(false);
 
   const totalTickets = tickets.length || 100;
-  const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
-  const soldTickets = Math.max(totalTickets - availableTickets, 0);
+  const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
   const selectedPrice = raffle && selectedNumbers.length >= 2 ? raffle.price2 : raffle?.price1 || 0;
   const selectedTotal = selectedNumbers.length * selectedPrice;
 

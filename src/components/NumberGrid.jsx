@@ -12,7 +12,7 @@ export default function NumberGrid({ tickets, onSelectNumber }) {
 
   const handleToggle = (num) => {
     const ticket = allTickets.find(t => t.number === num);
-    if (!ticket || ticket.status !== 'AVAILABLE') return;
+    if (!ticket || ticket.status === 'SOLD') return;
 
     let newSelection;
     if (selectedNumbers.includes(num)) {
@@ -42,14 +42,14 @@ export default function NumberGrid({ tickets, onSelectNumber }) {
           const isSelected = selectedNumbers.includes(ticket.number);
 
           let statusClass = styles.available;
-          if (ticket.status === 'SOLD' || ticket.status === 'RESERVED') statusClass = styles.sold;
+          if (ticket.status === 'SOLD') statusClass = styles.sold;
           else if (isSelected) statusClass = styles.selected;
 
           return (
             <button
               key={ticket.number}
               onClick={() => handleToggle(ticket.number)}
-              disabled={ticket.status !== 'AVAILABLE'}
+              disabled={ticket.status === 'SOLD'}
               className={`${styles.numberBtn} ${statusClass}`}
             >
               {ticket.number.toString().padStart(2, '0')}

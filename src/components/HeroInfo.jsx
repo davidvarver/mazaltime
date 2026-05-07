@@ -6,8 +6,8 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   if (!raffle) return null;
 
   const totalTickets = tickets.length || 100;
-  const availableTickets = tickets.filter(ticket => ticket.status === 'AVAILABLE').length;
-  const soldTickets = Math.max(totalTickets - availableTickets, 0);
+  const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
+  const availableTickets = Math.max(totalTickets - soldTickets, 0);
   const progress = Math.round((soldTickets / totalTickets) * 100);
   const fullDate = formatDateOnly(raffle.drawDate, {
     day: 'numeric',
