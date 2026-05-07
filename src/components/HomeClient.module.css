@@ -444,6 +444,28 @@
   gap: 0.85rem;
 }
 
+.paymentCta {
+  min-height: 50px;
+  margin-top: 1.05rem;
+  padding: 0.85rem 1.8rem;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(12, 45, 63, 0.2);
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.paymentCta:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 38px rgba(12, 45, 63, 0.24);
+}
+
+.paymentCta:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
 .paymentLogo {
   min-width: 118px;
   min-height: 56px;

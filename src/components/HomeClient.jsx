@@ -154,6 +154,14 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 <span className={`${styles.paymentLogo} ${styles.mastercardLogo}`}><i />Mastercard</span>
                 <span className={`${styles.paymentLogo} ${styles.amexLogo}`}>AMEX</span>
               </div>
+              <button
+                type="button"
+                className={styles.paymentCta}
+                onClick={handleOpenCheckout}
+                disabled={selectedNumbers.length === 0}
+              >
+                {selectedNumbers.length > 0 ? 'Comprar ahora' : 'Elige un n&uacute;mero para pagar'}
+              </button>
             </section>
 
             {selectedNumbers.length > 0 && (
