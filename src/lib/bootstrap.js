@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 const DEFAULT_ADMINS = [
   { name: 'Moni', username: 'moni', password: 'password123' },
   { name: 'Eliahu', username: 'eliahu', password: 'password123' },
@@ -24,6 +26,12 @@ function buildInitialRaffle() {
 }
 
 export async function ensureDefaultData(prisma) {
+  const allowDefaultSeed = process.env.NODE_ENV !== 'production' || process.env.ALLOW_DEFAULT_SEED === 'true';
+  const adminsWithHashedPasswords = await Promise.all(DEFAULT_ADMINS.map(async (admin) => ({
+    ...admin,
+    hashedPassword: await bcrypt.hash(admin.password, 10),
+  })));
+
   await prisma.$transaction(async (tx) => {
     const oldDani = await tx.admin.findUnique({
       where: { username: 'dani' },
@@ -42,12 +50,32 @@ export async function ensureDefaultData(prisma) {
       });
     }
 
-    for (const admin of DEFAULT_ADMINS) {
-      await tx.admin.upsert({
+    for (const admin of adminsWithHashedPasswords) {
+      const existingAdmin = await tx.admin.findUnique({
         where: { username: admin.username },
-        update: {},
-        create: admin,
+        select: { id: true, password: true },
       });
+
+      if (existingAdmin) {
+        if (existingAdmin.password === admin.password) {
+          await tx.admin.update({
+            where: { id: existingAdmin.id },
+            data: { password: admin.hashedPassword },
+          });
+        }
+
+        continue;
+      }
+
+      if (allowDefaultSeed) {
+        await tx.admin.create({
+          data: {
+            name: admin.name,
+            username: admin.username,
+            password: admin.hashedPassword,
+          },
+        });
+      }
     }
 
     const activeRaffle = await tx.raffle.findFirst({
@@ -55,7 +83,7 @@ export async function ensureDefaultData(prisma) {
       select: { id: true },
     });
 
-    if (!activeRaffle) {
+    if (!activeRaffle && allowDefaultSeed) {
       await tx.raffle.create({
         data: buildInitialRaffle(),
       });

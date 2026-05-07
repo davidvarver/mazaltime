@@ -3,13 +3,21 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
+function getAuthSecret() {
+  if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === 'production') {
+    throw new Error('NEXTAUTH_SECRET is required in production.');
+  }
+
+  return process.env.NEXTAUTH_SECRET || 'development-only-secret';
+}
+
 export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Correo Electrónico',
       credentials: {
-        email: { label: "Correo", type: "email" },
-        password: { label: "Contraseña", type: "password" }
+        email: { label: 'Correo', type: 'email' },
+        password: { label: 'Contraseña', type: 'password' }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -17,7 +25,7 @@ export const authOptions = {
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email.trim().toLowerCase() }
         });
 
         if (!user) {
@@ -54,7 +62,7 @@ export const authOptions = {
   pages: {
     signIn: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET || 'supersecretkeyformazaltime',
+  secret: getAuthSecret(),
 };
 
 const handler = NextAuth(authOptions);

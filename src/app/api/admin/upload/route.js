@@ -2,11 +2,6 @@ import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 
-async function fileToDataUrl(file) {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  return `data:${file.type};base64,${buffer.toString('base64')}`;
-}
-
 export async function POST(req) {
   try {
     if (!getAdminSessionFromRequest(req)) {
@@ -21,7 +16,7 @@ export async function POST(req) {
     }
 
     // Validate type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json({ error: 'Formato no permitido. Usa JPG, PNG o WebP.' }, { status: 400 });
     }
@@ -31,12 +26,12 @@ export async function POST(req) {
       return NextResponse.json({ error: 'La imagen no puede pesar más de 5MB.' }, { status: 400 });
     }
 
-    const ext = file.name.split('.').pop();
+    const ext = file.name.split('.').pop()?.toLowerCase();
     const filename = `watches/watch_${Date.now()}.${ext}`;
 
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.warn('BLOB_READ_WRITE_TOKEN is not configured. Using data URL image fallback.');
-      return NextResponse.json({ url: await fileToDataUrl(file) });
+      console.error('BLOB_READ_WRITE_TOKEN is not configured.');
+      return NextResponse.json({ error: 'Storage de imágenes no configurado' }, { status: 500 });
     }
 
     let blob;
@@ -48,11 +43,6 @@ export async function POST(req) {
       });
     } catch (blobError) {
       const message = blobError.message || '';
-
-      if (message.includes('Cannot use public access on a private store')) {
-        console.warn('Vercel Blob store is private. Using data URL image fallback.');
-        return NextResponse.json({ url: await fileToDataUrl(file) });
-      }
 
       throw blobError;
     }

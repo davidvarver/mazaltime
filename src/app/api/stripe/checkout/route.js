@@ -26,6 +26,13 @@ function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+function normalizeTicketNumbers(numbers) {
+  if (!Array.isArray(numbers)) return [];
+
+  return [...new Set(numbers.map(Number))]
+    .filter(number => Number.isInteger(number) && number >= 0 && number <= 99);
+}
+
 async function getOrCreateCheckoutUser(session, customer = {}) {
   if (session?.user?.id) {
     return prisma.user.findUnique({ where: { id: session.user.id } });
@@ -78,9 +85,9 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No se pudo preparar el comprador' }, { status: 400 });
     }
 
-    const normalizedNumbers = [...new Set((numbers || []).map(Number))].filter(Number.isInteger);
+    const normalizedNumbers = normalizeTicketNumbers(numbers);
 
-    if (!raffleId || normalizedNumbers.length === 0) {
+    if (!raffleId || normalizedNumbers.length === 0 || normalizedNumbers.length !== (numbers || []).length) {
       return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 });
     }
 

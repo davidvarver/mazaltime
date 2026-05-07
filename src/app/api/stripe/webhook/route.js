@@ -14,7 +14,18 @@ function getStripe() {
 function parseSessionMetadata(session) {
   const userId = session.metadata?.userId;
   const raffleId = session.metadata?.raffleId;
-  const numbers = JSON.parse(session.metadata?.numbers || '[]');
+  let parsedNumbers = [];
+
+  try {
+    parsedNumbers = JSON.parse(session.metadata?.numbers || '[]');
+  } catch {
+    parsedNumbers = [];
+  }
+
+  const numbers = Array.isArray(parsedNumbers)
+    ? [...new Set(parsedNumbers.map(Number))]
+      .filter(number => Number.isInteger(number) && number >= 0 && number <= 99)
+    : [];
 
   return { userId, raffleId, numbers };
 }

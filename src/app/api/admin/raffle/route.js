@@ -70,7 +70,11 @@ export async function PUT(req) {
 
       updateData.winningNumber = parsedWinningNumber;
     }
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
+    if (imageUrl !== undefined) {
+      const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
+      if (imageUrl && !normalizedImageUrl) return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
+      updateData.imageUrl = normalizedImageUrl;
+    }
     if (lotteryUrl !== undefined) {
       const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
       if (lotteryUrl && !normalizedLotteryUrl) return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
@@ -114,6 +118,7 @@ export async function POST(req) {
 
     const parsedPrice1 = parsePositivePrice(price1);
     const parsedPrice2 = parsePositivePrice(price2);
+    const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
     const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
 
     if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2) {
@@ -122,6 +127,10 @@ export async function POST(req) {
 
     if (lotteryUrl && !normalizedLotteryUrl) {
       return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
+    }
+
+    if (imageUrl && !normalizedImageUrl) {
+      return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
     }
 
     // Use transaction to create raffle and its 100 tickets
@@ -134,7 +143,7 @@ export async function POST(req) {
           drawDate: parsedDrawDate,
           price1: parsedPrice1,
           price2: parsedPrice2,
-          imageUrl: imageUrl || null,
+          imageUrl: normalizedImageUrl,
           lotteryUrl: normalizedLotteryUrl,
           isActive: true
         }
