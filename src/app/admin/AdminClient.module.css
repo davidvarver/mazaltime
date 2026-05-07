@@ -218,6 +218,34 @@
   font-weight: 900;
 }
 
+.buyerSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.buyerMetric {
+  padding: 0.9rem 1rem;
+  border: 1px solid #f2e6d2;
+  border-radius: 18px;
+  background: #fffcf5;
+}
+
+.buyerMetric span,
+.table small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.buyerMetric strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--gold-dark);
+  font-size: 1.55rem;
+}
+
 .editForm {
   width: 100%;
   display: flex;

@@ -5,7 +5,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { getDateOnlyValue } from '@/lib/dateOnly';
 import styles from './AdminClient.module.css';
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '' }) {
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', buyerInsights = [] }) {
   const router = useRouter();
   const [currentAdminId, setCurrentAdminId] = useState(() =>
     admins.some(admin => admin.id === loggedAdminId) ? loggedAdminId : ''
@@ -234,6 +234,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const totalReal = tickets
     .filter(t => t.status === 'SOLD')
     .reduce((sum, t) => sum + (t.pricePaid || (raffle?.price1 || 0)), 0);
+  const buyersThisRaffle = buyerInsights.filter(buyer => buyer.boughtCurrent);
+  const previousBuyersMissing = buyerInsights.filter(buyer => !buyer.boughtCurrent && buyer.totalTickets > 0);
 
   // --- Render ---
   return (
@@ -313,6 +315,68 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="number" min="0" max="99" placeholder="N&uacute;mero ganador (0-99)" value={winningNumber} onChange={e => setWinningNumber(e.target.value)} required />
                 <button type="submit" className={styles.endBtn}>Archivar Rifa (Finalizar)</button>
               </form>
+            </div>
+          </div>
+
+          <div className={styles.tableCard}>
+            <div className={styles.sectionHeader}>
+              <h3>Base de compradores</h3>
+              <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
+            </div>
+            <div className={styles.buyerSummaryGrid}>
+              <div className={styles.buyerMetric}>
+                <span>Compradores hist&oacute;ricos</span>
+                <strong>{buyerInsights.length}</strong>
+              </div>
+              <div className={styles.buyerMetric}>
+                <span>Compraron esta rifa</span>
+                <strong>{buyersThisRaffle.length}</strong>
+              </div>
+              <div className={styles.buyerMetric}>
+                <span>Faltan esta vez</span>
+                <strong>{previousBuyersMissing.length}</strong>
+              </div>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Contacto</th>
+                    <th>Rifas</th>
+                    <th>Boletos total</th>
+                    <th>Gastado total</th>
+                    <th>Esta rifa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {buyerInsights.length === 0 ? (
+                    <tr>
+                      <td colSpan="6">Todav&iacute;a no hay compradores registrados.</td>
+                    </tr>
+                  ) : buyerInsights.map(buyer => (
+                    <tr key={buyer.key}>
+                      <td>{buyer.name}</td>
+                      <td>
+                        <div>{buyer.phone || '-'}</div>
+                        <small>{buyer.email || '-'}</small>
+                      </td>
+                      <td>{buyer.rafflesParticipated}</td>
+                      <td>{buyer.totalTickets}</td>
+                      <td>${buyer.totalSpent.toLocaleString()} MXN</td>
+                      <td>
+                        {buyer.boughtCurrent ? (
+                          <span className={`${styles.badge} ${styles.sold}`}>
+                            {buyer.currentTickets} boleto{buyer.currentTickets !== 1 ? 's' : ''}
+                          </span>
+                        ) : (
+                          <span className={`${styles.badge} ${styles.available}`}>No ha comprado</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 

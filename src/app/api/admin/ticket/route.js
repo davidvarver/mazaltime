@@ -10,9 +10,21 @@ export async function POST(req) {
 
     const body = await req.json();
     const { raffleId, numbers, status, adminId, buyerName, buyerPhone } = body;
+    const allowedStatuses = new Set(['AVAILABLE', 'SOLD']);
 
     if (!raffleId || !numbers || !Array.isArray(numbers) || numbers.length === 0 || !status || !adminId) {
       return NextResponse.json({ error: 'Faltan datos requeridos' }, { status: 400 });
+    }
+
+    if (!allowedStatuses.has(status)) {
+      return NextResponse.json({ error: 'Estado no permitido' }, { status: 400 });
+    }
+
+    const normalizedNumbers = [...new Set(numbers.map(number => parseInt(number, 10)))]
+      .filter(number => Number.isInteger(number) && number >= 0 && number <= 99);
+
+    if (normalizedNumbers.length !== numbers.length) {
+      return NextResponse.json({ error: 'Todos los números deben estar entre 0 y 99' }, { status: 400 });
     }
 
     // Require buyer info when marking as SOLD
@@ -45,13 +57,15 @@ export async function POST(req) {
       updateData.buyerName = null;
       updateData.buyerPhone = null;
       updateData.pricePaid = null;
+      updateData.stripeSessionId = null;
+      updateData.reservedAt = null;
     }
 
     // Update all numbers in one transaction
     const updatedTickets = await prisma.$transaction(
-      numbers.map(number =>
+      normalizedNumbers.map(number =>
         prisma.ticket.update({
-          where: { raffleId_number: { raffleId, number: parseInt(number, 10) } },
+          where: { raffleId_number: { raffleId, number } },
           data: updateData,
           include: { admin: true, user: true }
         })

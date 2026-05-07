@@ -5,7 +5,11 @@ export const ADMIN_COOKIE_NAME = 'mazaltime_admin';
 const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
 
 function getSecret() {
-  return process.env.NEXTAUTH_SECRET || 'supersecretkeyformazaltime';
+  if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === 'production') {
+    throw new Error('NEXTAUTH_SECRET is required in production.');
+  }
+
+  return process.env.NEXTAUTH_SECRET || 'development-only-secret';
 }
 
 function sign(value) {
@@ -30,7 +34,14 @@ export function verifyAdminToken(token) {
   const [id, username, expiresAt, signature] = parts;
   const payload = `${id}:${username}:${expiresAt}`;
 
-  if (signature !== sign(payload)) return null;
+  const expectedSignature = sign(payload);
+  const signatureBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expectedSignature);
+
+  if (
+    signatureBuffer.length !== expectedBuffer.length ||
+    !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)
+  ) return null;
   if (Number(expiresAt) < Date.now()) return null;
 
   return { id, username };

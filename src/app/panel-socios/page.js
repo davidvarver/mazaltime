@@ -27,12 +27,75 @@ async function getPanelData() {
       orderBy: { drawDate: 'desc' },
     });
 
-    return { raffle, admins, pastRaffles };
+    const soldTickets = await prisma.ticket.findMany({
+      where: { status: 'SOLD' },
+      include: {
+        user: true,
+        raffle: {
+          select: { id: true, title: true, watchName: true, isActive: true, drawDate: true },
+        },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+
+    return { raffle, admins, pastRaffles, buyerInsights: buildBuyerInsights(soldTickets, raffle?.id) };
   } catch (error) {
     console.error('Admin panel database error:', error);
 
-    return { raffle: null, admins: [], pastRaffles: [] };
+    return { raffle: null, admins: [], pastRaffles: [], buyerInsights: [] };
   }
+}
+
+function buildBuyerInsights(soldTickets, activeRaffleId) {
+  const buyers = new Map();
+
+  for (const ticket of soldTickets) {
+    const email = ticket.user?.email || '';
+    const phone = ticket.user?.phone || ticket.buyerPhone || '';
+    const name = ticket.user?.name || ticket.buyerName || 'Cliente sin nombre';
+    const key = ticket.userId ? `user:${ticket.userId}` : `manual:${phone || name.toLowerCase()}`;
+
+    if (!buyers.has(key)) {
+      buyers.set(key, {
+        key,
+        name,
+        email,
+        phone,
+        totalTickets: 0,
+        totalSpent: 0,
+        currentTickets: 0,
+        currentSpent: 0,
+        raffles: new Set(),
+        lastPurchaseAt: ticket.updatedAt,
+      });
+    }
+
+    const buyer = buyers.get(key);
+    const paid = ticket.pricePaid || ticket.raffle?.price1 || 0;
+
+    buyer.totalTickets += 1;
+    buyer.totalSpent += paid;
+    buyer.raffles.add(ticket.raffleId);
+
+    if (ticket.raffleId === activeRaffleId) {
+      buyer.currentTickets += 1;
+      buyer.currentSpent += paid;
+    }
+
+    if (ticket.updatedAt > buyer.lastPurchaseAt) {
+      buyer.lastPurchaseAt = ticket.updatedAt;
+    }
+  }
+
+  return [...buyers.values()]
+    .map(buyer => ({
+      ...buyer,
+      rafflesParticipated: buyer.raffles.size,
+      boughtCurrent: buyer.currentTickets > 0,
+      lastPurchaseAt: buyer.lastPurchaseAt?.toISOString?.() || null,
+      raffles: undefined,
+    }))
+    .sort((a, b) => b.totalSpent - a.totalSpent);
 }
 
 export default async function SociosPanelPage() {
@@ -43,7 +106,7 @@ export default async function SociosPanelPage() {
     redirect('/panel-socios/login');
   }
 
-  const { raffle, admins, pastRaffles } = await getPanelData();
+  const { raffle, admins, pastRaffles, buyerInsights } = await getPanelData();
 
   return (
     <div>
@@ -53,6 +116,7 @@ export default async function SociosPanelPage() {
         admins={admins}
         pastRaffles={pastRaffles}
         loggedAdminId={adminSession.id}
+        buyerInsights={buyerInsights}
       />
     </div>
   );

@@ -3,6 +3,22 @@ import { prisma } from '@/lib/prisma';
 import { getAdminSessionFromRequest } from '@/lib/adminAuth';
 import { parseDateOnlyForStorage } from '@/lib/dateOnly';
 
+function parsePositivePrice(value) {
+  const parsed = parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function normalizeOptionalUrl(value) {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function PUT(req) {
   try {
     if (!getAdminSessionFromRequest(req)) {
@@ -29,12 +45,37 @@ export async function PUT(req) {
 
       updateData.drawDate = parsedDrawDate;
     }
-    if (price1 !== undefined) updateData.price1 = parseInt(price1, 10);
-    if (price2 !== undefined) updateData.price2 = parseInt(price2, 10);
+    if (price1 !== undefined) {
+      const parsedPrice = parsePositivePrice(price1);
+      if (!parsedPrice) return NextResponse.json({ error: 'Precio 1 inválido' }, { status: 400 });
+      updateData.price1 = parsedPrice;
+    }
+    if (price2 !== undefined) {
+      const parsedPrice = parsePositivePrice(price2);
+      if (!parsedPrice) return NextResponse.json({ error: 'Precio 2 inválido' }, { status: 400 });
+      updateData.price2 = parsedPrice;
+    }
     if (isActive !== undefined) updateData.isActive = isActive;
-    if (winningNumber !== undefined) updateData.winningNumber = winningNumber ? parseInt(winningNumber, 10) : null;
+    if (winningNumber !== undefined) {
+      const parsedWinningNumber = winningNumber === '' || winningNumber === null
+        ? null
+        : parseInt(winningNumber, 10);
+
+      if (
+        parsedWinningNumber !== null &&
+        (!Number.isInteger(parsedWinningNumber) || parsedWinningNumber < 0 || parsedWinningNumber > 99)
+      ) {
+        return NextResponse.json({ error: 'Número ganador inválido' }, { status: 400 });
+      }
+
+      updateData.winningNumber = parsedWinningNumber;
+    }
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
-    if (lotteryUrl !== undefined) updateData.lotteryUrl = lotteryUrl || null;
+    if (lotteryUrl !== undefined) {
+      const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
+      if (lotteryUrl && !normalizedLotteryUrl) return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
+      updateData.lotteryUrl = normalizedLotteryUrl;
+    }
 
     const updatedRaffle = await prisma.raffle.update({
       where: { id },
@@ -71,6 +112,18 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Fecha de sorteo requerida' }, { status: 400 });
     }
 
+    const parsedPrice1 = parsePositivePrice(price1);
+    const parsedPrice2 = parsePositivePrice(price2);
+    const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
+
+    if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2) {
+      return NextResponse.json({ error: 'Datos de rifa incompletos o inválidos' }, { status: 400 });
+    }
+
+    if (lotteryUrl && !normalizedLotteryUrl) {
+      return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
+    }
+
     // Use transaction to create raffle and its 100 tickets
     const result = await prisma.$transaction(async (tx) => {
       const newRaffle = await tx.raffle.create({
@@ -79,10 +132,10 @@ export async function POST(req) {
           watchName,
           zodiacSign,
           drawDate: parsedDrawDate,
-          price1: parseInt(price1, 10),
-          price2: parseInt(price2, 10),
+          price1: parsedPrice1,
+          price2: parsedPrice2,
           imageUrl: imageUrl || null,
-          lotteryUrl: lotteryUrl || null,
+          lotteryUrl: normalizedLotteryUrl,
           isActive: true
         }
       });
