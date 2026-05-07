@@ -2,9 +2,12 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { releaseExpiredReservations } from '@/lib/ticketReservations';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import Stripe from 'stripe';
 
-const RESERVATION_MINUTES = 31;
+const STRIPE_SESSION_MINUTES = 31;
 
 function getStripe() {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -19,19 +22,62 @@ function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
 }
 
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+async function getOrCreateCheckoutUser(session, customer = {}) {
+  if (session?.user?.id) {
+    return prisma.user.findUnique({ where: { id: session.user.id } });
+  }
+
+  const email = normalizeEmail(customer.email);
+  const name = String(customer.name || '').trim();
+  const phone = String(customer.phone || '').trim();
+
+  if (!email || !name || !phone) {
+    throw new Error('Nombre, correo y WhatsApp son requeridos');
+  }
+
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+
+  if (existingUser) {
+    if (!existingUser.phone && phone) {
+      return prisma.user.update({
+        where: { id: existingUser.id },
+        data: { phone },
+      });
+    }
+
+    return existingUser;
+  }
+
+  const temporaryPassword = await bcrypt.hash(crypto.randomUUID(), 10);
+
+  return prisma.user.create({
+    data: {
+      name,
+      email,
+      phone,
+      password: temporaryPassword,
+    },
+  });
+}
+
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
-
     const stripe = getStripe();
     if (!stripe) {
       return NextResponse.json({ error: 'Stripe no está configurado en el servidor.' }, { status: 500 });
     }
 
-    const { raffleId, numbers } = await req.json();
+    const { raffleId, numbers, customer } = await req.json();
+    const checkoutUser = await getOrCreateCheckoutUser(session, customer);
+    if (!checkoutUser) {
+      return NextResponse.json({ error: 'No se pudo preparar el comprador' }, { status: 400 });
+    }
+
     const normalizedNumbers = [...new Set((numbers || []).map(Number))].filter(Number.isInteger);
 
     if (!raffleId || normalizedNumbers.length === 0) {
@@ -44,22 +90,7 @@ export async function POST(req) {
     }
 
     const now = new Date();
-    const reservationCutoff = new Date(now.getTime() - RESERVATION_MINUTES * 60 * 1000);
-
-    await prisma.ticket.updateMany({
-      where: {
-        raffleId,
-        status: 'RESERVED',
-        reservedAt: { lt: reservationCutoff },
-      },
-      data: {
-        status: 'AVAILABLE',
-        userId: null,
-        pricePaid: null,
-        stripeSessionId: null,
-        reservedAt: null,
-      },
-    });
+    await releaseExpiredReservations(raffleId);
 
     const unitPrice = normalizedNumbers.length >= 2 ? raffle.price2 : raffle.price1;
     const appUrl = getAppUrl();
@@ -70,10 +101,10 @@ export async function POST(req) {
       locale: 'es-419',
       success_url: `${appUrl}/mis-boletos?success=true`,
       cancel_url: `${appUrl}/?canceled=true`,
-      customer_email: session.user.email,
-      expires_at: Math.floor(Date.now() / 1000) + RESERVATION_MINUTES * 60,
+      customer_email: checkoutUser.email,
+      expires_at: Math.floor(Date.now() / 1000) + STRIPE_SESSION_MINUTES * 60,
       metadata: {
-        userId: session.user.id,
+        userId: checkoutUser.id,
         raffleId: raffle.id,
         numbers: JSON.stringify(normalizedNumbers),
       },
@@ -100,7 +131,6 @@ export async function POST(req) {
       },
       data: {
         status: 'RESERVED',
-        userId: session.user.id,
         pricePaid: unitPrice,
         stripeSessionId: checkoutSession.id,
         reservedAt: now,
@@ -131,6 +161,6 @@ export async function POST(req) {
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {
     console.error('Stripe checkout error:', error);
-    return NextResponse.json({ error: 'Error al crear la sesión de pago' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Error al crear la sesión de pago' }, { status: 500 });
   }
 }

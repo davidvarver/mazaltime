@@ -18,7 +18,7 @@ export default async function MisBoletosPage() {
   }
 
   const tickets = await prisma.ticket.findMany({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, status: 'SOLD' },
     include: { raffle: true },
     orderBy: { createdAt: 'desc' }
   });

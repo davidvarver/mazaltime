@@ -1,6 +1,6 @@
 ﻿'use client';
 import { useEffect, useState } from 'react';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import HeroInfo from './HeroInfo';
 import NumberGrid from './NumberGrid';
@@ -43,33 +43,13 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
   const handleSubmitCheckout = async (formData, numbers) => {
     try {
-      if (!session) {
-        const regRes = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-
-        const regData = await regRes.json();
-        if (!regRes.ok) throw new Error(regData.error || 'Error al registrar tu cuenta. Si ya tienes una, inicia sesion primero.');
-
-        const signInRes = await signIn('credentials', {
-          email: formData.email,
-          password: formData.password,
-          redirect: false,
-        });
-
-        if (signInRes?.error) {
-          throw new Error('Error al iniciar sesion automaticamente');
-        }
-      }
-
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           raffleId: raffle.id,
           numbers,
+          customer: session ? undefined : formData,
         }),
       });
 
@@ -174,8 +154,6 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 <span className={`${styles.paymentLogo} ${styles.visaLogo}`}>VISA</span>
                 <span className={`${styles.paymentLogo} ${styles.mastercardLogo}`}><i />Mastercard</span>
                 <span className={`${styles.paymentLogo} ${styles.amexLogo}`}>AMEX</span>
-                <span className={`${styles.paymentLogo} ${styles.oxxoLogo}`}>OXXO</span>
-                <span className={`${styles.paymentLogo} ${styles.transferLogo}`}>Transferencia</span>
               </div>
             </section>
 
