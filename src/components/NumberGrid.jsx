@@ -42,7 +42,7 @@ export default function NumberGrid({ tickets, onSelectNumber }) {
           const isSelected = selectedNumbers.includes(ticket.number);
 
           let statusClass = styles.available;
-          if (ticket.status === 'SOLD') statusClass = styles.sold;
+          if (ticket.status === 'SOLD' || ticket.status === 'RESERVED') statusClass = styles.sold;
           else if (isSelected) statusClass = styles.selected;
 
           return (

@@ -51,7 +51,7 @@ model Raffle {
 model Ticket {
   id          String   @id @default(cuid())
   number      Int      // 0 to 99
-  status      String   @default("AVAILABLE") // AVAILABLE, SOLD
+  status      String   @default("AVAILABLE") // AVAILABLE, RESERVED, SOLD
   
   // Relations
   raffleId    String
@@ -64,6 +64,8 @@ model Ticket {
   buyerName   String?
   buyerPhone  String?
   pricePaid   Int?    // Actual price charged for this ticket (MXN)
+  stripeSessionId String?
+  reservedAt  DateTime?
   
   // Admin who assigned this manually (if applicable)
   adminId     String?
