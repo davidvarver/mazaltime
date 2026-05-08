@@ -4,6 +4,12 @@ import { formatDateOnly } from '@/lib/dateOnly';
 import { getPromoLabel, isPromoEnabled } from '@/lib/pricing';
 import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 
+function isVideoUrl(url) {
+  if (!url) return false;
+
+  return /\.(mp4|webm|mov)(\?|$)/i.test(url);
+}
+
 export default function HeroInfo({ raffle, tickets = [] }) {
   if (!raffle) return null;
 
@@ -42,14 +48,21 @@ export default function HeroInfo({ raffle, tickets = [] }) {
           <div className={styles.galleryStrip} aria-label="Fotos del reloj">
             {displayImages.map((image, index) => (
               <div key={image} className={styles.galleryThumb}>
-                <Image
-                  src={image}
-                  alt={`${watchTitle} foto ${index + 1}`}
-                  fill
-                  sizes="96px"
-                  style={{ objectFit: 'cover' }}
-                  unoptimized={image.startsWith('http')}
-                />
+                {isVideoUrl(image) ? (
+                  <>
+                    <video src={image} muted playsInline preload="metadata" />
+                    <span className={styles.videoBadge}>Video</span>
+                  </>
+                ) : (
+                  <Image
+                    src={image}
+                    alt={`${watchTitle} foto ${index + 1}`}
+                    fill
+                    sizes="96px"
+                    style={{ objectFit: 'cover' }}
+                    unoptimized={image.startsWith('http')}
+                  />
+                )}
               </div>
             ))}
           </div>

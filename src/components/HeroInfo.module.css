@@ -38,22 +38,47 @@
 }
 
 .galleryStrip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+  display: flex;
   gap: 0.5rem;
   padding: 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   border-top: 1px solid #f2e6d2;
   background: #fffcf5;
 }
 
 .galleryThumb {
   position: relative;
+  flex: 0 0 86px;
   min-height: 72px;
   overflow: hidden;
+  scroll-snap-align: start;
   border: 1px solid #ead9ba;
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 8px 18px rgba(12, 45, 63, 0.06);
+}
+
+.galleryThumb video {
+  width: 100%;
+  height: 100%;
+  min-height: 72px;
+  object-fit: cover;
+  display: block;
+}
+
+.videoBadge {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.35rem;
+  padding: 0.18rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(12, 45, 63, 0.88);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .infoContent {
@@ -222,14 +247,18 @@
   }
 
   .galleryStrip {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.4rem;
     padding: 0.55rem;
   }
 
   .galleryThumb {
+    flex-basis: 66px;
     min-height: 54px;
     border-radius: 10px;
+  }
+
+  .galleryThumb video {
+    min-height: 54px;
   }
 
   .infoContent {

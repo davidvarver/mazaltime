@@ -2,8 +2,20 @@
 import { useState, useRef } from 'react';
 import styles from './ImageUpload.module.css';
 
-export default function ImageUpload({ currentUrl, onUploaded }) {
+function isVideoUrl(url) {
+  if (!url) return false;
+  return /\.(mp4|webm|mov)(\?|$)/i.test(url);
+}
+
+export default function ImageUpload({
+  currentUrl,
+  onUploaded,
+  acceptVideo = false,
+  label = 'Haz clic para subir foto del reloj',
+  hint = 'Recomendado: 1200 x 1600 px · JPG, PNG, WebP · Máx 5MB',
+}) {
   const [preview, setPreview] = useState(currentUrl || null);
+  const [previewType, setPreviewType] = useState(isVideoUrl(currentUrl) ? 'video' : 'image');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
 
@@ -12,6 +24,7 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
     if (!file) return;
 
     const localUrl = URL.createObjectURL(file);
+    setPreviewType(file.type.startsWith('video/') ? 'video' : 'image');
     setPreview(localUrl);
     setLoading(true);
 
@@ -24,11 +37,12 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
         body: formData,
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Error al subir la imagen');
+      if (!res.ok) throw new Error(data.error || 'Error al subir el archivo');
 
       onUploaded(data.url);
     } catch (err) {
       alert(err.message);
+      setPreviewType(isVideoUrl(currentUrl) ? 'video' : 'image');
       setPreview(currentUrl || null);
     } finally {
       setLoading(false);
@@ -44,24 +58,28 @@ export default function ImageUpload({ currentUrl, onUploaded }) {
         style={preview ? { padding: 0, border: 'none' } : {}}
       >
         {preview ? (
-          <img src={preview} alt="Foto del reloj" className={styles.preview} />
+          previewType === 'video' ? (
+            <video src={preview} className={styles.preview} controls muted playsInline />
+          ) : (
+            <img src={preview} alt="Foto del reloj" className={styles.preview} />
+          )
         ) : (
           <div className={styles.placeholder}>
-            <span className={styles.icon}>Foto</span>
-            <span>Haz clic para subir foto del reloj</span>
-            <span className={styles.hint}>JPG, PNG, WebP · Máx 5MB</span>
+            <span className={styles.icon}>{acceptVideo ? 'Foto / video' : 'Foto'}</span>
+            <span>{label}</span>
+            <span className={styles.hint}>{hint}</span>
           </div>
         )}
       </div>
       {preview && (
         <button type="button" className={styles.changeBtn} onClick={() => inputRef.current?.click()}>
-          {loading ? 'Subiendo...' : 'Cambiar foto'}
+          {loading ? 'Subiendo...' : 'Cambiar archivo'}
         </button>
       )}
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={acceptVideo ? 'image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime' : 'image/jpeg,image/png,image/webp'}
         onChange={handleChange}
         style={{ display: 'none' }}
       />

@@ -90,9 +90,12 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     return (
       <div className={styles.galleryUploadSection}>
         <div className={styles.galleryUploadHeader}>
-          <strong>Fotos extra del reloj</strong>
-          <span>Opcional Â· mÃ¡ximo {MAX_GALLERY_IMAGES}</span>
+          <strong>Fotos extra o video del reloj</strong>
+          <span>Opcional · máximo {MAX_GALLERY_IMAGES} archivos</span>
         </div>
+        <p className={styles.uploadGuidance}>
+          Fotos recomendadas: 1200 x 1600 px, JPG/PNG/WebP, máx 5MB. Video recomendado: vertical o cuadrado, MP4/WebM/MOV, máx 30MB.
+        </p>
         <div className={styles.galleryUploadGrid}>
           {Array.from({ length: MAX_GALLERY_IMAGES }).map((_, index) => {
             const currentUrl = galleryImages[index] || '';
@@ -101,6 +104,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <div key={`${index}-${currentUrl || 'empty'}`} className={styles.galleryUploadItem}>
                 <ImageUpload
                   currentUrl={currentUrl}
+                  acceptVideo
+                  label="Subir foto extra o video corto"
+                  hint="Fotos 1200 x 1600 px · Video vertical/cuadrado · Máx 30MB"
                   onUploaded={url => updateGalleryImage(setFormState, index, url)}
                 />
                 {currentUrl && (
@@ -470,9 +476,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       </header>
 
       {canManageAdmins && (
-        <section className={styles.adminManagementCard}>
+        <details className={styles.adminManagementCard}>
+          <summary className={styles.panelSummary}>Administradores</summary>
           <div className={styles.sectionHeader}>
-            <h2>Administradores</h2>
             <p>Solo Eliahu puede agregar o eliminar accesos del panel.</p>
           </div>
           <div className={styles.adminManagementGrid}>
@@ -519,7 +525,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               ))}
             </div>
           </div>
-        </section>
+        </details>
       )}
 
       {raffle ? (
@@ -550,8 +556,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </div>
 
             {/* Editar rifa */}
-            <div className={styles.statsCard}>
-              <h3>Editar informaci&oacute;n de rifa</h3>
+            <details className={styles.statsCard}>
+              <summary className={styles.panelSummary}>Editar informaci&oacute;n de rifa</summary>
               <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
                 <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
                 <input type="text" placeholder="Marca (ej: Rolex)" value={editRaffleData.watchBrand || ''} onChange={e => setEditRaffleData({...editRaffleData, watchBrand: e.target.value})} />
@@ -564,16 +570,17 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
                 <div className={styles.primaryImageUpload}>
                   <strong>Foto principal</strong>
+                  <p className={styles.uploadGuidance}>Medida recomendada: 1200 x 1600 px. Formatos JPG, PNG o WebP. Máximo 5MB.</p>
                   <ImageUpload currentUrl={editRaffleData.imageUrl} onUploaded={url => setEditRaffleData({...editRaffleData, imageUrl: url})} />
                 </div>
                 {renderGalleryUploaders(editRaffleData, setEditRaffleData)}
                 <button type="submit" className={styles.saveBtn}>Guardar Cambios</button>
               </form>
-            </div>
+            </details>
 
             {/* Finalizar rifa */}
-            <div className={styles.statsCard}>
-              <h3>Finalizar Rifa Actual</h3>
+            <details className={styles.statsCard}>
+              <summary className={styles.panelSummary}>Finalizar rifa actual</summary>
               <p style={{fontSize:'0.85rem', color:'#ffb74d', marginBottom:'1rem'}}>
                 Esto archivar&aacute; la rifa y la mostrar&aacute; en &quot;Rifas Pasadas&quot;.
               </p>
@@ -581,13 +588,13 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="number" min="0" max="99" placeholder="N&uacute;mero ganador (0-99)" value={winningNumber} onChange={e => setWinningNumber(e.target.value)} required />
                 <button type="submit" className={styles.endBtn}>Archivar Rifa (Finalizar)</button>
               </form>
-            </div>
+            </details>
           </div>
 
-          <div className={styles.tableCard}>
+          <details className={styles.tableCard}>
+            <summary className={styles.panelSummary}>Base de compradores</summary>
             <div className={styles.sectionHeaderRow}>
               <div className={styles.sectionHeader}>
-                <h3>Base de compradores</h3>
                 <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
               </div>
               <a href="/api/admin/buyers/export" className={styles.exportBtn}>
@@ -688,19 +695,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 </tbody>
               </table>
             </div>
-          </div>
+          </details>
 
-          {/* BotÃ³n Venta Manual */}
-          <div className={styles.saleBar}>
-            <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
-              Registrar venta manual (efectivo / transferencia)
-            </button>
-            {!currentAdminId && <span className={styles.saleHint}>Selecciona tu socio primero</span>}
-          </div>
-
-          {/* Tabla de boletos */}
-          <div className={styles.tableCard}>
-            <h3>Gesti&oacute;n de boletos</h3>
+          <details className={styles.tableCard}>
+            <summary className={styles.panelSummary}>Gesti&oacute;n de boletos y venta manual</summary>
+            <div className={styles.saleBar}>
+              <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
+                Registrar venta manual (efectivo / transferencia)
+              </button>
+              {!currentAdminId && <span className={styles.saleHint}>Selecciona tu socio primero</span>}
+            </div>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead>
@@ -759,7 +763,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 </tbody>
               </table>
             </div>
-          </div>
+          </details>
 
           {/* Bulk Sale Modal */}
           {saleModal && (
@@ -828,6 +832,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
                   <div className={styles.primaryImageUpload}>
                     <strong>Foto principal</strong>
+                    <p className={styles.uploadGuidance}>Medida recomendada: 1200 x 1600 px. Formatos JPG, PNG o WebP. Máximo 5MB.</p>
                     <ImageUpload currentUrl={newRaffleData.imageUrl} onUploaded={url => setNewRaffleData({...newRaffleData, imageUrl: url})} />
                   </div>
                   {renderGalleryUploaders(newRaffleData, setNewRaffleData)}
@@ -854,6 +859,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
               <div className={styles.primaryImageUpload}>
                 <strong>Foto principal</strong>
+                <p className={styles.uploadGuidance}>Medida recomendada: 1200 x 1600 px. Formatos JPG, PNG o WebP. Máximo 5MB.</p>
                 <ImageUpload currentUrl={newRaffleData.imageUrl} onUploaded={url => setNewRaffleData({...newRaffleData, imageUrl: url})} />
               </div>
               {renderGalleryUploaders(newRaffleData, setNewRaffleData)}

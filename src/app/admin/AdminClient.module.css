@@ -245,6 +245,54 @@
   align-content: flex-start;
 }
 
+details.statsCard,
+details.tableCard,
+details.adminManagementCard {
+  display: block;
+}
+
+.panelSummary {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  list-style: none;
+}
+
+.panelSummary::-webkit-details-marker {
+  display: none;
+}
+
+.panelSummary::after {
+  content: 'Abrir';
+  flex: 0 0 auto;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(12, 45, 63, 0.16);
+  border-radius: 999px;
+  background: #fffcf5;
+  color: var(--navy);
+  font-family: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+}
+
+details[open] > .panelSummary {
+  margin-bottom: 1rem;
+}
+
+details[open] > .panelSummary::after {
+  content: 'Cerrar';
+}
+
 .statsCard h2,
 .statsCard h3,
 .tableCard h3,
@@ -420,6 +468,14 @@
 .galleryUploadHeader strong {
   color: var(--ink);
   font-size: 0.92rem;
+}
+
+.uploadGuidance {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .promoControls {

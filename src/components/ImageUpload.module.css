@@ -42,6 +42,7 @@
   object-fit: cover;
   display: block;
   border-radius: var(--radius-md);
+  background: #0c2d3f;
 }
 
 .changeBtn {
