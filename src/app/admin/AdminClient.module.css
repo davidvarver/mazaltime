@@ -267,6 +267,58 @@
   font-size: 1.55rem;
 }
 
+.buyerFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0 0 1rem;
+}
+
+.buyerFilters button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #e6dccd;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 0.84rem;
+  font-weight: 900;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.buyerFilters button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(212, 175, 55, 0.55);
+}
+
+.buyerFilters strong {
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: #fffcf5;
+  color: var(--gold-dark);
+  font-size: 0.78rem;
+}
+
+.buyerFilters .buyerFilterActive {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 12px 24px rgba(212, 175, 55, 0.22);
+}
+
+.buyerFilters .buyerFilterActive strong {
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--navy);
+}
+
 .editForm {
   width: 100%;
   display: flex;

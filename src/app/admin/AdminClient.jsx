@@ -37,6 +37,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const [noteDrafts, setNoteDrafts] = useState(() =>
     Object.fromEntries(initialTickets.map(ticket => [ticket.id, ticket.notes || '']))
   );
+  const [buyerFilter, setBuyerFilter] = useState('ALL');
 
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -325,6 +326,18 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const newBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'NEW');
   const recurringBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'RECURRING');
   const inactiveBuyers = buyerInsights.filter(buyer => buyer.customerStatus === 'INACTIVE');
+  const buyerFilterOptions = [
+    { value: 'ALL', label: 'Todos', count: buyerInsights.length },
+    { value: 'CURRENT', label: 'Activos esta rifa', count: buyersThisRaffle.length },
+    { value: 'NEW', label: 'Nuevos', count: newBuyers.length },
+    { value: 'RECURRING', label: 'Recurrentes', count: recurringBuyers.length },
+    { value: 'INACTIVE', label: 'Inactivos', count: inactiveBuyers.length || previousBuyersMissing.length },
+  ];
+  const filteredBuyerInsights = buyerInsights.filter((buyer) => {
+    if (buyerFilter === 'ALL') return true;
+    if (buyerFilter === 'CURRENT') return buyer.boughtCurrent;
+    return buyer.customerStatus === buyerFilter;
+  });
 
   // --- Render ---
   return (
@@ -435,6 +448,19 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <strong>{inactiveBuyers.length || previousBuyersMissing.length}</strong>
               </div>
             </div>
+            <div className={styles.buyerFilters} aria-label="Filtrar compradores">
+              {buyerFilterOptions.map(option => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={buyerFilter === option.value ? styles.buyerFilterActive : ''}
+                  onClick={() => setBuyerFilter(option.value)}
+                >
+                  <span>{option.label}</span>
+                  <strong>{option.count}</strong>
+                </button>
+              ))}
+            </div>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead>
@@ -453,7 +479,11 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                     <tr>
                       <td colSpan="7">Todav&iacute;a no hay compradores registrados.</td>
                     </tr>
-                  ) : buyerInsights.map(buyer => (
+                  ) : filteredBuyerInsights.length === 0 ? (
+                    <tr>
+                      <td colSpan="7">No hay compradores en este filtro.</td>
+                    </tr>
+                  ) : filteredBuyerInsights.map(buyer => (
                     <tr key={buyer.key}>
                       <td>{buyer.name}</td>
                       <td>
