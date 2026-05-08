@@ -7,6 +7,7 @@ import Image from 'next/image';
 import styles from './mis-boletos.module.css';
 import UserMenu from '@/components/UserMenu';
 import { formatDateOnly } from '@/lib/dateOnly';
+import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 
 export const revalidate = 0;
 
@@ -70,7 +71,7 @@ export default async function MisBoletosPage() {
                 <div className={styles.raffleHeader}>
                   <div>
                     <span className={styles.raffleLabel}>{raffle.title}</span>
-                    <h2>{raffle.watchName}</h2>
+                    <h2>{getRaffleWatchTitle(raffle)}</h2>
                   </div>
                   <p className={styles.drawDate}>
                     Sorteo: {formatDateOnly(raffle.drawDate)} · {raffle.zodiacSign}

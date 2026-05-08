@@ -36,6 +36,8 @@ model User {
 model Raffle {
   id          String   @id @default(cuid())
   title       String
+  watchBrand  String?
+  watchModel  String?
   watchName   String
   watchDetails String?
   zodiacSign  String

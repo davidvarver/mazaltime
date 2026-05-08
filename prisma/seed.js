@@ -67,7 +67,10 @@ async function main() {
   await prisma.raffle.create({
     data: {
       title: 'MAZAL TIME - INFO OFICIAL',
+      watchBrand: 'Rolex',
+      watchModel: 'GMT-Master II "Batgirl"',
       watchName: 'Rolex GMT-Master II "Batgirl"',
+      watchDetails: 'Brand new 2025 full set',
       zodiacSign: 'Sorteo Zodiaco',
       drawDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // Next week
       price1: 4200,

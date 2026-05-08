@@ -2,6 +2,7 @@ import Image from 'next/image';
 import styles from './HeroInfo.module.css';
 import { formatDateOnly } from '@/lib/dateOnly';
 import { getPromoLabel, isPromoEnabled } from '@/lib/pricing';
+import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 
 export default function HeroInfo({ raffle, tickets = [] }) {
   if (!raffle) return null;
@@ -16,6 +17,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   });
   const isBatgirl = /batgirl|gmt-master/i.test(raffle.watchName || '');
   const imageSrc = raffle.imageUrl || (isBatgirl ? '/rolex-batgirl.png' : '/rolex_demo.png');
+  const watchTitle = getRaffleWatchTitle(raffle);
   const galleryImages = Array.isArray(raffle.galleryImages) ? raffle.galleryImages : [];
   const displayImages = [imageSrc, ...galleryImages]
     .filter(Boolean)
@@ -27,7 +29,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
         <div className={styles.imageWrapper}>
           <Image
             src={imageSrc}
-            alt={raffle.watchName}
+            alt={watchTitle}
             fill
             style={{ objectFit: 'contain' }}
             priority
@@ -42,7 +44,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
               <div key={image} className={styles.galleryThumb}>
                 <Image
                   src={image}
-                  alt={`${raffle.watchName} foto ${index + 1}`}
+                  alt={`${watchTitle} foto ${index + 1}`}
                   fill
                   sizes="96px"
                   style={{ objectFit: 'cover' }}
@@ -55,7 +57,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
       </div>
 
       <div className={styles.infoContent}>
-        <h2 className={styles.subtitle}>{raffle.watchName || raffle.title}</h2>
+        <h2 className={styles.subtitle}>{watchTitle}</h2>
         {raffle.watchDetails && (
           <p className={styles.watchDetails}>{raffle.watchDetails}</p>
         )}

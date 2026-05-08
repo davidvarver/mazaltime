@@ -108,7 +108,8 @@
 .liberateBtn,
 .saveBtn,
 .endBtn,
-.saleBtn {
+.saleBtn,
+.dangerOutlineBtn {
   min-height: 46px;
   display: inline-flex;
   align-items: center;
@@ -141,12 +142,19 @@
   color: #b91c1c;
 }
 
+.dangerOutlineBtn {
+  border: 1px solid rgba(185, 28, 28, 0.34);
+  background: rgba(185, 28, 28, 0.06);
+  color: #b91c1c;
+}
+
 .logoutBtn:hover,
 .createToggleBtn:hover,
 .liberateBtn:hover,
 .saveBtn:hover,
 .endBtn:hover,
-.saleBtn:hover:not(:disabled) {
+.saleBtn:hover:not(:disabled),
+.dangerOutlineBtn:hover {
   transform: translateY(-2px);
 }
 
@@ -161,6 +169,61 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.25rem;
   margin-bottom: 1.6rem;
+}
+
+.adminManagementCard {
+  margin-bottom: 1.6rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 40px rgba(23, 38, 50, 0.08);
+}
+
+.adminManagementGrid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.adminList {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.adminListRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid #f2e6d2;
+  border-radius: 18px;
+  background: #fffcf5;
+}
+
+.adminListRow strong,
+.adminListRow span {
+  display: block;
+}
+
+.adminListRow strong {
+  color: var(--ink);
+}
+
+.adminListRow span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.ownerBadge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.16);
+  color: var(--gold-dark) !important;
+  font-weight: 900 !important;
 }
 
 .statsCard,
@@ -659,6 +722,11 @@
   box-shadow: 0 12px 24px rgba(212, 175, 55, 0.22);
 }
 
+.dangerOutlineBtn {
+  min-height: 44px;
+  flex: 0 0 auto;
+}
+
 .emptyState {
   padding: 1.25rem;
 }
@@ -779,7 +847,8 @@
   .logoutBtn,
   .saleBtn,
   .createToggleBtn,
-  .exportBtn {
+  .exportBtn,
+  .dangerOutlineBtn {
     width: 100%;
   }
 
@@ -791,7 +860,8 @@
   .inlineFields,
   .pastRaffleActions,
   .promoGrid,
-  .galleryUploadGrid {
+  .galleryUploadGrid,
+  .adminManagementGrid {
     grid-template-columns: 1fr;
   }
 

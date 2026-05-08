@@ -9,6 +9,8 @@ const DEFAULT_ADMINS = [
 function buildInitialRaffle() {
   return {
     title: 'MAZAL TIME - INFO OFICIAL',
+    watchBrand: 'Rolex',
+    watchModel: 'GMT-Master II "Batgirl"',
     watchName: 'Rolex GMT-Master II "Batgirl"',
     watchDetails: 'Brand new 2025 full set',
     zodiacSign: 'Sorteo Zodiaco',

@@ -80,6 +80,7 @@ export default async function SociosPanelPage() {
         pastRaffles={pastRaffles}
         loggedAdminId={adminSession.id}
         loggedAdminName={loggedAdmin.name}
+        loggedAdminUsername={loggedAdmin.username}
         buyerInsights={buyerInsights}
       />
     </div>

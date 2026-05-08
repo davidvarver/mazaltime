@@ -8,6 +8,7 @@ import CheckoutModal from './CheckoutModal';
 import UserMenu from './UserMenu';
 import PastRaffles from './PastRaffles';
 import { getTicketUnitPrice } from '@/lib/pricing';
+import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 import styles from './HomeClient.module.css';
 
 const WHATSAPP_URL = 'https://wa.me/525523138175';
@@ -239,7 +240,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               {latestPastRaffle ? (
                 <article className={styles.lastRaffleCard}>
                   <span>&Uacute;ltima rifa</span>
-                  <h2>{latestPastRaffle.watchName}</h2>
+                  <h2>{getRaffleWatchTitle(latestPastRaffle)}</h2>
                   {latestPastRaffle.watchDetails && <p>{latestPastRaffle.watchDetails}</p>}
                   <dl>
                     <div>

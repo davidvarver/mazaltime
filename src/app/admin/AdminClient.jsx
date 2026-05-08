@@ -5,18 +5,34 @@ import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 import { getDateOnlyValue } from '@/lib/dateOnly';
 import { getPromoLabel, getTicketUnitPrice, isPromoEnabled } from '@/lib/pricing';
+import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 import styles from './AdminClient.module.css';
 
 const MAX_GALLERY_IMAGES = 4;
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', loggedAdminName = '', buyerInsights = [] }) {
+function normalizeRaffleForm(raffle = {}) {
+  const watchName = raffle.watchName || '';
+  const inferredRolexModel = watchName.toLowerCase().startsWith('rolex ')
+    ? watchName.slice(6).trim()
+    : watchName;
+
+  return {
+    ...raffle,
+    watchBrand: raffle.watchBrand || (watchName.toLowerCase().startsWith('rolex ') ? 'Rolex' : ''),
+    watchModel: raffle.watchModel || inferredRolexModel,
+    galleryImages: raffle.galleryImages || [],
+  };
+}
+
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', loggedAdminName = '', loggedAdminUsername = '', buyerInsights = [] }) {
   const router = useRouter();
   const currentAdminId = loggedAdminId;
+  const canManageAdmins = loggedAdminUsername === 'eliahu';
   const [tickets, setTickets] = useState(initialTickets);
   const [raffle] = useState(initialRaffle);
   const [pastRaffleForms, setPastRaffleForms] = useState(() =>
     pastRaffles.map(pastRaffle => ({
-      ...pastRaffle,
+      ...normalizeRaffleForm(pastRaffle),
       drawDate: getDateOnlyValue(pastRaffle.drawDate),
       winningNumber: pastRaffle.winningNumber ?? '',
     }))
@@ -24,8 +40,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const [editingPastRaffleId, setEditingPastRaffleId] = useState(null);
 
   // Edit raffle form
-  const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
-    title: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
+  const [editRaffleData, setEditRaffleData] = useState(initialRaffle ? normalizeRaffleForm(initialRaffle) : {
+    title: '', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // End raffle
@@ -39,11 +55,13 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     Object.fromEntries(initialTickets.map(ticket => [ticket.id, ticket.notes || '']))
   );
   const [buyerFilter, setBuyerFilter] = useState('ALL');
+  const [adminList, setAdminList] = useState(admins);
+  const [newAdminData, setNewAdminData] = useState({ name: '', username: '', password: '' });
 
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRaffleData, setNewRaffleData] = useState({
-    title: 'MAZAL TIME', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: 'MAZAL TIME', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // --- Handlers ---
@@ -279,6 +297,62 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     window.location.href = '/panel-socios/login';
   };
 
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch('/api/admin/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newAdminData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear admin');
+
+      setAdminList(prev => [...prev, data.admin]);
+      setNewAdminData({ name: '', username: '', password: '' });
+      alert('Admin creado. En su primer inicio de sesi\u00f3n tendr\u00e1 que cambiar la contrase\u00f1a.');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteAdmin = async (admin) => {
+    const confirmed = confirm(`\u00bfEliminar el admin "${admin.name}"? Sus ventas manuales quedar\u00e1n sin socio asignado.`);
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch('/api/admin/admins', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: admin.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al eliminar admin');
+
+      setAdminList(prev => prev.filter(item => item.id !== admin.id));
+      alert('Admin eliminado correctamente.');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleResetTestBuyers = async () => {
+    const confirmed = confirm('Esto borrara usuarios/compradores de prueba y liberara todos los boletos vendidos o reservados. No borra admins ni rifas. ¿Continuar?');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch('/api/admin/buyers/reset', { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al borrar compradores');
+
+      alert(`Listo: ${data.usersDeleted} compradores borrados y ${data.ticketsCleared} boletos liberados.`);
+      window.location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const updatePastRaffleForm = (id, updates) => {
     setPastRaffleForms(prev =>
       prev.map(pastRaffle => pastRaffle.id === id ? { ...pastRaffle, ...updates } : pastRaffle)
@@ -295,6 +369,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         body: JSON.stringify({
           id: pastRaffle.id,
           title: pastRaffle.title,
+          watchBrand: pastRaffle.watchBrand,
+          watchModel: pastRaffle.watchModel,
           watchName: pastRaffle.watchName,
           watchDetails: pastRaffle.watchDetails,
           zodiacSign: pastRaffle.zodiacSign,
@@ -321,7 +397,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   };
 
   const handleDeletePastRaffle = async (pastRaffle) => {
-    const confirmed = confirm(`Â¿Eliminar permanentemente "${pastRaffle.watchName}" y todos sus boletos?`);
+    const confirmed = confirm(`\u00bfEliminar permanentemente "${getRaffleWatchTitle(pastRaffle)}" y todos sus boletos?`);
     if (!confirmed) return;
 
     try {
@@ -350,7 +426,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const salePrice = getTicketUnitPrice(raffle, parsedSaleNumbers.length);
   const saleTotal = parsedSaleNumbers.length * salePrice;
 
-  const adminRevenue = admins.map(admin => {
+  const adminRevenue = adminList.map(admin => {
     const adminTickets = tickets.filter(t => t.adminId === admin.id && t.status === 'SOLD');
     const revenue = adminTickets.reduce((sum, t) => sum + (t.pricePaid || (raffle?.price1 || 0)), 0);
     return { ...admin, count: adminTickets.length, revenue };
@@ -393,6 +469,59 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         </div>
       </header>
 
+      {canManageAdmins && (
+        <section className={styles.adminManagementCard}>
+          <div className={styles.sectionHeader}>
+            <h2>Administradores</h2>
+            <p>Solo Eliahu puede agregar o eliminar accesos del panel.</p>
+          </div>
+          <div className={styles.adminManagementGrid}>
+            <form onSubmit={handleCreateAdmin} className={styles.editForm}>
+              <input
+                type="text"
+                required
+                placeholder="Nombre del admin"
+                value={newAdminData.name}
+                onChange={e => setNewAdminData(prev => ({ ...prev, name: e.target.value }))}
+              />
+              <input
+                type="text"
+                required
+                placeholder="Usuario para iniciar sesi\u00f3n"
+                value={newAdminData.username}
+                onChange={e => setNewAdminData(prev => ({ ...prev, username: e.target.value }))}
+              />
+              <input
+                type="password"
+                required
+                minLength={6}
+                placeholder="Contrase\u00f1a temporal"
+                value={newAdminData.password}
+                onChange={e => setNewAdminData(prev => ({ ...prev, password: e.target.value }))}
+              />
+              <button type="submit" className={styles.saveBtn}>Agregar admin</button>
+            </form>
+            <div className={styles.adminList}>
+              {adminList.map(admin => (
+                <div key={admin.id} className={styles.adminListRow}>
+                  <div>
+                    <strong>{admin.name}</strong>
+                    <span>@{admin.username}</span>
+                  </div>
+                  {admin.username !== 'eliahu' ? (
+                    <button type="button" className={styles.endBtn} onClick={() => handleDeleteAdmin(admin)}>
+                      Eliminar
+                    </button>
+                  ) : (
+                    <span className={styles.ownerBadge}>Due\u00f1o</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {raffle ? (
         <>
           <div className={styles.gridContainer}>
@@ -425,8 +554,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <h3>Editar informaci&oacute;n de rifa</h3>
               <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
                 <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
-                <input type="text" placeholder="Nombre del Reloj" value={editRaffleData.watchName} onChange={e => setEditRaffleData({...editRaffleData, watchName: e.target.value})} />
-                <input type="text" placeholder="Detalles del reloj (ej: Brand new 2025 full set)" value={editRaffleData.watchDetails || ''} onChange={e => setEditRaffleData({...editRaffleData, watchDetails: e.target.value})} />
+                <input type="text" placeholder="Marca (ej: Rolex)" value={editRaffleData.watchBrand || ''} onChange={e => setEditRaffleData({...editRaffleData, watchBrand: e.target.value})} />
+                <input type="text" placeholder="Modelo (ej: Sky-Dweller)" value={editRaffleData.watchModel || ''} onChange={e => setEditRaffleData({...editRaffleData, watchModel: e.target.value})} />
+                <input type="text" placeholder="Detalles chicos (ej: 336934 Black Dial 42mm Jubilee, New 2025 Full Set)" value={editRaffleData.watchDetails || ''} onChange={e => setEditRaffleData({...editRaffleData, watchDetails: e.target.value})} />
                 <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
                 <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
                 <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
@@ -463,6 +593,11 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <a href="/api/admin/buyers/export" className={styles.exportBtn}>
                 Descargar Excel
               </a>
+              {canManageAdmins && (
+                <button type="button" className={styles.dangerOutlineBtn} onClick={handleResetTestBuyers}>
+                  Borrar compradores de prueba
+                </button>
+              )}
             </div>
             <div className={styles.buyerSummaryGrid}>
               <div className={styles.buyerMetric}>
@@ -683,8 +818,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 </p>
                 <form onSubmit={handleCreateRaffle} className={styles.editForm}>
                   <input type="text" required placeholder="T&iacute;tulo (ej: MAZAL TIME)" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
-                  <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
-                  <input type="text" placeholder="Detalles del reloj (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
+                  <input type="text" required placeholder="Marca (ej: Rolex)" value={newRaffleData.watchBrand || ''} onChange={e => setNewRaffleData({...newRaffleData, watchBrand: e.target.value})} />
+                  <input type="text" required placeholder="Modelo (ej: Sky-Dweller)" value={newRaffleData.watchModel || ''} onChange={e => setNewRaffleData({...newRaffleData, watchModel: e.target.value})} />
+                  <input type="text" placeholder="Detalles chicos (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
                   <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
                   <input type="number" required placeholder="Precio 1 Boleto (MXN)" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
@@ -708,8 +844,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             <p style={{marginBottom:'1rem', color:'var(--color-text-muted)'}}>Llena los datos para lanzar la siguiente rifa.</p>
             <form onSubmit={handleCreateRaffle} className={styles.editForm}>
               <input type="text" required placeholder="T&iacute;tulo" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
-              <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
-              <input type="text" placeholder="Detalles del reloj (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
+              <input type="text" required placeholder="Marca (ej: Rolex)" value={newRaffleData.watchBrand || ''} onChange={e => setNewRaffleData({...newRaffleData, watchBrand: e.target.value})} />
+              <input type="text" required placeholder="Modelo (ej: Sky-Dweller)" value={newRaffleData.watchModel || ''} onChange={e => setNewRaffleData({...newRaffleData, watchModel: e.target.value})} />
+              <input type="text" placeholder="Detalles chicos (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
               <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
               <input type="number" required placeholder="Precio 1 Boleto" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
@@ -747,7 +884,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                         {pastRaffle.imageUrl ? (
                           <Image
                             src={pastRaffle.imageUrl}
-                            alt={pastRaffle.watchName || 'Rifa pasada'}
+                            alt={getRaffleWatchTitle(pastRaffle) || 'Rifa pasada'}
                             width={180}
                             height={140}
                             unoptimized={pastRaffle.imageUrl.startsWith('http')}
@@ -757,7 +894,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                         )}
                         <div>
                           <span className={styles.statusBadge}>Finalizada</span>
-                          <h3>{pastRaffle.watchName || 'Rifa pasada'}</h3>
+                          <h3>{getRaffleWatchTitle(pastRaffle) || 'Rifa pasada'}</h3>
                           {pastRaffle.watchDetails && <p>{pastRaffle.watchDetails}</p>}
                           <small>{pastRaffle.title || 'Mazal Time'}</small>
                         </div>
@@ -787,9 +924,15 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                       />
                       <input
                         type="text"
-                        placeholder="Nombre del reloj"
-                        value={pastRaffle.watchName || ''}
-                        onChange={e => updatePastRaffleForm(pastRaffle.id, { watchName: e.target.value })}
+                        placeholder="Marca (ej: Rolex)"
+                        value={pastRaffle.watchBrand || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { watchBrand: e.target.value })}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Modelo (ej: Sky-Dweller)"
+                        value={pastRaffle.watchModel || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { watchModel: e.target.value })}
                       />
                       <input
                         type="text"

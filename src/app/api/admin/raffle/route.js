@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuthorizedAdmin } from '@/lib/adminGuard';
 import { parseDateOnlyForStorage } from '@/lib/dateOnly';
+import { composeWatchName } from '@/lib/raffleDisplay';
 
 function parsePositivePrice(value) {
   const parsed = parseInt(value, 10);
@@ -47,6 +48,8 @@ export async function PUT(req) {
     const {
       id,
       title,
+      watchBrand,
+      watchModel,
       watchName,
       watchDetails,
       zodiacSign,
@@ -68,7 +71,13 @@ export async function PUT(req) {
 
     const updateData = {};
     if (title !== undefined) updateData.title = title;
-    if (watchName !== undefined) updateData.watchName = watchName;
+    if (watchBrand !== undefined) updateData.watchBrand = watchBrand?.trim() || null;
+    if (watchModel !== undefined) updateData.watchModel = watchModel?.trim() || null;
+    if (watchName !== undefined || watchBrand !== undefined || watchModel !== undefined) {
+      const nextWatchName = composeWatchName({ watchBrand, watchModel, watchName });
+      if (!nextWatchName) return NextResponse.json({ error: 'Marca o modelo del reloj requerido' }, { status: 400 });
+      updateData.watchName = nextWatchName;
+    }
     if (watchDetails !== undefined) updateData.watchDetails = watchDetails?.trim() || null;
     if (zodiacSign !== undefined) updateData.zodiacSign = zodiacSign;
     if (drawDate !== undefined) {
@@ -146,6 +155,8 @@ export async function POST(req) {
 
     const {
       title,
+      watchBrand,
+      watchModel,
       watchName,
       watchDetails,
       zodiacSign,
@@ -179,8 +190,9 @@ export async function POST(req) {
     const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
     const normalizedGalleryImages = normalizeGalleryImages(galleryImages || []);
     const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
+    const composedWatchName = composeWatchName({ watchBrand, watchModel, watchName });
 
-    if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2 || !parsedPromoMinTickets) {
+    if (!title || !composedWatchName || !zodiacSign || !parsedPrice1 || !parsedPrice2 || !parsedPromoMinTickets) {
       return NextResponse.json({ error: 'Datos de rifa incompletos o inválidos' }, { status: 400 });
     }
 
@@ -200,7 +212,9 @@ export async function POST(req) {
       const newRaffle = await tx.raffle.create({
         data: {
           title,
-          watchName,
+          watchBrand: watchBrand?.trim() || null,
+          watchModel: watchModel?.trim() || null,
+          watchName: composedWatchName,
           watchDetails: watchDetails?.trim() || null,
           zodiacSign,
           drawDate: parsedDrawDate,
