@@ -1,1 +1,1 @@
-﻿ALTER TABLE "Ticket" ADD COLUMN "notes" TEXT;
+﻿ALTER TABLE "Ticket" ADD COLUMN IF NOT EXISTS "notes" TEXT;

@@ -1,1 +1,1 @@
-﻿ALTER TABLE "Raffle" ADD COLUMN "watchDetails" TEXT;
+﻿ALTER TABLE "Raffle" ADD COLUMN IF NOT EXISTS "watchDetails" TEXT;

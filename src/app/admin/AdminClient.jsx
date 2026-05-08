@@ -448,18 +448,21 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <strong>{inactiveBuyers.length || previousBuyersMissing.length}</strong>
               </div>
             </div>
-            <div className={styles.buyerFilters} aria-label="Filtrar compradores">
-              {buyerFilterOptions.map(option => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className={buyerFilter === option.value ? styles.buyerFilterActive : ''}
-                  onClick={() => setBuyerFilter(option.value)}
-                >
-                  <span>{option.label}</span>
-                  <strong>{option.count}</strong>
-                </button>
-              ))}
+            <div className={styles.buyerFilterPanel}>
+              <span>Filtrar compradores</span>
+              <div className={styles.buyerFilters} aria-label="Filtrar compradores">
+                {buyerFilterOptions.map(option => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={buyerFilter === option.value ? styles.buyerFilterActive : ''}
+                    onClick={() => setBuyerFilter(option.value)}
+                  >
+                    <span>{option.label}</span>
+                    <strong>{option.count}</strong>
+                  </button>
+                ))}
+              </div>
             </div>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
