@@ -7,6 +7,7 @@ import NumberGrid from './NumberGrid';
 import CheckoutModal from './CheckoutModal';
 import UserMenu from './UserMenu';
 import PastRaffles from './PastRaffles';
+import { getTicketUnitPrice } from '@/lib/pricing';
 import styles from './HomeClient.module.css';
 
 const WHATSAPP_URL = 'https://wa.me/525523138175';
@@ -31,7 +32,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
   const totalTickets = tickets.length || 100;
   const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
-  const selectedPrice = raffle && selectedNumbers.length >= 2 ? raffle.price2 : raffle?.price1 || 0;
+  const selectedPrice = getTicketUnitPrice(raffle, selectedNumbers.length);
   const selectedTotal = selectedNumbers.length * selectedPrice;
   const latestPastRaffle = pastRaffles[0];
 

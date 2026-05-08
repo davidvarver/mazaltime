@@ -72,6 +72,8 @@ async function main() {
       drawDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // Next week
       price1: 4200,
       price2: 4000,
+      promoEnabled: true,
+      promoMinTickets: 2,
       isActive: true,
       tickets: {
         create: Array.from({ length: 100 }).map((_, i) => ({

@@ -1,6 +1,7 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import styles from './HeroInfo.module.css';
 import { formatDateOnly } from '@/lib/dateOnly';
+import { getPromoLabel, isPromoEnabled } from '@/lib/pricing';
 
 export default function HeroInfo({ raffle, tickets = [] }) {
   if (!raffle) return null;
@@ -65,11 +66,13 @@ export default function HeroInfo({ raffle, tickets = [] }) {
             <strong>${raffle.price1.toLocaleString()} MXN</strong>
             <small>por numero</small>
           </div>
-          <div>
-            <span>2 o mas</span>
-            <strong>${raffle.price2.toLocaleString()} MXN</strong>
-            <small>cada uno</small>
-          </div>
+          {isPromoEnabled(raffle) && (
+            <div>
+              <span>{getPromoLabel(raffle)}</span>
+              <strong>${raffle.price2.toLocaleString()} MXN</strong>
+              <small>cada uno</small>
+            </div>
+          )}
         </div>
 
         <div className={styles.progressArea}>

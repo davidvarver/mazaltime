@@ -8,6 +8,11 @@ function parsePositivePrice(value) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
+function parsePromoMinTickets(value) {
+  const parsed = parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed >= 2 && parsed <= 100 ? parsed : null;
+}
+
 function normalizeOptionalUrl(value) {
   if (!value) return null;
 
@@ -39,7 +44,23 @@ export async function PUT(req) {
     if (authError) return authError;
 
     const data = await req.json();
-    const { id, title, watchName, watchDetails, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, galleryImages, lotteryUrl } = data;
+    const {
+      id,
+      title,
+      watchName,
+      watchDetails,
+      zodiacSign,
+      drawDate,
+      price1,
+      price2,
+      promoEnabled,
+      promoMinTickets,
+      isActive,
+      winningNumber,
+      imageUrl,
+      galleryImages,
+      lotteryUrl,
+    } = data;
 
     if (!id) {
       return NextResponse.json({ error: 'ID de rifa requerido' }, { status: 400 });
@@ -66,8 +87,14 @@ export async function PUT(req) {
     }
     if (price2 !== undefined) {
       const parsedPrice = parsePositivePrice(price2);
-      if (!parsedPrice) return NextResponse.json({ error: 'Precio 2 inválido' }, { status: 400 });
+      if (!parsedPrice) return NextResponse.json({ error: 'Precio promo inválido' }, { status: 400 });
       updateData.price2 = parsedPrice;
+    }
+    if (promoEnabled !== undefined) updateData.promoEnabled = Boolean(promoEnabled);
+    if (promoMinTickets !== undefined) {
+      const parsedPromoMinTickets = parsePromoMinTickets(promoMinTickets);
+      if (!parsedPromoMinTickets) return NextResponse.json({ error: 'Cantidad mínima de promo inválida' }, { status: 400 });
+      updateData.promoMinTickets = parsedPromoMinTickets;
     }
     if (isActive !== undefined) updateData.isActive = isActive;
     if (winningNumber !== undefined) {
@@ -102,7 +129,7 @@ export async function PUT(req) {
 
     const updatedRaffle = await prisma.raffle.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
 
     return NextResponse.json({ success: true, raffle: updatedRaffle });
@@ -117,11 +144,23 @@ export async function POST(req) {
     const { error: authError } = await getAuthorizedAdmin(req);
     if (authError) return authError;
 
-    const { title, watchName, watchDetails, zodiacSign, drawDate, price1, price2, imageUrl, galleryImages, lotteryUrl } = await req.json();
+    const {
+      title,
+      watchName,
+      watchDetails,
+      zodiacSign,
+      drawDate,
+      price1,
+      price2,
+      promoEnabled = true,
+      promoMinTickets = 2,
+      imageUrl,
+      galleryImages,
+      lotteryUrl,
+    } = await req.json();
 
-    // Check if there's already an active raffle
     const activeRaffle = await prisma.raffle.findFirst({
-      where: { isActive: true }
+      where: { isActive: true },
     });
 
     if (activeRaffle) {
@@ -136,11 +175,12 @@ export async function POST(req) {
 
     const parsedPrice1 = parsePositivePrice(price1);
     const parsedPrice2 = parsePositivePrice(price2);
+    const parsedPromoMinTickets = parsePromoMinTickets(promoMinTickets);
     const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
     const normalizedGalleryImages = normalizeGalleryImages(galleryImages || []);
     const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
 
-    if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2) {
+    if (!title || !watchName || !zodiacSign || !parsedPrice1 || !parsedPrice2 || !parsedPromoMinTickets) {
       return NextResponse.json({ error: 'Datos de rifa incompletos o inválidos' }, { status: 400 });
     }
 
@@ -156,7 +196,6 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Galería de imágenes inválida' }, { status: 400 });
     }
 
-    // Use transaction to create raffle and its 100 tickets
     const result = await prisma.$transaction(async (tx) => {
       const newRaffle = await tx.raffle.create({
         data: {
@@ -167,21 +206,23 @@ export async function POST(req) {
           drawDate: parsedDrawDate,
           price1: parsedPrice1,
           price2: parsedPrice2,
+          promoEnabled: Boolean(promoEnabled),
+          promoMinTickets: parsedPromoMinTickets,
           imageUrl: normalizedImageUrl,
           galleryImages: normalizedGalleryImages,
           lotteryUrl: normalizedLotteryUrl,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       const ticketsData = Array.from({ length: 100 }, (_, i) => ({
         number: i,
         status: 'AVAILABLE',
-        raffleId: newRaffle.id
+        raffleId: newRaffle.id,
       }));
 
       await tx.ticket.createMany({
-        data: ticketsData
+        data: ticketsData,
       });
 
       return newRaffle;

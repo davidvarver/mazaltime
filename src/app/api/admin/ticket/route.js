@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuthorizedAdmin } from '@/lib/adminGuard';
+import { getTicketUnitPrice } from '@/lib/pricing';
 
 export async function POST(req) {
   try {
@@ -35,9 +36,8 @@ export async function POST(req) {
     const raffle = await prisma.raffle.findUnique({ where: { id: raffleId } });
     if (!raffle) return NextResponse.json({ error: 'Rifa no encontrada' }, { status: 404 });
 
-    // Calculate price per ticket (group discount if 2+)
     const pricePaid = status === 'SOLD'
-      ? (numbers.length >= 2 ? raffle.price2 : raffle.price1)
+      ? getTicketUnitPrice(raffle, normalizedNumbers.length)
       : null;
 
     const updateData = {

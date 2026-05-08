@@ -42,6 +42,8 @@ model Raffle {
   drawDate    DateTime
   price1      Int      // Price for 1 ticket in MXN
   price2      Int      // Price for 2+ tickets in MXN
+  promoEnabled Boolean @default(true)
+  promoMinTickets Int  @default(2)
   isActive    Boolean  @default(true)
   winningNumber Int?
   imageUrl    String?  // Uploaded watch photo URL

@@ -15,6 +15,8 @@ function buildInitialRaffle() {
     drawDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     price1: 4200,
     price2: 4000,
+    promoEnabled: true,
+    promoMinTickets: 2,
     lotteryUrl: '',
     isActive: true,
     tickets: {

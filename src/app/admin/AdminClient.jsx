@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 import { getDateOnlyValue } from '@/lib/dateOnly';
+import { getPromoLabel, getTicketUnitPrice, isPromoEnabled } from '@/lib/pricing';
 import styles from './AdminClient.module.css';
 
 const MAX_GALLERY_IMAGES = 4;
@@ -24,7 +25,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
-    title: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // End raffle
@@ -42,7 +43,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRaffleData, setNewRaffleData] = useState({
-    title: 'MAZAL TIME', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: 'MAZAL TIME', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // --- Handlers ---
@@ -100,6 +101,43 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       </div>
     );
   };
+
+  const renderPromoControls = (formData, setFormState) => (
+    <div className={styles.promoControls}>
+      <label className={styles.promoToggle}>
+        <input
+          type="checkbox"
+          checked={Boolean(formData.promoEnabled)}
+          onChange={e => setFormState(prev => ({ ...prev, promoEnabled: e.target.checked }))}
+        />
+        <span>Activar promo por cantidad</span>
+      </label>
+      {formData.promoEnabled && (
+        <div className={styles.promoGrid}>
+          <input
+            type="number"
+            min="2"
+            required
+            placeholder="Promo desde cuántos boletos"
+            value={formData.promoMinTickets || 2}
+            onChange={e => setFormState(prev => ({ ...prev, promoMinTickets: parseInt(e.target.value, 10) }))}
+          />
+          <input
+            type="number"
+            required
+            placeholder="Precio promo por boleto"
+            value={formData.price2 || ''}
+            onChange={e => setFormState(prev => ({ ...prev, price2: parseInt(e.target.value, 10) }))}
+          />
+        </div>
+      )}
+      <small>
+        {formData.promoEnabled
+          ? `En home saldrá "${formData.promoMinTickets || 2} o más" con precio promo.`
+          : 'Sin promo: el home solo mostrará el precio individual.'}
+      </small>
+    </div>
+  );
 
   const handleLiberate = async (number) => {
     if (!currentAdminId) { alert('Selecciona tu cuenta primero.'); return; }
@@ -263,6 +301,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           drawDate: pastRaffle.drawDate,
           price1: pastRaffle.price1,
           price2: pastRaffle.price2,
+          promoEnabled: pastRaffle.promoEnabled,
+          promoMinTickets: pastRaffle.promoMinTickets,
           winningNumber: pastRaffle.winningNumber,
           imageUrl: pastRaffle.imageUrl,
           lotteryUrl: pastRaffle.lotteryUrl,
@@ -307,9 +347,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     .split(/[\s,]+/)
     .map(n => parseInt(n.trim(), 10))
     .filter(n => !isNaN(n) && n >= 0 && n <= 99);
-  const salePrice = raffle
-    ? (parsedSaleNumbers.length >= 2 ? raffle.price2 : raffle.price1)
-    : 0;
+  const salePrice = getTicketUnitPrice(raffle, parsedSaleNumbers.length);
   const saleTotal = parsedSaleNumbers.length * salePrice;
 
   const adminRevenue = admins.map(admin => {
@@ -392,7 +430,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
                 <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
                 <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
-                <input type="number" placeholder="Precio 2+ boletos" value={editRaffleData.price2} onChange={e => setEditRaffleData({...editRaffleData, price2: parseInt(e.target.value)})} />
+                {renderPromoControls(editRaffleData, setEditRaffleData)}
                 <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
                 <div className={styles.primaryImageUpload}>
                   <strong>Foto principal</strong>
@@ -607,7 +645,11 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   {parsedSaleNumbers.length > 0 && (
                     <div className={styles.saleSummary}>
                       <span>{parsedSaleNumbers.length} n&uacute;mero{parsedSaleNumbers.length > 1 ? 's' : ''}</span>
-                      <span>{parsedSaleNumbers.length >= 2 ? `Precio grupal: $${raffle.price2.toLocaleString()} c/u` : `Precio individual: $${raffle.price1.toLocaleString()}`}</span>
+                      <span>
+                        {isPromoEnabled(raffle) && parsedSaleNumbers.length >= (raffle.promoMinTickets || 2)
+                          ? `Precio promo (${getPromoLabel(raffle)}): $${salePrice.toLocaleString()} c/u`
+                          : `Precio individual: $${salePrice.toLocaleString()} c/u`}
+                      </span>
                       <strong className={styles.saleTotal}>Total: ${saleTotal.toLocaleString()} MXN</strong>
                     </div>
                   )}
@@ -646,7 +688,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
                   <input type="number" required placeholder="Precio 1 Boleto (MXN)" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
-                  <input type="number" required placeholder="Precio 2+ Boletos (MXN)" value={newRaffleData.price2} onChange={e => setNewRaffleData({...newRaffleData, price2: parseInt(e.target.value)})} />
+                  {renderPromoControls(newRaffleData, setNewRaffleData)}
                   <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
                   <div className={styles.primaryImageUpload}>
                     <strong>Foto principal</strong>
@@ -671,7 +713,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
               <input type="number" required placeholder="Precio 1 Boleto" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
-              <input type="number" required placeholder="Precio 2+ Boletos" value={newRaffleData.price2} onChange={e => setNewRaffleData({...newRaffleData, price2: parseInt(e.target.value)})} />
+              {renderPromoControls(newRaffleData, setNewRaffleData)}
               <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
               <div className={styles.primaryImageUpload}>
                 <strong>Foto principal</strong>

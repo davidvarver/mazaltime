@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { getTicketUnitPrice } from '@/lib/pricing';
 import styles from './CheckoutModal.module.css';
 
 export default function CheckoutModal({ selectedNumbers, raffle, session, onClose, onSubmit }) {
@@ -9,7 +10,7 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
   const count = selectedNumbers.length;
   if (count === 0) return null;
 
-  const total = count >= 2 ? count * raffle.price2 : count * raffle.price1;
+  const total = count * getTicketUnitPrice(raffle, count);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

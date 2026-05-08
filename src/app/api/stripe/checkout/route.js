@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { releaseExpiredReservations } from '@/lib/ticketReservations';
+import { getTicketUnitPrice } from '@/lib/pricing';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import Stripe from 'stripe';
@@ -99,7 +100,7 @@ export async function POST(req) {
     const now = new Date();
     await releaseExpiredReservations(raffleId);
 
-    const unitPrice = normalizedNumbers.length >= 2 ? raffle.price2 : raffle.price1;
+    const unitPrice = getTicketUnitPrice(raffle, normalizedNumbers.length);
     const appUrl = getAppUrl();
 
     const previousReservations = await prisma.ticket.findMany({
