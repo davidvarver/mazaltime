@@ -14,13 +14,11 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No se recibió ningún archivo' }, { status: 400 });
     }
 
-    // Validate type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json({ error: 'Formato no permitido. Usa JPG, PNG o WebP.' }, { status: 400 });
     }
 
-    // Max 5MB
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json({ error: 'La imagen no puede pesar más de 5MB.' }, { status: 400 });
     }
@@ -33,20 +31,15 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Storage de imágenes no configurado' }, { status: 500 });
     }
 
-    let blob;
+    const blob = await put(filename, file, {
+      access: 'private',
+      contentType: file.type,
+    });
 
-    try {
-      blob = await put(filename, file, {
-        access: 'public',
-        contentType: file.type,
-      });
-    } catch (blobError) {
-      const message = blobError.message || '';
+    const imageUrl = new URL('/api/blob', req.nextUrl.origin);
+    imageUrl.searchParams.set('pathname', blob.pathname);
 
-      throw blobError;
-    }
-
-    return NextResponse.json({ url: blob.url });
+    return NextResponse.json({ url: imageUrl.toString() });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({
