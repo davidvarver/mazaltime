@@ -11,6 +11,16 @@ import styles from './HomeClient.module.css';
 
 const WHATSAPP_URL = 'https://wa.me/525523138175';
 
+function formatDrawDate(date) {
+  if (!date) return 'Fecha por confirmar';
+
+  return new Date(date).toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
 export default function HomeClient({ raffle, initialTickets, pastRaffles = [] }) {
   const { data: session } = useSession();
   const [selectedNumbers, setSelectedNumbers] = useState([]);
@@ -23,6 +33,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
   const selectedPrice = raffle && selectedNumbers.length >= 2 ? raffle.price2 : raffle?.price1 || 0;
   const selectedTotal = selectedNumbers.length * selectedPrice;
+  const latestPastRaffle = pastRaffles[0];
 
   const handleSelectNumber = (numbers) => {
     setSelectedNumbers(numbers);
@@ -210,10 +221,57 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             )}
           </>
         ) : (
-          <div className={styles.noRaffle}>
-            <p>No hay una rifa activa en este momento.</p>
-            <p className={styles.noRaffleSubtext}>S&iacute;guenos en redes para enterarte cuando lancemos la pr&oacute;xima.</p>
-          </div>
+          <section className={styles.noRaffle} aria-label="Pr&oacute;xima rifa">
+            <div className={styles.noRaffleHero}>
+              <span>Entre sorteos</span>
+              <h1>Estamos preparando la pr&oacute;xima rifa.</h1>
+              <p>
+                Mientras abrimos la siguiente edici&oacute;n, puedes revisar c&oacute;mo funciona Mazal Time
+                y ver el sorteo anterior para conocer el formato.
+              </p>
+              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className={styles.noRaffleBtn}>
+                Avisarme por WhatsApp
+              </a>
+            </div>
+
+            <div className={styles.noRaffleGrid}>
+              {latestPastRaffle ? (
+                <article className={styles.lastRaffleCard}>
+                  <span>&Uacute;ltima rifa</span>
+                  <h2>{latestPastRaffle.watchName}</h2>
+                  {latestPastRaffle.watchDetails && <p>{latestPastRaffle.watchDetails}</p>}
+                  <dl>
+                    <div>
+                      <dt>Sorteo</dt>
+                      <dd>{formatDrawDate(latestPastRaffle.drawDate)}</dd>
+                    </div>
+                    {latestPastRaffle.winningNumber !== null && latestPastRaffle.winningNumber !== undefined && (
+                      <div>
+                        <dt>N&uacute;mero ganador</dt>
+                        <dd>{latestPastRaffle.winningNumber.toString().padStart(2, '0')}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </article>
+              ) : (
+                <article className={styles.lastRaffleCard}>
+                  <span>Historial</span>
+                  <h2>Pronto ver&aacute;s aqu&iacute; nuestras rifas finalizadas.</h2>
+                  <p>Cuando cerremos una rifa, quedar&aacute; guardada con fecha, resultado y ganador.</p>
+                </article>
+              )}
+
+              <article className={styles.howItWorksCard}>
+                <span>C&oacute;mo funciona</span>
+                <ul>
+                  <li>Publicamos la rifa activa con fecha, precio y regla del sorteo.</li>
+                  <li>Eliges tus n&uacute;meros disponibles y completas el pago seguro.</li>
+                  <li>El ganador se define con los &uacute;ltimos 2 n&uacute;meros del Premio Mayor indicado.</li>
+                  <li>Coordinamos la entrega directamente con el ganador.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
         )}
 
         {pastRaffles.length > 0 && (

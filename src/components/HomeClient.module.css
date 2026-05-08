@@ -359,24 +359,143 @@
 }
 
 .noRaffle {
-  width: min(780px, calc(100% - 32px));
-  margin: 4rem auto;
-  padding: 3rem 2rem;
-  border-radius: 28px;
-  background: #fff;
-  color: var(--muted);
-  text-align: center;
-  box-shadow: 0 18px 38px rgba(12, 45, 63, 0.08);
+  width: min(1120px, calc(100% - 32px));
+  margin: 3rem auto 0;
+  padding: clamp(1.4rem, 3.5vw, 2.6rem);
+  border: 1px solid var(--line);
+  border-radius: 38px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 247, 234, 0.82)),
+    radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.16), transparent 26rem);
+  color: var(--ink);
+  box-shadow: 0 24px 58px rgba(12, 45, 63, 0.08);
 }
 
-.noRaffle p:first-child {
+.noRaffleHero {
+  width: min(760px, 100%);
+  margin: 0 auto 1.6rem;
+  text-align: center;
+}
+
+.noRaffleHero span,
+.lastRaffleCard span,
+.howItWorksCard span {
+  color: var(--gold-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.noRaffleHero h1 {
+  margin-top: 0.35rem;
   color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.noRaffleHero p {
+  width: min(640px, 100%);
+  margin: 1rem auto 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.noRaffleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 1.2rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(12, 45, 63, 0.2);
+}
+
+.noRaffleGrid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 1rem;
+}
+
+.lastRaffleCard,
+.howItWorksCard {
+  min-height: 100%;
+  padding: clamp(1.2rem, 2.6vw, 1.8rem);
+  border: 1px solid rgba(239, 225, 200, 0.92);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 14px 30px rgba(12, 45, 63, 0.05);
+}
+
+.lastRaffleCard h2 {
+  margin-top: 0.45rem;
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.5rem;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.lastRaffleCard p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.lastRaffleCard dl {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+}
+
+.lastRaffleCard dl div {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.lastRaffleCard dt {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lastRaffleCard dd {
+  margin-top: 0.2rem;
+  color: var(--ink);
   font-weight: 900;
 }
 
-.noRaffleSubtext {
-  margin-top: 0.6rem;
+.howItWorksCard ul {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.howItWorksCard li {
+  position: relative;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.howItWorksCard li::before {
+  content: "";
+  position: absolute;
+  top: 0.68em;
+  left: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--gold);
 }
 
 .floatingAction {
@@ -746,6 +865,40 @@
     margin-top: 1.55rem;
     border-radius: 30px;
     padding: 0.7rem;
+  }
+
+  .noRaffle {
+    width: calc(100% - 20px);
+    margin-top: 1.4rem;
+    padding: 1.15rem;
+    border-radius: 28px;
+  }
+
+  .noRaffleHero {
+    margin-bottom: 1rem;
+  }
+
+  .noRaffleHero h1 {
+    font-size: clamp(1.9rem, 9vw, 2.7rem);
+  }
+
+  .noRaffleHero p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .noRaffleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lastRaffleCard,
+  .howItWorksCard {
+    border-radius: 22px;
+    padding: 1rem;
+  }
+
+  .lastRaffleCard h2 {
+    font-size: 1.35rem;
   }
 
   .footer {
