@@ -50,3 +50,5 @@ prisma/*.db
 
 # Uploaded images (use cloud storage in production)
 /public/uploads/
+
+.vercel
