@@ -28,6 +28,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const router = useRouter();
   const currentAdminId = loggedAdminId;
   const canManageAdmins = loggedAdminUsername === 'eliahu';
+  const [openPanel, setOpenPanel] = useState('');
   const [tickets, setTickets] = useState(initialTickets);
   const [raffle] = useState(initialRaffle);
   const [pastRaffleForms, setPastRaffleForms] = useState(() =>
@@ -343,22 +344,6 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     }
   };
 
-  const handleResetTestBuyers = async () => {
-    const confirmed = confirm('Esto borrara usuarios/compradores de prueba y liberara todos los boletos vendidos o reservados. No borra admins ni rifas. ¿Continuar?');
-    if (!confirmed) return;
-
-    try {
-      const res = await fetch('/api/admin/buyers/reset', { method: 'DELETE' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al borrar compradores');
-
-      alert(`Listo: ${data.usersDeleted} compradores borrados y ${data.ticketsCleared} boletos liberados.`);
-      window.location.reload();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
   const updatePastRaffleForm = (id, updates) => {
     setPastRaffleForms(prev =>
       prev.map(pastRaffle => pastRaffle.id === id ? { ...pastRaffle, ...updates } : pastRaffle)
@@ -476,8 +461,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       </header>
 
       {canManageAdmins && (
-        <details className={styles.adminManagementCard}>
-          <summary className={styles.panelSummary}>Administradores</summary>
+        <details className={styles.adminManagementCard} open={openPanel === 'admins'}>
+          <summary
+            className={styles.panelSummary}
+            onClick={e => {
+              e.preventDefault();
+              setOpenPanel(openPanel === 'admins' ? '' : 'admins');
+            }}
+          >
+            Administradores
+          </summary>
           <div className={styles.sectionHeader}>
             <p>Solo Eliahu puede agregar o eliminar accesos del panel.</p>
           </div>
@@ -556,8 +549,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </div>
 
             {/* Editar rifa */}
-            <details className={styles.statsCard}>
-              <summary className={styles.panelSummary}>Editar informaci&oacute;n de rifa</summary>
+            <details className={styles.statsCard} open={openPanel === 'edit-raffle'}>
+              <summary
+                className={styles.panelSummary}
+                onClick={e => {
+                  e.preventDefault();
+                  setOpenPanel(openPanel === 'edit-raffle' ? '' : 'edit-raffle');
+                }}
+              >
+                Editar informaci&oacute;n de rifa
+              </summary>
               <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
                 <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
                 <input type="text" placeholder="Marca (ej: Rolex)" value={editRaffleData.watchBrand || ''} onChange={e => setEditRaffleData({...editRaffleData, watchBrand: e.target.value})} />
@@ -579,8 +580,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </details>
 
             {/* Finalizar rifa */}
-            <details className={styles.statsCard}>
-              <summary className={styles.panelSummary}>Finalizar rifa actual</summary>
+            <details className={styles.statsCard} open={openPanel === 'finish-raffle'}>
+              <summary
+                className={styles.panelSummary}
+                onClick={e => {
+                  e.preventDefault();
+                  setOpenPanel(openPanel === 'finish-raffle' ? '' : 'finish-raffle');
+                }}
+              >
+                Finalizar rifa actual
+              </summary>
               <p style={{fontSize:'0.85rem', color:'#ffb74d', marginBottom:'1rem'}}>
                 Esto archivar&aacute; la rifa y la mostrar&aacute; en &quot;Rifas Pasadas&quot;.
               </p>
@@ -591,8 +600,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </details>
           </div>
 
-          <details className={styles.tableCard}>
-            <summary className={styles.panelSummary}>Base de compradores</summary>
+          <details className={styles.tableCard} open={openPanel === 'buyers'}>
+            <summary
+              className={styles.panelSummary}
+              onClick={e => {
+                e.preventDefault();
+                setOpenPanel(openPanel === 'buyers' ? '' : 'buyers');
+              }}
+            >
+              Base de compradores
+            </summary>
             <div className={styles.sectionHeaderRow}>
               <div className={styles.sectionHeader}>
                 <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
@@ -600,11 +617,6 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <a href="/api/admin/buyers/export" className={styles.exportBtn}>
                 Descargar Excel
               </a>
-              {canManageAdmins && (
-                <button type="button" className={styles.dangerOutlineBtn} onClick={handleResetTestBuyers}>
-                  Borrar compradores de prueba
-                </button>
-              )}
             </div>
             <div className={styles.buyerSummaryGrid}>
               <div className={styles.buyerMetric}>
@@ -697,8 +709,16 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </div>
           </details>
 
-          <details className={styles.tableCard}>
-            <summary className={styles.panelSummary}>Gesti&oacute;n de boletos y venta manual</summary>
+          <details className={styles.tableCard} open={openPanel === 'tickets'}>
+            <summary
+              className={styles.panelSummary}
+              onClick={e => {
+                e.preventDefault();
+                setOpenPanel(openPanel === 'tickets' ? '' : 'tickets');
+              }}
+            >
+              Gesti&oacute;n de boletos y venta manual
+            </summary>
             <div className={styles.saleBar}>
               <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
                 Registrar venta manual (efectivo / transferencia)

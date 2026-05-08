@@ -24,6 +24,8 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   const isBatgirl = /batgirl|gmt-master/i.test(raffle.watchName || '');
   const imageSrc = raffle.imageUrl || (isBatgirl ? '/rolex-batgirl.png' : '/rolex_demo.png');
   const watchTitle = getRaffleWatchTitle(raffle);
+  const inferredBrand = raffle.watchBrand || (watchTitle.toLowerCase().startsWith('rolex ') ? 'Rolex' : '');
+  const inferredModel = raffle.watchModel || (inferredBrand ? watchTitle.replace(new RegExp(`^${inferredBrand}\\s+`, 'i'), '') : watchTitle);
   const galleryImages = Array.isArray(raffle.galleryImages) ? raffle.galleryImages : [];
   const displayImages = [imageSrc, ...galleryImages]
     .filter(Boolean)
@@ -70,7 +72,10 @@ export default function HeroInfo({ raffle, tickets = [] }) {
       </div>
 
       <div className={styles.infoContent}>
-        <h2 className={styles.subtitle}>{watchTitle}</h2>
+        <h2 className={styles.subtitle}>
+          {inferredBrand && <span className={styles.watchBrand}>{inferredBrand}</span>}
+          <span className={styles.watchModel}>{inferredModel}</span>
+        </h2>
         {raffle.watchDetails && (
           <p className={styles.watchDetails}>{raffle.watchDetails}</p>
         )}

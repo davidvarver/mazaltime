@@ -97,6 +97,15 @@
   margin-bottom: 0.55rem;
 }
 
+.watchBrand,
+.watchModel {
+  display: block;
+}
+
+.watchBrand {
+  margin-bottom: 0.08em;
+}
+
 .watchDetails {
   width: fit-content;
   max-width: 100%;

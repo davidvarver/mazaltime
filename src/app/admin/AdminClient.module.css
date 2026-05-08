@@ -108,8 +108,7 @@
 .liberateBtn,
 .saveBtn,
 .endBtn,
-.saleBtn,
-.dangerOutlineBtn {
+.saleBtn {
   min-height: 46px;
   display: inline-flex;
   align-items: center;
@@ -142,19 +141,12 @@
   color: #b91c1c;
 }
 
-.dangerOutlineBtn {
-  border: 1px solid rgba(185, 28, 28, 0.34);
-  background: rgba(185, 28, 28, 0.06);
-  color: #b91c1c;
-}
-
 .logoutBtn:hover,
 .createToggleBtn:hover,
 .liberateBtn:hover,
 .saveBtn:hover,
 .endBtn:hover,
-.saleBtn:hover:not(:disabled),
-.dangerOutlineBtn:hover {
+.saleBtn:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
@@ -166,8 +158,8 @@
 
 .gridContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
   margin-bottom: 1.6rem;
 }
 
@@ -249,11 +241,12 @@ details.statsCard,
 details.tableCard,
 details.adminManagementCard {
   display: block;
+  padding: 0.9rem 1.15rem;
 }
 
 .panelSummary {
   width: 100%;
-  min-height: 54px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -261,7 +254,7 @@ details.adminManagementCard {
   cursor: pointer;
   color: var(--ink);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-size: clamp(1.12rem, 2.1vw, 1.45rem);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.04em;
@@ -778,11 +771,6 @@ details[open] > .panelSummary::after {
   box-shadow: 0 12px 24px rgba(212, 175, 55, 0.22);
 }
 
-.dangerOutlineBtn {
-  min-height: 44px;
-  flex: 0 0 auto;
-}
-
 .emptyState {
   padding: 1.25rem;
 }
@@ -903,8 +891,7 @@ details[open] > .panelSummary::after {
   .logoutBtn,
   .saleBtn,
   .createToggleBtn,
-  .exportBtn,
-  .dangerOutlineBtn {
+  .exportBtn {
     width: 100%;
   }
 
