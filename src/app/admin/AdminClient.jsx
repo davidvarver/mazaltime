@@ -460,70 +460,70 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         </div>
       </header>
 
-      {canManageAdmins && (
-        <details className={styles.adminManagementCard} open={openPanel === 'admins'}>
-          <summary
-            className={styles.panelSummary}
-            onClick={e => {
-              e.preventDefault();
-              setOpenPanel(openPanel === 'admins' ? '' : 'admins');
-            }}
-          >
-            Administradores
-          </summary>
-          <div className={styles.sectionHeader}>
-            <p>Solo Eliahu puede agregar o eliminar accesos del panel.</p>
-          </div>
-          <div className={styles.adminManagementGrid}>
-            <form onSubmit={handleCreateAdmin} className={styles.editForm}>
-              <input
-                type="text"
-                required
-                placeholder="Nombre del admin"
-                value={newAdminData.name}
-                onChange={e => setNewAdminData(prev => ({ ...prev, name: e.target.value }))}
-              />
-              <input
-                type="text"
-                required
-                placeholder="Usuario para iniciar sesi\u00f3n"
-                value={newAdminData.username}
-                onChange={e => setNewAdminData(prev => ({ ...prev, username: e.target.value }))}
-              />
-              <input
-                type="password"
-                required
-                minLength={6}
-                placeholder="Contrase\u00f1a temporal"
-                value={newAdminData.password}
-                onChange={e => setNewAdminData(prev => ({ ...prev, password: e.target.value }))}
-              />
-              <button type="submit" className={styles.saveBtn}>Agregar admin</button>
-            </form>
-            <div className={styles.adminList}>
-              {adminList.map(admin => (
-                <div key={admin.id} className={styles.adminListRow}>
-                  <div>
-                    <strong>{admin.name}</strong>
-                    <span>@{admin.username}</span>
-                  </div>
-                  {admin.username !== 'eliahu' ? (
-                    <button type="button" className={styles.endBtn} onClick={() => handleDeleteAdmin(admin)}>
-                      Eliminar
-                    </button>
-                  ) : (
-                    <span className={styles.ownerBadge}>Due\u00f1o</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </details>
-      )}
-
       {raffle ? (
         <>
           <div className={styles.gridContainer}>
+            {canManageAdmins && (
+              <details className={styles.adminManagementCard} open={openPanel === 'admins'}>
+                <summary
+                  className={styles.panelSummary}
+                  onClick={e => {
+                    e.preventDefault();
+                    setOpenPanel(openPanel === 'admins' ? '' : 'admins');
+                  }}
+                >
+                  Administradores
+                </summary>
+                <div className={styles.sectionHeader}>
+                  <p>Solo Eliahu puede agregar o eliminar accesos del panel.</p>
+                </div>
+                <div className={styles.adminManagementGrid}>
+                  <form onSubmit={handleCreateAdmin} className={styles.editForm}>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nombre del admin"
+                      value={newAdminData.name}
+                      onChange={e => setNewAdminData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Usuario para iniciar sesi\u00f3n"
+                      value={newAdminData.username}
+                      onChange={e => setNewAdminData(prev => ({ ...prev, username: e.target.value }))}
+                    />
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      placeholder="Contrase\u00f1a temporal"
+                      value={newAdminData.password}
+                      onChange={e => setNewAdminData(prev => ({ ...prev, password: e.target.value }))}
+                    />
+                    <button type="submit" className={styles.saveBtn}>Agregar admin</button>
+                  </form>
+                  <div className={styles.adminList}>
+                    {adminList.map(admin => (
+                      <div key={admin.id} className={styles.adminListRow}>
+                        <div>
+                          <strong>{admin.name}</strong>
+                          <span>@{admin.username}</span>
+                        </div>
+                        {admin.username !== 'eliahu' ? (
+                          <button type="button" className={styles.endBtn} onClick={() => handleDeleteAdmin(admin)}>
+                            Eliminar
+                          </button>
+                        ) : (
+                          <span className={styles.ownerBadge}>Due\u00f1o</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            )}
+
             {/* Stats generales */}
             <div className={styles.statsCard}>
               <h3>Rifa Actual</h3>
@@ -598,8 +598,6 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <button type="submit" className={styles.endBtn}>Archivar Rifa (Finalizar)</button>
               </form>
             </details>
-          </div>
-
           <details className={styles.tableCard} open={openPanel === 'buyers'}>
             <summary
               className={styles.panelSummary}
@@ -784,6 +782,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               </table>
             </div>
           </details>
+
+          </div>
 
           {/* Bulk Sale Modal */}
           {saleModal && (
