@@ -39,7 +39,7 @@ export async function PUT(req) {
     if (authError) return authError;
 
     const data = await req.json();
-    const { id, title, watchName, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, galleryImages, lotteryUrl } = data;
+    const { id, title, watchName, watchDetails, zodiacSign, drawDate, price1, price2, isActive, winningNumber, imageUrl, galleryImages, lotteryUrl } = data;
 
     if (!id) {
       return NextResponse.json({ error: 'ID de rifa requerido' }, { status: 400 });
@@ -48,6 +48,7 @@ export async function PUT(req) {
     const updateData = {};
     if (title !== undefined) updateData.title = title;
     if (watchName !== undefined) updateData.watchName = watchName;
+    if (watchDetails !== undefined) updateData.watchDetails = watchDetails?.trim() || null;
     if (zodiacSign !== undefined) updateData.zodiacSign = zodiacSign;
     if (drawDate !== undefined) {
       const parsedDrawDate = parseDateOnlyForStorage(drawDate);
@@ -116,7 +117,7 @@ export async function POST(req) {
     const { error: authError } = await getAuthorizedAdmin(req);
     if (authError) return authError;
 
-    const { title, watchName, zodiacSign, drawDate, price1, price2, imageUrl, galleryImages, lotteryUrl } = await req.json();
+    const { title, watchName, watchDetails, zodiacSign, drawDate, price1, price2, imageUrl, galleryImages, lotteryUrl } = await req.json();
 
     // Check if there's already an active raffle
     const activeRaffle = await prisma.raffle.findFirst({
@@ -161,6 +162,7 @@ export async function POST(req) {
         data: {
           title,
           watchName,
+          watchDetails: watchDetails?.trim() || null,
           zodiacSign,
           drawDate: parsedDrawDate,
           price1: parsedPrice1,

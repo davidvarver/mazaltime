@@ -22,7 +22,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
-    title: '', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // End raffle
@@ -39,7 +39,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRaffleData, setNewRaffleData] = useState({
-    title: 'MAZAL TIME', watchName: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: 'MAZAL TIME', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // --- Handlers ---
@@ -255,6 +255,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           id: pastRaffle.id,
           title: pastRaffle.title,
           watchName: pastRaffle.watchName,
+          watchDetails: pastRaffle.watchDetails,
           zodiacSign: pastRaffle.zodiacSign,
           drawDate: pastRaffle.drawDate,
           price1: pastRaffle.price1,
@@ -371,6 +372,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
                 <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
                 <input type="text" placeholder="Nombre del Reloj" value={editRaffleData.watchName} onChange={e => setEditRaffleData({...editRaffleData, watchName: e.target.value})} />
+                <input type="text" placeholder="Detalles del reloj (ej: Brand new 2025 full set)" value={editRaffleData.watchDetails || ''} onChange={e => setEditRaffleData({...editRaffleData, watchDetails: e.target.value})} />
                 <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
                 <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
                 <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
@@ -604,6 +606,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <form onSubmit={handleCreateRaffle} className={styles.editForm}>
                   <input type="text" required placeholder="T&iacute;tulo (ej: MAZAL TIME)" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
                   <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
+                  <input type="text" placeholder="Detalles del reloj (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
                   <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
                   <input type="number" required placeholder="Precio 1 Boleto (MXN)" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
@@ -628,6 +631,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             <form onSubmit={handleCreateRaffle} className={styles.editForm}>
               <input type="text" required placeholder="T&iacute;tulo" value={newRaffleData.title} onChange={e => setNewRaffleData({...newRaffleData, title: e.target.value})} />
               <input type="text" required placeholder="Nombre del Reloj" value={newRaffleData.watchName} onChange={e => setNewRaffleData({...newRaffleData, watchName: e.target.value})} />
+              <input type="text" placeholder="Detalles del reloj (ej: Full set, Brand new, 2025)" value={newRaffleData.watchDetails || ''} onChange={e => setNewRaffleData({...newRaffleData, watchDetails: e.target.value})} />
               <input type="text" required placeholder="Signo Zodiacal" value={newRaffleData.zodiacSign} onChange={e => setNewRaffleData({...newRaffleData, zodiacSign: e.target.value})} />
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
               <input type="number" required placeholder="Precio 1 Boleto" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
@@ -675,6 +679,12 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   placeholder="Nombre del reloj"
                   value={pastRaffle.watchName || ''}
                   onChange={e => updatePastRaffleForm(pastRaffle.id, { watchName: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="Detalles del reloj"
+                  value={pastRaffle.watchDetails || ''}
+                  onChange={e => updatePastRaffleForm(pastRaffle.id, { watchDetails: e.target.value })}
                 />
                 <input
                   type="text"

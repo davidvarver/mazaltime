@@ -10,6 +10,7 @@ function buildInitialRaffle() {
   return {
     title: 'MAZAL TIME - INFO OFICIAL',
     watchName: 'Rolex GMT-Master II "Batgirl"',
+    watchDetails: 'Brand new 2025 full set',
     zodiacSign: 'Sorteo Zodiaco',
     drawDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     price1: 4200,

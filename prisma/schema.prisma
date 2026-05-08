@@ -36,6 +36,7 @@ model Raffle {
   id          String   @id @default(cuid())
   title       String
   watchName   String
+  watchDetails String?
   zodiacSign  String
   drawDate    DateTime
   price1      Int      // Price for 1 ticket in MXN

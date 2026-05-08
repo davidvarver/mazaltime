@@ -55,6 +55,9 @@ export default function HeroInfo({ raffle, tickets = [] }) {
 
       <div className={styles.infoContent}>
         <h2 className={styles.subtitle}>{raffle.watchName || raffle.title}</h2>
+        {raffle.watchDetails && (
+          <p className={styles.watchDetails}>{raffle.watchDetails}</p>
+        )}
 
         <div className={styles.priceRow}>
           <div>
