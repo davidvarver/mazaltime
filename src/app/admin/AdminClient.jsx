@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 import { getDateOnlyValue } from '@/lib/dateOnly';
 import styles from './AdminClient.module.css';
@@ -19,6 +20,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       winningNumber: pastRaffle.winningNumber ?? '',
     }))
   );
+  const [editingPastRaffleId, setEditingPastRaffleId] = useState(null);
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle || {
@@ -69,7 +71,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       <div className={styles.galleryUploadSection}>
         <div className={styles.galleryUploadHeader}>
           <strong>Fotos extra del reloj</strong>
-          <span>Opcional · máximo {MAX_GALLERY_IMAGES}</span>
+          <span>Opcional Â· mÃ¡ximo {MAX_GALLERY_IMAGES}</span>
         </div>
         <div className={styles.galleryUploadGrid}>
           {Array.from({ length: MAX_GALLERY_IMAGES }).map((_, index) => {
@@ -133,11 +135,11 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       .map(n => parseInt(n.trim(), 10))
       .filter(n => !isNaN(n) && n >= 0 && n <= 99);
 
-    if (numberList.length === 0) { alert('Ingresa al menos un número válido (0-99).'); return; }
+    if (numberList.length === 0) { alert('Ingresa al menos un nÃºmero vÃ¡lido (0-99).'); return; }
 
     const unavailable = tickets.filter(t => numberList.includes(t.number) && t.status !== 'AVAILABLE');
     if (unavailable.length > 0) {
-      alert(`Los números ${unavailable.map(t => t.number.toString().padStart(2, '0')).join(', ')} ya están ocupados.`);
+      alert(`Los nÃºmeros ${unavailable.map(t => t.number.toString().padStart(2, '0')).join(', ')} ya estÃ¡n ocupados.`);
       return;
     }
 
@@ -203,8 +205,8 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const handleEndRaffle = async (e) => {
     e.preventDefault();
     if (!raffle) return;
-    if (!winningNumber) return alert('Ingresa el número ganador');
-    const confirmed = confirm(`¿El número ganador es el ${winningNumber}? Esto finalizará la rifa.`);
+    if (!winningNumber) return alert('Ingresa el nÃºmero ganador');
+    const confirmed = confirm(`Â¿El nÃºmero ganador es el ${winningNumber}? Esto finalizarÃ¡ la rifa.`);
     if (!confirmed) return;
     try {
       const res = await fetch('/api/admin/raffle', {
@@ -213,7 +215,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         body: JSON.stringify({ id: raffle.id, isActive: false, winningNumber })
       });
       if (!res.ok) throw new Error('Error al finalizar');
-      alert('Rifa finalizada. Se movió a Rifas Pasadas.');
+      alert('Rifa finalizada. Se moviÃ³ a Rifas Pasadas.');
       window.location.reload();
     } catch (err) { alert(err.message); }
   };
@@ -270,6 +272,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
       if (!res.ok) throw new Error(data.error || 'Error al actualizar la rifa pasada');
 
       alert('Rifa pasada actualizada correctamente');
+      setEditingPastRaffleId(null);
       router.refresh();
     } catch (err) {
       alert(err.message);
@@ -277,7 +280,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   };
 
   const handleDeletePastRaffle = async (pastRaffle) => {
-    const confirmed = confirm(`¿Eliminar permanentemente "${pastRaffle.watchName}" y todos sus boletos?`);
+    const confirmed = confirm(`Â¿Eliminar permanentemente "${pastRaffle.watchName}" y todos sus boletos?`);
     if (!confirmed) return;
 
     try {
@@ -481,7 +484,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
             </div>
           </div>
 
-          {/* Botón Venta Manual */}
+          {/* BotÃ³n Venta Manual */}
           <div className={styles.saleBar}>
             <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
               Registrar venta manual (efectivo / transferencia)
@@ -658,81 +661,120 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
           <div className={styles.emptyState}>Todav&iacute;a no hay rifas pasadas.</div>
         ) : (
           <div className={styles.pastRafflesGrid}>
-            {pastRaffleForms.map(pastRaffle => (
-              <form
-                key={pastRaffle.id}
-                onSubmit={e => handleUpdatePastRaffle(e, pastRaffle)}
-                className={styles.pastRaffleCard}
-              >
-                <ImageUpload
-                  currentUrl={pastRaffle.imageUrl}
-                  onUploaded={url => updatePastRaffleForm(pastRaffle.id, { imageUrl: url })}
-                />
-                <input
-                  type="text"
-                  placeholder="Título"
-                  value={pastRaffle.title || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { title: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="Nombre del reloj"
-                  value={pastRaffle.watchName || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { watchName: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="Detalles del reloj"
-                  value={pastRaffle.watchDetails || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { watchDetails: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="Signo"
-                  value={pastRaffle.zodiacSign || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { zodiacSign: e.target.value })}
-                />
-                <input
-                  type="url"
-                  placeholder="Link sorteo Loter&iacute;a Nacional"
-                  value={pastRaffle.lotteryUrl || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { lotteryUrl: e.target.value })}
-                />
-                <input
-                  type="date"
-                  value={pastRaffle.drawDate || ''}
-                  onChange={e => updatePastRaffleForm(pastRaffle.id, { drawDate: e.target.value })}
-                />
-                <div className={styles.inlineFields}>
-                  <input
-                    type="number"
-                    min="0"
-                    max="99"
-                    placeholder="Ganador"
-                    value={pastRaffle.winningNumber}
-                    onChange={e => updatePastRaffleForm(pastRaffle.id, { winningNumber: e.target.value })}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Precio 1"
-                    value={pastRaffle.price1 || ''}
-                    onChange={e => updatePastRaffleForm(pastRaffle.id, { price1: parseInt(e.target.value, 10) })}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Precio 2+"
-                    value={pastRaffle.price2 || ''}
-                    onChange={e => updatePastRaffleForm(pastRaffle.id, { price2: parseInt(e.target.value, 10) })}
-                  />
+            {pastRaffleForms.map(pastRaffle => {
+              const isEditing = editingPastRaffleId === pastRaffle.id;
+
+              return (
+                <div key={pastRaffle.id} className={styles.pastRaffleCard}>
+                  {!isEditing ? (
+                    <>
+                      <div className={styles.pastRafflePreview}>
+                        {pastRaffle.imageUrl ? (
+                          <Image
+                            src={pastRaffle.imageUrl}
+                            alt={pastRaffle.watchName || 'Rifa pasada'}
+                            width={180}
+                            height={140}
+                            unoptimized={pastRaffle.imageUrl.startsWith('http')}
+                          />
+                        ) : (
+                          <div className={styles.pastRaffleNoImage}>Sin foto</div>
+                        )}
+                        <div>
+                          <span className={styles.statusBadge}>Finalizada</span>
+                          <h3>{pastRaffle.watchName || 'Rifa pasada'}</h3>
+                          {pastRaffle.watchDetails && <p>{pastRaffle.watchDetails}</p>}
+                          <small>{pastRaffle.title || 'Mazal Time'}</small>
+                        </div>
+                      </div>
+                      <div className={styles.pastRaffleMeta}>
+                        <span>Sorteo: {pastRaffle.drawDate || '-'}</span>
+                        <span>Ganador: {pastRaffle.winningNumber !== '' ? String(pastRaffle.winningNumber).padStart(2, '0') : '-'}</span>
+                      </div>
+                      <button type="button" className={styles.saveBtn} onClick={() => setEditingPastRaffleId(pastRaffle.id)}>
+                        Editar rifa pasada
+                      </button>
+                    </>
+                  ) : (
+                    <form
+                      onSubmit={e => handleUpdatePastRaffle(e, pastRaffle)}
+                      className={styles.pastRaffleEditForm}
+                    >
+                      <ImageUpload
+                        currentUrl={pastRaffle.imageUrl}
+                        onUploaded={url => updatePastRaffleForm(pastRaffle.id, { imageUrl: url })}
+                      />
+                      <input
+                        type="text"
+                        placeholder="T&iacute;tulo"
+                        value={pastRaffle.title || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { title: e.target.value })}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Nombre del reloj"
+                        value={pastRaffle.watchName || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { watchName: e.target.value })}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Detalles del reloj"
+                        value={pastRaffle.watchDetails || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { watchDetails: e.target.value })}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Signo"
+                        value={pastRaffle.zodiacSign || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { zodiacSign: e.target.value })}
+                      />
+                      <input
+                        type="url"
+                        placeholder="Link sorteo Loter&iacute;a Nacional"
+                        value={pastRaffle.lotteryUrl || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { lotteryUrl: e.target.value })}
+                      />
+                      <input
+                        type="date"
+                        value={pastRaffle.drawDate || ''}
+                        onChange={e => updatePastRaffleForm(pastRaffle.id, { drawDate: e.target.value })}
+                      />
+                      <div className={styles.inlineFields}>
+                        <input
+                          type="number"
+                          min="0"
+                          max="99"
+                          placeholder="Ganador"
+                          value={pastRaffle.winningNumber}
+                          onChange={e => updatePastRaffleForm(pastRaffle.id, { winningNumber: e.target.value })}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Precio 1"
+                          value={pastRaffle.price1 || ''}
+                          onChange={e => updatePastRaffleForm(pastRaffle.id, { price1: parseInt(e.target.value, 10) })}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Precio 2+"
+                          value={pastRaffle.price2 || ''}
+                          onChange={e => updatePastRaffleForm(pastRaffle.id, { price2: parseInt(e.target.value, 10) })}
+                        />
+                      </div>
+                      <div className={styles.pastRaffleActions}>
+                        <button type="button" className={styles.liberateBtn} onClick={() => setEditingPastRaffleId(null)}>
+                          Cancelar
+                        </button>
+                        <button type="submit" className={styles.saveBtn}>Guardar</button>
+                        <button type="button" className={styles.endBtn} onClick={() => handleDeletePastRaffle(pastRaffle)}>
+                          Eliminar
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </div>
-                <div className={styles.pastRaffleActions}>
-                  <button type="submit" className={styles.saveBtn}>Guardar</button>
-                  <button type="button" className={styles.endBtn} onClick={() => handleDeletePastRaffle(pastRaffle)}>
-                    Eliminar
-                  </button>
-                </div>
-              </form>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
