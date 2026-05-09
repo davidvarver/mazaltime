@@ -535,23 +535,27 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               >
                 Editar informaci&oacute;n de rifa
               </summary>
-              <form onSubmit={handleUpdateRaffle} className={styles.editForm}>
-                <input type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
-                <input type="text" placeholder="Marca (ej: Rolex)" value={editRaffleData.watchBrand || ''} onChange={e => setEditRaffleData({...editRaffleData, watchBrand: e.target.value})} />
-                <input type="text" placeholder="Modelo (ej: Sky-Dweller)" value={editRaffleData.watchModel || ''} onChange={e => setEditRaffleData({...editRaffleData, watchModel: e.target.value})} />
-                <input type="text" placeholder="Detalles chicos (ej: 336934 Black Dial 42mm Jubilee, New 2025 Full Set)" value={editRaffleData.watchDetails || ''} onChange={e => setEditRaffleData({...editRaffleData, watchDetails: e.target.value})} />
-                <input type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
-                <input type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
-                <input type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
-                {renderPromoControls(editRaffleData, setEditRaffleData)}
-                <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
-                <div className={styles.primaryImageUpload}>
+              <form onSubmit={handleUpdateRaffle} className={`${styles.editForm} ${styles.compactRaffleForm}`}>
+                <input className={styles.fieldHalf} type="text" placeholder="T&iacute;tulo" value={editRaffleData.title} onChange={e => setEditRaffleData({...editRaffleData, title: e.target.value})} />
+                <input className={styles.fieldQuarter} type="text" placeholder="Marca (ej: Rolex)" value={editRaffleData.watchBrand || ''} onChange={e => setEditRaffleData({...editRaffleData, watchBrand: e.target.value})} />
+                <input className={styles.fieldQuarter} type="text" placeholder="Modelo (ej: Sky-Dweller)" value={editRaffleData.watchModel || ''} onChange={e => setEditRaffleData({...editRaffleData, watchModel: e.target.value})} />
+                <input className={styles.fieldFull} type="text" placeholder="Detalles chicos (ej: 336934 Black Dial 42mm Jubilee, New 2025 Full Set)" value={editRaffleData.watchDetails || ''} onChange={e => setEditRaffleData({...editRaffleData, watchDetails: e.target.value})} />
+                <input className={styles.fieldQuarter} type="text" placeholder="Signo" value={editRaffleData.zodiacSign} onChange={e => setEditRaffleData({...editRaffleData, zodiacSign: e.target.value})} />
+                <input className={styles.fieldQuarter} type="date" value={getDateOnlyValue(editRaffleData.drawDate)} onChange={e => setEditRaffleData({...editRaffleData, drawDate: e.target.value})} />
+                <input className={styles.fieldQuarter} type="number" placeholder="Precio 1 boleto" value={editRaffleData.price1} onChange={e => setEditRaffleData({...editRaffleData, price1: parseInt(e.target.value)})} />
+                <div className={styles.fieldQuarter}>
+                  {renderPromoControls(editRaffleData, setEditRaffleData)}
+                </div>
+                <input className={styles.fieldFull} type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
+                <div className={`${styles.primaryImageUpload} ${styles.fieldHalf}`}>
                   <strong>Foto principal</strong>
                   <p className={styles.uploadGuidance}>Medida recomendada: 1200 x 1600 px. Formatos JPG, PNG o WebP. Máximo 5MB.</p>
                   <ImageUpload currentUrl={editRaffleData.imageUrl} onUploaded={url => setEditRaffleData({...editRaffleData, imageUrl: url})} />
                 </div>
-                {renderGalleryUploaders(editRaffleData, setEditRaffleData)}
-                <button type="submit" className={styles.saveBtn}>Guardar Cambios</button>
+                <div className={styles.fieldHalf}>
+                  {renderGalleryUploaders(editRaffleData, setEditRaffleData)}
+                </div>
+                <button type="submit" className={`${styles.saveBtn} ${styles.fieldFull}`}>Guardar Cambios</button>
               </form>
             </details>
 
