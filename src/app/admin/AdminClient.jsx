@@ -462,7 +462,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
       {raffle ? (
         <>
-          <div className={styles.gridContainer}>
+          <div className={styles.panelLauncherGrid}>
             {canManageAdmins && (
               <details className={styles.adminManagementCard} open={openPanel === 'admins'}>
                 <summary
@@ -524,30 +524,6 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               </details>
             )}
 
-            {/* Stats generales */}
-            <div className={styles.statsCard}>
-              <h3>Rifa Actual</h3>
-              <p>Disponibles: <strong>{tickets.filter(t => t.status === 'AVAILABLE').length}</strong></p>
-              <p>Vendidos: <strong>{tickets.filter(t => t.status === 'SOLD').length}</strong></p>
-              <p>Total recaudado real: <strong>${totalReal.toLocaleString()} MXN</strong></p>
-            </div>
-
-            {/* Revenue por socio */}
-            <div className={styles.statsCard}>
-              <h3>Recaudado por Socio</h3>
-              {adminRevenue.map(a => (
-                <div key={a.id} className={styles.adminRevenueRow}>
-                  <span className={styles.adminName}>{a.name}</span>
-                  <span className={styles.adminBoletos}>{a.count} boleto{a.count !== 1 ? 's' : ''}</span>
-                  <span className={styles.adminMoney}>${a.revenue.toLocaleString()} MXN</span>
-                </div>
-              ))}
-              <div className={styles.adminRevenueTotal}>
-                <span>Total</span>
-                <span>${adminRevenue.reduce((s, a) => s + a.revenue, 0).toLocaleString()} MXN</span>
-              </div>
-            </div>
-
             {/* Editar rifa */}
             <details className={styles.statsCard} open={openPanel === 'edit-raffle'}>
               <summary
@@ -598,191 +574,217 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <button type="submit" className={styles.endBtn}>Archivar Rifa (Finalizar)</button>
               </form>
             </details>
-          <details className={styles.tableCard} open={openPanel === 'buyers'}>
-            <summary
-              className={styles.panelSummary}
-              onClick={e => {
-                e.preventDefault();
-                setOpenPanel(openPanel === 'buyers' ? '' : 'buyers');
-              }}
-            >
-              Base de compradores
-            </summary>
-            <div className={styles.sectionHeaderRow}>
-              <div className={styles.sectionHeader}>
-                <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
+
+            <details className={styles.tableCard} open={openPanel === 'buyers'}>
+              <summary
+                className={styles.panelSummary}
+                onClick={e => {
+                  e.preventDefault();
+                  setOpenPanel(openPanel === 'buyers' ? '' : 'buyers');
+                }}
+              >
+                Base de compradores
+              </summary>
+              <div className={styles.sectionHeaderRow}>
+                <div className={styles.sectionHeader}>
+                  <p>Historial para identificar clientes recurrentes y compradores anteriores que no han comprado en esta rifa.</p>
+                </div>
+                <a href="/api/admin/buyers/export" className={styles.exportBtn}>
+                  Descargar Excel
+                </a>
               </div>
-              <a href="/api/admin/buyers/export" className={styles.exportBtn}>
-                Descargar Excel
-              </a>
-            </div>
-            <div className={styles.buyerSummaryGrid}>
-              <div className={styles.buyerMetric}>
-                <span>Compradores hist&oacute;ricos</span>
-                <strong>{buyerInsights.length}</strong>
+              <div className={styles.buyerSummaryGrid}>
+                <div className={styles.buyerMetric}>
+                  <span>Compradores hist&oacute;ricos</span>
+                  <strong>{buyerInsights.length}</strong>
+                </div>
+                <div className={styles.buyerMetric}>
+                  <span>Compraron esta rifa</span>
+                  <strong>{buyersThisRaffle.length}</strong>
+                </div>
+                <div className={styles.buyerMetric}>
+                  <span>Nuevos</span>
+                  <strong>{newBuyers.length}</strong>
+                </div>
+                <div className={styles.buyerMetric}>
+                  <span>Recurrentes</span>
+                  <strong>{recurringBuyers.length}</strong>
+                </div>
+                <div className={styles.buyerMetric}>
+                  <span>Inactivos esta vez</span>
+                  <strong>{inactiveBuyers.length || previousBuyersMissing.length}</strong>
+                </div>
               </div>
-              <div className={styles.buyerMetric}>
-                <span>Compraron esta rifa</span>
-                <strong>{buyersThisRaffle.length}</strong>
+              <div className={styles.buyerFilterPanel}>
+                <span>Filtrar compradores</span>
+                <div className={styles.buyerFilters} aria-label="Filtrar compradores">
+                  {buyerFilterOptions.map(option => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={buyerFilter === option.value ? styles.buyerFilterActive : ''}
+                      onClick={() => setBuyerFilter(option.value)}
+                    >
+                      <span>{option.label}</span>
+                      <strong>{option.count}</strong>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className={styles.buyerMetric}>
-                <span>Nuevos</span>
-                <strong>{newBuyers.length}</strong>
-              </div>
-              <div className={styles.buyerMetric}>
-                <span>Recurrentes</span>
-                <strong>{recurringBuyers.length}</strong>
-              </div>
-              <div className={styles.buyerMetric}>
-                <span>Inactivos esta vez</span>
-                <strong>{inactiveBuyers.length || previousBuyersMissing.length}</strong>
-              </div>
-            </div>
-            <div className={styles.buyerFilterPanel}>
-              <span>Filtrar compradores</span>
-              <div className={styles.buyerFilters} aria-label="Filtrar compradores">
-                {buyerFilterOptions.map(option => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={buyerFilter === option.value ? styles.buyerFilterActive : ''}
-                    onClick={() => setBuyerFilter(option.value)}
-                  >
-                    <span>{option.label}</span>
-                    <strong>{option.count}</strong>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Etiqueta</th>
-                    <th>Contacto</th>
-                    <th>Rifas</th>
-                    <th>Boletos total</th>
-                    <th>Gastado total</th>
-                    <th>Esta rifa</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {buyerInsights.length === 0 ? (
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
                     <tr>
-                      <td colSpan="7">Todav&iacute;a no hay compradores registrados.</td>
+                      <th>Cliente</th>
+                      <th>Etiqueta</th>
+                      <th>Contacto</th>
+                      <th>Rifas</th>
+                      <th>Boletos total</th>
+                      <th>Gastado total</th>
+                      <th>Esta rifa</th>
                     </tr>
-                  ) : filteredBuyerInsights.length === 0 ? (
-                    <tr>
-                      <td colSpan="7">No hay compradores en este filtro.</td>
-                    </tr>
-                  ) : filteredBuyerInsights.map(buyer => (
-                    <tr key={buyer.key}>
-                      <td>{buyer.name}</td>
-                      <td>
-                        <span className={`${styles.customerTag} ${styles[`customer${buyer.customerStatus}`]}`}>
-                          {buyer.customerStatusLabel}
-                        </span>
-                      </td>
-                      <td>
-                        <div>{buyer.phone || '-'}</div>
-                        <small>{buyer.email || '-'}</small>
-                      </td>
-                      <td>{buyer.rafflesParticipated}</td>
-                      <td>{buyer.totalTickets}</td>
-                      <td>${buyer.totalSpent.toLocaleString()} MXN</td>
-                      <td>
-                        {buyer.boughtCurrent ? (
-                          <span className={`${styles.badge} ${styles.sold}`}>
-                            {buyer.currentTickets} boleto{buyer.currentTickets !== 1 ? 's' : ''}
+                  </thead>
+                  <tbody>
+                    {buyerInsights.length === 0 ? (
+                      <tr>
+                        <td colSpan="7">Todav&iacute;a no hay compradores registrados.</td>
+                      </tr>
+                    ) : filteredBuyerInsights.length === 0 ? (
+                      <tr>
+                        <td colSpan="7">No hay compradores en este filtro.</td>
+                      </tr>
+                    ) : filteredBuyerInsights.map(buyer => (
+                      <tr key={buyer.key}>
+                        <td>{buyer.name}</td>
+                        <td>
+                          <span className={`${styles.customerTag} ${styles[`customer${buyer.customerStatus}`]}`}>
+                            {buyer.customerStatusLabel}
                           </span>
-                        ) : (
-                          <span className={`${styles.badge} ${styles.available}`}>No ha comprado</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
+                        </td>
+                        <td>
+                          <div>{buyer.phone || '-'}</div>
+                          <small>{buyer.email || '-'}</small>
+                        </td>
+                        <td>{buyer.rafflesParticipated}</td>
+                        <td>{buyer.totalTickets}</td>
+                        <td>${buyer.totalSpent.toLocaleString()} MXN</td>
+                        <td>
+                          {buyer.boughtCurrent ? (
+                            <span className={`${styles.badge} ${styles.sold}`}>
+                              {buyer.currentTickets} boleto{buyer.currentTickets !== 1 ? 's' : ''}
+                            </span>
+                          ) : (
+                            <span className={`${styles.badge} ${styles.available}`}>No ha comprado</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
 
-          <details className={styles.tableCard} open={openPanel === 'tickets'}>
-            <summary
-              className={styles.panelSummary}
-              onClick={e => {
-                e.preventDefault();
-                setOpenPanel(openPanel === 'tickets' ? '' : 'tickets');
-              }}
-            >
-              Gesti&oacute;n de boletos y venta manual
-            </summary>
-            <div className={styles.saleBar}>
-              <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
-                Registrar venta manual (efectivo / transferencia)
-              </button>
-              {!currentAdminId && <span className={styles.saleHint}>Selecciona tu socio primero</span>}
-            </div>
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Estado</th>
-                    <th>Cliente</th>
-                    <th>Tel&eacute;fono</th>
-                    <th>Precio</th>
-                    <th>Socio</th>
-                    <th>Notas</th>
-                    <th>Liberar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tickets.map(ticket => (
-                    <tr key={ticket.id}>
-                      <td className={styles.numberCell}>{ticket.number.toString().padStart(2, '0')}</td>
-                      <td>
-                        <span className={`${styles.statusBadge} ${styles[ticket.status.toLowerCase()]}`}>
-                          {ticket.status === 'SOLD' ? 'Vendido' : 'Disponible'}
-                        </span>
-                      </td>
-                      <td>{ticket.user?.name || ticket.buyerName || '-'}</td>
-                      <td>{ticket.user?.phone || ticket.buyerPhone || '-'}</td>
-                      <td>{ticket.pricePaid ? `$${ticket.pricePaid.toLocaleString()}` : (ticket.status === 'SOLD' ? `$${raffle.price1.toLocaleString()}` : '-')}</td>
-                      <td>{ticket.admin?.name || '-'}</td>
-                      <td className={styles.notesCell}>
-                        {ticket.status === 'SOLD' ? (
-                          <div className={styles.noteEditor}>
-                            <textarea
-                              value={noteDrafts[ticket.id] || ''}
-                              placeholder="Ej: pendiente, pag&oacute; en efectivo, transferencia..."
-                              onChange={e => setNoteDrafts(prev => ({ ...prev, [ticket.id]: e.target.value }))}
-                              rows={2}
-                            />
-                            <button
-                              type="button"
-                              className={styles.noteSaveBtn}
-                              onClick={() => handleSaveNote(ticket.id)}
-                            >
-                              Guardar nota
+            <details className={styles.tableCard} open={openPanel === 'tickets'}>
+              <summary
+                className={styles.panelSummary}
+                onClick={e => {
+                  e.preventDefault();
+                  setOpenPanel(openPanel === 'tickets' ? '' : 'tickets');
+                }}
+              >
+                Gesti&oacute;n de boletos y venta manual
+              </summary>
+              <div className={styles.saleBar}>
+                <button className={styles.saleBtn} onClick={handleOpenSale} disabled={!currentAdminId}>
+                  Registrar venta manual (efectivo / transferencia)
+                </button>
+                {!currentAdminId && <span className={styles.saleHint}>Selecciona tu socio primero</span>}
+              </div>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Estado</th>
+                      <th>Cliente</th>
+                      <th>Tel&eacute;fono</th>
+                      <th>Precio</th>
+                      <th>Socio</th>
+                      <th>Notas</th>
+                      <th>Liberar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tickets.map(ticket => (
+                      <tr key={ticket.id}>
+                        <td className={styles.numberCell}>{ticket.number.toString().padStart(2, '0')}</td>
+                        <td>
+                          <span className={`${styles.statusBadge} ${styles[ticket.status.toLowerCase()]}`}>
+                            {ticket.status === 'SOLD' ? 'Vendido' : 'Disponible'}
+                          </span>
+                        </td>
+                        <td>{ticket.user?.name || ticket.buyerName || '-'}</td>
+                        <td>{ticket.user?.phone || ticket.buyerPhone || '-'}</td>
+                        <td>{ticket.pricePaid ? `$${ticket.pricePaid.toLocaleString()}` : (ticket.status === 'SOLD' ? `$${raffle.price1.toLocaleString()}` : '-')}</td>
+                        <td>{ticket.admin?.name || '-'}</td>
+                        <td className={styles.notesCell}>
+                          {ticket.status === 'SOLD' ? (
+                            <div className={styles.noteEditor}>
+                              <textarea
+                                value={noteDrafts[ticket.id] || ''}
+                                placeholder="Ej: pendiente, pag&oacute; en efectivo, transferencia..."
+                                onChange={e => setNoteDrafts(prev => ({ ...prev, [ticket.id]: e.target.value }))}
+                                rows={2}
+                              />
+                              <button
+                                type="button"
+                                className={styles.noteSaveBtn}
+                                onClick={() => handleSaveNote(ticket.id)}
+                              >
+                                Guardar nota
+                              </button>
+                            </div>
+                          ) : '-'}
+                        </td>
+                        <td>
+                          {ticket.status === 'SOLD' && (
+                            <button className={styles.liberateBtn} onClick={() => handleLiberate(ticket.number)} disabled={!currentAdminId}>
+                              Liberar
                             </button>
-                          </div>
-                        ) : '-'}
-                      </td>
-                      <td>
-                        {ticket.status === 'SOLD' && (
-                          <button className={styles.liberateBtn} onClick={() => handleLiberate(ticket.number)} disabled={!currentAdminId}>
-                            Liberar
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
 
+          <div className={styles.gridContainer}>
+            {/* Stats generales */}
+            <div className={styles.statsCard}>
+              <h3>Rifa Actual</h3>
+              <p>Disponibles: <strong>{tickets.filter(t => t.status === 'AVAILABLE').length}</strong></p>
+              <p>Vendidos: <strong>{tickets.filter(t => t.status === 'SOLD').length}</strong></p>
+              <p>Total recaudado real: <strong>${totalReal.toLocaleString()} MXN</strong></p>
+            </div>
+
+            {/* Revenue por socio */}
+            <div className={styles.statsCard}>
+              <h3>Recaudado por Socio</h3>
+              {adminRevenue.map(a => (
+                <div key={a.id} className={styles.adminRevenueRow}>
+                  <span className={styles.adminName}>{a.name}</span>
+                  <span className={styles.adminBoletos}>{a.count} boleto{a.count !== 1 ? 's' : ''}</span>
+                  <span className={styles.adminMoney}>${a.revenue.toLocaleString()} MXN</span>
+                </div>
+              ))}
+              <div className={styles.adminRevenueTotal}>
+                <span>Total</span>
+                <span>${adminRevenue.reduce((s, a) => s + a.revenue, 0).toLocaleString()} MXN</span>
+              </div>
+            </div>
           </div>
 
           {/* Bulk Sale Modal */}
