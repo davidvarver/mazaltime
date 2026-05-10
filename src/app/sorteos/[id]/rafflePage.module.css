@@ -42,6 +42,10 @@
   margin-top: 1rem;
 }
 
+.mediaColumn {
+  min-width: 0;
+}
+
 .imageBox {
   position: relative;
   min-height: 520px;
@@ -50,12 +54,67 @@
   overflow: hidden;
 }
 
+.imageBox video {
+  width: 100%;
+  height: 520px;
+  display: block;
+  object-fit: contain;
+  background: #fff;
+}
+
+.gallery {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding-bottom: 0.2rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+.galleryItem {
+  position: relative;
+  flex: 0 0 92px;
+  height: 76px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid #eadbbd;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.galleryItem video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.galleryItem span {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.35rem;
+  padding: 0.12rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(12, 45, 63, 0.88);
+  color: #fff;
+  font-size: 0.56rem;
+  font-weight: 900;
+}
+
 .copy h1 {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(3rem, 8vw, 6.5rem);
   line-height: 0.92;
   letter-spacing: -0.07em;
+}
+
+.intro {
+  margin: 0 0 1.2rem;
+  color: #667085;
+  font-size: 1.02rem;
+  line-height: 1.7;
 }
 
 .details {
@@ -109,6 +168,33 @@
   text-decoration: none;
 }
 
+.contentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.contentGrid div {
+  padding: 1.2rem;
+  border: 1px solid #efe1c8;
+  border-radius: 22px;
+  background: #fffcf5;
+}
+
+.contentGrid h2 {
+  margin: 0 0 0.45rem;
+  color: #172632;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.contentGrid p {
+  margin: 0;
+  color: #667085;
+  line-height: 1.7;
+}
+
 .explainer {
   margin-top: 2rem;
   padding-top: 1.5rem;
@@ -127,13 +213,36 @@
   line-height: 1.75;
 }
 
+.relatedLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.relatedLinks a {
+  display: inline-flex;
+  padding: 0.7rem 0.95rem;
+  border-radius: 999px;
+  background: #0c2d3f;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
 @media (max-width: 800px) {
   .heroGrid,
-  .metaGrid {
+  .metaGrid,
+  .contentGrid {
     grid-template-columns: 1fr;
   }
 
   .imageBox {
     min-height: 420px;
+  }
+
+  .imageBox video {
+    height: 420px;
   }
 }

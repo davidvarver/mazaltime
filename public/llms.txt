@@ -8,9 +8,11 @@ Mazal Time es una plataforma mexicana de rifas y sorteos de relojes de lujo. Los
 - Rifas Rolex: https://mazaltime.com.mx/rifas-rolex
 - Rifas de relojes de lujo: https://mazaltime.com.mx/rifas-relojes-lujo
 - Como funciona: https://mazaltime.com.mx/como-funciona
+- Ganadores anteriores: https://mazaltime.com.mx/ganadores
 - Bases del sorteo: https://mazaltime.com.mx/bases
 - Terminos: https://mazaltime.com.mx/terminos
 - Privacidad: https://mazaltime.com.mx/privacidad
+- Reembolsos: https://mazaltime.com.mx/politica-de-reembolsos
 
 ## Mecanica general
 

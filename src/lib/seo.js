@@ -179,3 +179,56 @@ export function raffleEventJsonLd(raffle, tickets = [], path = '/') {
     ],
   };
 }
+
+export function raffleTicketProductJsonLd(raffle, tickets = [], path = '/') {
+  if (!raffle) return null;
+
+  const name = [raffle.watchBrand, raffle.watchModel].filter(Boolean).join(' ') || raffle.watchName || raffle.title;
+  const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
+  const totalTickets = tickets.length || 100;
+  const url = absoluteUrl(path);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `Boleto para rifa ${name}`,
+    description: `Participacion numerada para la rifa de ${name} en Mazal Time. El premio se define con el resultado verificable de Loteria Nacional indicado en la rifa.`,
+    image: [absoluteUrl(raffle.imageUrl || '/rolex-batgirl.png')],
+    brand: {
+      '@type': 'Brand',
+      name: SITE_NAME,
+    },
+    offers: {
+      '@type': 'Offer',
+      url,
+      priceCurrency: 'MXN',
+      price: raffle.price1,
+      availability: soldTickets >= totalTickets ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+    additionalProperty: [
+      { '@type': 'PropertyValue', name: 'Premio', value: name },
+      { '@type': 'PropertyValue', name: 'Boletos totales', value: totalTickets },
+      { '@type': 'PropertyValue', name: 'Boletos vendidos', value: soldTickets },
+    ],
+  };
+}
+
+export function winnersItemListJsonLd(raffles = [], path = '/ganadores') {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Ganadores anteriores de Mazal Time',
+    url: absoluteUrl(path),
+    itemListElement: raffles.map((raffle, index) => {
+      const name = [raffle.watchBrand, raffle.watchModel].filter(Boolean).join(' ') || raffle.watchName || raffle.title;
+
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: absoluteUrl(`/sorteos/${raffle.id}`),
+        name: `${name} - numero ganador ${raffle.winningNumber ?? 'por anunciar'}`,
+      };
+    }),
+  };
+}

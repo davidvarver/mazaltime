@@ -97,7 +97,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href="#inicio">Inicio</a>
             <a href="#rifa-activa">Sorteo activo</a>
             <a href="#numeros">N&uacute;meros</a>
-            <a href="#ganadores">Ganadores</a>
+            <a href="/ganadores">Ganadores</a>
           </nav>
         </div>
       </header>
@@ -291,6 +291,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href="/rifas-rolex">Rifas Rolex</a>
             <a href="/rifas-relojes-lujo">Rifas de relojes de lujo</a>
             <a href="/como-funciona">C&oacute;mo funciona</a>
+            <a href="/ganadores">Ganadores anteriores</a>
           </div>
         </div>
         <div>
@@ -303,6 +304,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href="/bases">Bases del sorteo</a>
             <a href="/privacidad">Privacidad</a>
             <a href="/terminos">T&eacute;rminos</a>
+            <a href="/politica-de-reembolsos">Reembolsos</a>
           </div>
         </div>
       </footer>

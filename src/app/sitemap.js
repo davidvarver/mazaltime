@@ -60,6 +60,12 @@ export default async function sitemap() {
       priority: 0.8,
     },
     {
+      url: `${SITE_URL}/ganadores`,
+      lastModified: homeModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/bases`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -73,6 +79,12 @@ export default async function sitemap() {
     },
     {
       url: `${SITE_URL}/terminos`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
+      url: `${SITE_URL}/politica-de-reembolsos`,
       lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.4,
