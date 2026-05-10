@@ -1,5 +1,12 @@
 import Link from 'next/link';
 import styles from '../legal.module.css';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata = buildPageMetadata({
+  title: 'Aviso de privacidad',
+  description: 'Aviso de privacidad de Mazal Time para participantes de rifas de relojes de lujo en Mexico.',
+  path: '/privacidad',
+});
 
 export default function PrivacidadPage() {
   return (

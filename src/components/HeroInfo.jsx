@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './HeroInfo.module.css';
 import { formatDateOnly } from '@/lib/dateOnly';
 import { getPromoLabel, isPromoEnabled } from '@/lib/pricing';
@@ -121,6 +122,9 @@ export default function HeroInfo({ raffle, tickets = [] }) {
         </div>
 
         <div className={styles.datePill}>Sorteo: {fullDate}</div>
+        <Link className={styles.detailLink} href={`/sorteos/${raffle.id}`}>
+          Ver detalles completos de esta rifa
+        </Link>
       </div>
     </article>
   );

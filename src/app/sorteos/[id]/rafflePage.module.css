@@ -1,0 +1,139 @@
+﻿.page {
+  min-height: 100vh;
+  padding: clamp(1.25rem, 4vw, 4rem);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(212, 175, 55, 0.18), transparent 26rem),
+    linear-gradient(180deg, #fffaf0 0%, #fffcf5 58%, #f8efe0 100%);
+  color: #172632;
+}
+
+.card {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: clamp(1.4rem, 4vw, 3rem);
+  border: 1px solid #efe1c8;
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 58px rgba(23, 38, 50, 0.1);
+}
+
+.backLink {
+  display: inline-flex;
+  margin-bottom: 1.2rem;
+  color: #a8812f;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.eyebrow {
+  color: #a8812f;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.imageBox {
+  position: relative;
+  min-height: 520px;
+  border-radius: 28px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.copy h1 {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.07em;
+}
+
+.details {
+  display: inline-flex;
+  margin: 1rem 0 1.4rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #eadbbd;
+  border-radius: 999px;
+  color: #9b7a28;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 0;
+}
+
+.metaGrid div {
+  padding: 1rem;
+  border: 1px solid #efe1c8;
+  border-radius: 18px;
+  background: #fffcf5;
+}
+
+.metaGrid dt {
+  color: #667085;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.metaGrid dd {
+  margin: 0.25rem 0 0;
+  color: #0c2d3f;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.cta {
+  display: inline-flex;
+  margin-top: 1.4rem;
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  background: #d4af37;
+  color: #0c2d3f;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.explainer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #efe1c8;
+}
+
+.explainer h2 {
+  margin: 0 0 0.5rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.explainer p {
+  max-width: 780px;
+  color: #667085;
+  line-height: 1.75;
+}
+
+@media (max-width: 800px) {
+  .heroGrid,
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .imageBox {
+    min-height: 420px;
+  }
+}

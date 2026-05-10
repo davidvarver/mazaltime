@@ -1,5 +1,13 @@
 import Link from 'next/link';
 import styles from '../legal.module.css';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata = buildPageMetadata({
+  title: 'Bases del sorteo',
+  description: 'Consulta las bases de participacion de Mazal Time: boletos, confirmacion de pago, seleccion del ganador y entrega del reloj.',
+  path: '/bases',
+  keywords: ['bases rifa relojes', 'reglas sorteo Rolex', 'bases Mazal Time'],
+});
 
 export default function BasesPage() {
   return (

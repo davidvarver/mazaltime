@@ -1,6 +1,8 @@
 import styles from './PastRaffles.module.css';
 import { formatDateOnly } from '@/lib/dateOnly';
 import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PastRaffles({ pastRaffles }) {
   return (
@@ -19,14 +21,23 @@ export default function PastRaffles({ pastRaffles }) {
             <div key={raffle.id} className={`${styles.card} glass`}>
               {raffle.imageUrl && (
                 <div className={styles.cardImage}>
-                  <img src={raffle.imageUrl} alt={watchTitle} />
+                  <Image
+                    src={raffle.imageUrl}
+                    alt={watchTitle}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 340px"
+                    style={{ objectFit: 'cover' }}
+                    unoptimized
+                  />
                 </div>
               )}
               <div className={styles.cardHeader}>
                 <span className={styles.archiveBadge}>Finalizada</span>
               </div>
               <div className={styles.cardBody}>
-                <h3 className={styles.watchName}>{watchTitle}</h3>
+                <h3 className={styles.watchName}>
+                  <Link href={`/sorteos/${raffle.id}`}>{watchTitle}</Link>
+                </h3>
                 <p className={styles.raffleTitle}>{raffle.title}</p>
                 <p className={styles.drawDate}>
                   Sorteo: {formatDateOnly(raffle.drawDate)}

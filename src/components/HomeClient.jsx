@@ -287,6 +287,11 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
         <div>
           <strong>Mazal Time</strong>
           <p>Sorteos premium de relojes de lujo en M&eacute;xico.</p>
+          <div className={styles.legalLinks}>
+            <a href="/rifas-rolex">Rifas Rolex</a>
+            <a href="/rifas-relojes-lujo">Rifas de relojes de lujo</a>
+            <a href="/como-funciona">C&oacute;mo funciona</a>
+          </div>
         </div>
         <div>
           <span>Contacto</span>

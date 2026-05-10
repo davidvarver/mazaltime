@@ -1,5 +1,12 @@
 import Link from 'next/link';
 import styles from '../legal.module.css';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata = buildPageMetadata({
+  title: 'Terminos y condiciones',
+  description: 'Terminos y condiciones de Mazal Time para compra de boletos, participacion en sorteos y entrega de premios.',
+  path: '/terminos',
+});
 
 export default function TerminosPage() {
   return (
