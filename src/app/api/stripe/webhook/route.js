@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
+import { sendWhatsAppConfirmation } from '@/lib/whatsapp';
 
 function getStripe() {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -50,7 +51,36 @@ async function markTicketsSold(session) {
       reservedAt: null,
     },
   });
+
+  // Send WhatsApp confirmation — fire-and-forget (never blocks)
+  try {
+    const [user, raffle, tickets] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true, phone: true } }),
+      prisma.raffle.findUnique({ where: { id: raffleId }, select: { watchName: true } }),
+      prisma.ticket.findMany({
+        where: { raffleId, number: { in: numbers }, userId },
+        select: { pricePaid: true },
+        take: 1,
+      }),
+    ]);
+
+    if (user?.phone && raffle) {
+      const pricePaid = tickets[0]?.pricePaid || 0;
+      const totalMxn = pricePaid * numbers.length;
+
+      sendWhatsAppConfirmation({
+        buyerName:  user.name,
+        buyerPhone: user.phone,
+        watchName:  raffle.watchName,
+        numbers,
+        totalMxn,
+      }); // intentionally not awaited
+    }
+  } catch (waErr) {
+    console.error('[WhatsApp] Error preparing data:', waErr.message);
+  }
 }
+
 
 async function releaseReservedTickets(session) {
   await prisma.ticket.updateMany({

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuthorizedAdmin } from '@/lib/adminGuard';
 import { getTicketUnitPrice } from '@/lib/pricing';
+import { sendWhatsAppConfirmation } from '@/lib/whatsapp';
 
 export async function POST(req) {
   try {
@@ -72,6 +73,18 @@ export async function POST(req) {
         })
       )
     );
+
+    // Send WhatsApp confirmation for manual sales — fire-and-forget
+    if (status === 'SOLD' && buyerPhone) {
+      const totalMxn = pricePaid * normalizedNumbers.length;
+      sendWhatsAppConfirmation({
+        buyerName:  buyerName,
+        buyerPhone: buyerPhone,
+        watchName:  raffle.watchName,
+        numbers:    normalizedNumbers,
+        totalMxn,
+      }); // intentionally not awaited
+    }
 
     return NextResponse.json({ tickets: updatedTickets });
   } catch (error) {
