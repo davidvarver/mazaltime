@@ -5,22 +5,41 @@
 
 /**
  * Normalize a Mexican phone number to E.164 format (+52XXXXXXXXXX).
- * Handles: "5523138175", "525523138175", "+525523138175", "55 2313 8175"
+ *
+ * Handles common inputs:
+ *   "5523138175"       → +525523138175  (10-digit MX mobile)
+ *   "525523138175"     → +525523138175  (12-digit with country code)
+ *   "+525523138175"    → +525523138175  (already E.164)
+ *   "+5215523138175"   → +525523138175  (legacy MX intl format with extra '1')
+ *   "55 2313 8175"     → +525523138175  (spaces)
  */
 function normalizePhone(raw) {
   if (!raw) return null;
 
-  // Strip everything except digits and leading +
-  const digits = String(raw).replace(/[^\d+]/g, '');
-  const clean = digits.startsWith('+') ? digits : digits.replace(/^0+/, '');
+  // Remove spaces, dashes, parentheses — keep digits and leading +
+  const stripped = String(raw).replace(/[\s\-().]/g, '');
+  const digits   = stripped.replace(/[^\d]/g, '');
+  const hasPlus  = stripped.startsWith('+');
 
-  if (clean.startsWith('+')) return clean;           // already E.164
-  if (clean.length === 10) return `+52${clean}`;     // MX 10-digit
-  if (clean.length === 12 && clean.startsWith('52')) return `+${clean}`; // 52XXXXXXXXXX
-  if (clean.length === 13 && clean.startsWith('521')) return `+${clean.slice(0, 2)}${clean.slice(2)}`; // rare edge
+  let e164 = hasPlus ? `+${digits}` : digits;
 
-  // Unknown format — return as-is with + prefix so Twilio gives a clear error
-  return `+${clean}`;
+  // Already has + — validate/fix
+  if (e164.startsWith('+')) {
+    // Mexico legacy: +521XXXXXXXXXX (13 digits after +) → +52XXXXXXXXXX
+    if (/^\+521\d{10}$/.test(e164)) {
+      e164 = `+52${e164.slice(4)}`; // remove the '1' after +52
+    }
+    return e164;
+  }
+
+  // No + — infer country code from digit count
+  if (digits.length === 10) return `+52${digits}`;                          // MX 10-digit
+  if (digits.length === 12 && digits.startsWith('52')) return `+${digits}`; // 52XXXXXXXXXX
+  if (digits.length === 13 && digits.startsWith('521')) {
+    return `+52${digits.slice(3)}`; // 521XXXXXXXXXX → +52XXXXXXXXXX
+  }
+
+  return `+${digits}`; // best-effort
 }
 
 /**
