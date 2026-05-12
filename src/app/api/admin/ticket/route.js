@@ -59,6 +59,8 @@ export async function POST(req) {
       updateData.buyerPhone = null;
       updateData.notes = null;
       updateData.pricePaid = null;
+      updateData.couponCode = null;
+      updateData.discountPercent = null;
       updateData.stripeSessionId = null;
       updateData.reservedAt = null;
     }

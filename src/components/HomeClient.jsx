@@ -9,6 +9,7 @@ import UserMenu from './UserMenu';
 import PastRaffles from './PastRaffles';
 import { getTicketUnitPrice } from '@/lib/pricing';
 import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
+import { HOME_TEXT, LANGUAGES } from '@/lib/i18n';
 import styles from './HomeClient.module.css';
 
 const WHATSAPP_URL = 'https://wa.me/525523138175';
@@ -30,6 +31,8 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const [tickets, setTickets] = useState(initialTickets);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const [language, setLanguage] = useState('es');
+  const text = HOME_TEXT[language] || HOME_TEXT.es;
 
   const totalTickets = tickets.length || 100;
   const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
@@ -48,13 +51,26 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   };
 
   useEffect(() => {
+    const languageTimer = window.setTimeout(() => {
+      const savedLanguage = window.localStorage.getItem('mazaltime_lang');
+      if (savedLanguage && HOME_TEXT[savedLanguage]) setLanguage(savedLanguage);
+    }, 0);
+
     const handleScroll = () => setIsScrolled(window.scrollY > 24);
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.clearTimeout(languageTimer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
-  const handleSubmitCheckout = async (formData, numbers) => {
+  const handleLanguageChange = (nextLanguage) => {
+    setLanguage(nextLanguage);
+    window.localStorage.setItem('mazaltime_lang', nextLanguage);
+  };
+
+  const handleSubmitCheckout = async (formData, numbers, couponCode = '') => {
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -63,6 +79,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           raffleId: raffle.id,
           numbers,
           customer: session ? undefined : formData,
+          couponCode,
         }),
       });
 
@@ -89,41 +106,57 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             />
           </a>
 
-          <UserMenu />
+          <div className={styles.headerTools}>
+            <UserMenu />
+            <div className={styles.languagePicker} aria-label="Elegir idioma">
+              {Object.entries(LANGUAGES).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={language === value ? styles.languageActive : ''}
+                  onClick={() => handleLanguageChange(value)}
+                  aria-pressed={language === value}
+                >
+                  {value.toUpperCase()}
+                  <span>{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className={styles.navBar}>
           <nav className={styles.nav} aria-label="Navegacion principal">
-            <a href="#inicio">Inicio</a>
-            <a href="#rifa-activa">Sorteo activo</a>
-            <a href="#numeros">N&uacute;meros</a>
-            <a href="/ganadores">Ganadores</a>
+            <a href="#inicio">{text.navHome}</a>
+            <a href="#rifa-activa">{text.navActive}</a>
+            <a href="#numeros">{text.navNumbers}</a>
+            <a href="/ganadores">{text.navWinners}</a>
           </nav>
         </div>
       </header>
 
       <main id="inicio">
         <section className={styles.trustBand}>
-          <div><strong>{totalTickets} boletos</strong><span>por edici&oacute;n</span></div>
+          <div><strong>{totalTickets} {text.tickets}</strong><span>{text.perEdition}</span></div>
           {raffle?.lotteryUrl ? (
             <a href={raffle.lotteryUrl} target="_blank" rel="noreferrer" aria-label="Abrir sorteo oficial de Loter&iacute;a Nacional">
-              <strong>Sorteo transparente</strong>
-              <span>ver resultado oficial</span>
+              <strong>{text.transparent}</strong>
+              <span>{text.officialResult}</span>
             </a>
           ) : (
-            <div><strong>Sorteo transparente</strong><span>con resultado verificable</span></div>
+            <div><strong>{text.transparent}</strong><span>{text.verifiable}</span></div>
           )}
           <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="Abrir WhatsApp de Mazal Time">
-            <strong>Atenci&oacute;n directa</strong>
-            <span>por WhatsApp</span>
+            <strong>{text.directSupport}</strong>
+            <span>{text.whatsapp}</span>
           </a>
         </section>
 
         {raffle && (
           <section id="rifa-activa" className={styles.raffleExperience}>
             <div className={styles.sectionIntro}>
-              <span>Sorteo activo</span>
-              <h2>Selecciona tu n&uacute;mero favorito y participa</h2>
+              <span>{text.activeRaffle}</span>
+              <h2>{text.pickFavorite}</h2>
             </div>
 
             <HeroInfo raffle={raffle} tickets={tickets} />
@@ -134,16 +167,16 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                   <summary onClick={event => {
                     event.preventDefault();
                     setOpenFaq(current => current === 'como-funciona' ? null : 'como-funciona');
-                  }}>&iquest;C&oacute;mo funciona?</summary>
-                  <p>Elige uno o varios n&uacute;meros disponibles, registra tus datos y finaliza tu participaci&oacute;n. Te confirmaremos tus boletos y quedar&aacute;n apartados para el sorteo.</p>
+                  }}>{text.howWorks}</summary>
+                  <p>{text.howWorksBody}</p>
                 </details>
 
                 <details open={openFaq === 'fecha-sorteo'}>
                   <summary onClick={event => {
                     event.preventDefault();
                     setOpenFaq(current => current === 'fecha-sorteo' ? null : 'fecha-sorteo');
-                  }}>&iquest;Cu&aacute;ndo ser&aacute; el sorteo?</summary>
-                  <p>La fecha publicada en la rifa es la referencia principal. Si el boletaje no llega al m&iacute;nimo requerido, te avisaremos cualquier ajuste con anticipaci&oacute;n.</p>
+                  }}>{text.whenDraw}</summary>
+                  <p>{text.whenDrawBody}</p>
                 </details>
               </div>
 
@@ -152,16 +185,16 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                   <summary onClick={event => {
                     event.preventDefault();
                     setOpenFaq(current => current === 'ganador' ? null : 'ganador');
-                  }}>&iquest;C&oacute;mo se decidir&aacute; al ganador?</summary>
-                  <p>El ganador ser&aacute; el participante que tenga los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la rifa de Loter&iacute;a Nacional correspondiente a la semana indicada. Usamos ese resultado verificable para que todos puedan revisar la transparencia del sorteo.</p>
+                  }}>{text.winnerHow}</summary>
+                  <p>{text.winnerHowBody}</p>
                 </details>
 
                 <details open={openFaq === 'entrega'}>
                   <summary onClick={event => {
                     event.preventDefault();
                     setOpenFaq(current => current === 'entrega' ? null : 'entrega');
-                  }}>&iquest;C&oacute;mo entregamos el reloj?</summary>
-                  <p>Coordinamos la entrega directamente con el ganador. Puede ser entrega presencial o env&iacute;o asegurado, seg&uacute;n la ubicaci&oacute;n y acuerdo con el participante.</p>
+                  }}>{text.delivery}</summary>
+                  <p>{text.deliveryBody}</p>
                 </details>
               </div>
             </div>
@@ -174,11 +207,12 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               <NumberGrid
                 tickets={tickets}
                 onSelectNumber={handleSelectNumber}
+                labels={text}
               />
             </section>
 
             <section className={styles.paymentStrip} aria-label="Formas de pago">
-              <p>Comprar es f&aacute;cil, r&aacute;pido y seguro.</p>
+              <p>{text.easyPay}</p>
               <div>
                 <span className={`${styles.paymentLogo} ${styles.visaLogo}`}>VISA</span>
                 <span className={`${styles.paymentLogo} ${styles.mastercardLogo}`}><i />Mastercard</span>
@@ -190,7 +224,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
                 onClick={handleOpenCheckout}
                 disabled={selectedNumbers.length === 0}
               >
-                {selectedNumbers.length > 0 ? 'Comprar ahora' : 'Elige un número para pagar'}
+                {selectedNumbers.length > 0 ? text.buyNow : text.chooseToPay}
               </button>
             </section>
 
@@ -198,15 +232,15 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               <div className={styles.floatingAction}>
                 <div className={styles.checkoutBar}>
                   <div>
-                    <span>Tus n&uacute;meros</span>
+                    <span>{text.yourNumbers}</span>
                     <strong>{selectedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}</strong>
                   </div>
                   <div>
-                    <span>Total estimado</span>
+                    <span>{text.estimatedTotal}</span>
                     <strong>${selectedTotal.toLocaleString()} MXN</strong>
                   </div>
                   <button className={styles.checkoutBtn} onClick={handleOpenCheckout}>
-                    Comprar ahora
+                    {text.buyNow}
                   </button>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { authOptions } from '../../auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { releaseExpiredReservations } from '@/lib/ticketReservations';
 import { getTicketUnitPrice } from '@/lib/pricing';
+import { applyCouponToUnitPrice, isCouponUsable, normalizeCouponCode } from '@/lib/coupons';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import Stripe from 'stripe';
@@ -80,7 +81,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Stripe no está configurado en el servidor.' }, { status: 500 });
     }
 
-    const { raffleId, numbers, customer } = await req.json();
+    const { raffleId, numbers, customer, couponCode } = await req.json();
     const checkoutUser = await getOrCreateCheckoutUser(session, customer);
     if (!checkoutUser) {
       return NextResponse.json({ error: 'No se pudo preparar el comprador' }, { status: 400 });
@@ -100,7 +101,18 @@ export async function POST(req) {
     const now = new Date();
     await releaseExpiredReservations(raffleId);
 
-    const unitPrice = getTicketUnitPrice(raffle, normalizedNumbers.length);
+    const originalUnitPrice = getTicketUnitPrice(raffle, normalizedNumbers.length);
+    const normalizedCouponCode = normalizeCouponCode(couponCode);
+    let coupon = null;
+
+    if (normalizedCouponCode) {
+      coupon = await prisma.coupon.findUnique({ where: { code: normalizedCouponCode } });
+      if (!isCouponUsable(coupon)) {
+        return NextResponse.json({ error: 'Cupón inválido, vencido o desactivado.' }, { status: 400 });
+      }
+    }
+
+    const unitPrice = coupon ? applyCouponToUnitPrice(originalUnitPrice, coupon) : originalUnitPrice;
     const appUrl = getAppUrl();
 
     const previousReservations = await prisma.ticket.findMany({
@@ -134,6 +146,8 @@ export async function POST(req) {
         status: 'AVAILABLE',
         userId: null,
         pricePaid: null,
+        couponCode: null,
+        discountPercent: null,
         stripeSessionId: null,
         reservedAt: null,
       },
@@ -151,6 +165,8 @@ export async function POST(req) {
         userId: checkoutUser.id,
         raffleId: raffle.id,
         numbers: JSON.stringify(normalizedNumbers),
+        couponCode: coupon?.code || '',
+        discountPercent: coupon?.discountPercent ? String(coupon.discountPercent) : '',
       },
       line_items: [
         {
@@ -158,7 +174,10 @@ export async function POST(req) {
             currency: 'mxn',
             product_data: {
               name: `Mazal Time - ${raffle.watchName || raffle.title}`,
-              description: `Boleto(s): ${normalizedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}`,
+              description: [
+                `Boleto(s): ${normalizedNumbers.map(number => number.toString().padStart(2, '0')).join(', ')}`,
+                coupon ? `Cupón ${coupon.code}: ${coupon.discountPercent}% de descuento` : '',
+              ].filter(Boolean).join(' | '),
             },
             unit_amount: unitPrice * 100,
           },
@@ -177,6 +196,8 @@ export async function POST(req) {
         status: 'RESERVED',
         userId: checkoutUser.id,
         pricePaid: unitPrice,
+        couponCode: coupon?.code || null,
+        discountPercent: coupon?.discountPercent || null,
         stripeSessionId: checkoutSession.id,
         reservedAt: now,
       },
@@ -189,6 +210,8 @@ export async function POST(req) {
           status: 'AVAILABLE',
           userId: null,
           pricePaid: null,
+          couponCode: null,
+          discountPercent: null,
           stripeSessionId: null,
           reservedAt: null,
         },

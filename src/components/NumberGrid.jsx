@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import styles from './NumberGrid.module.css';
 
-export default function NumberGrid({ tickets, onSelectNumber }) {
+export default function NumberGrid({ tickets, onSelectNumber, labels = {} }) {
   const [selectedNumbers, setSelectedNumbers] = useState([]);
 
   const allTickets = tickets || Array.from({ length: 100 }).map((_, i) => ({
@@ -29,12 +29,12 @@ export default function NumberGrid({ tickets, onSelectNumber }) {
 
   return (
     <div className={styles.gridContainer}>
-      <h3 className={styles.title}>Elige tu boleto y agrega al carrito</h3>
-      <p className={styles.subtitle}>N&uacute;meros disponibles</p>
+      <h3 className={styles.title}>{labels.chooseTicket || 'Elige tu boleto y agrega al carrito'}</h3>
+      <p className={styles.subtitle}>{labels.availableNumbers || 'Números disponibles'}</p>
       <div className={styles.statusLegend}>
-        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.available}`}></div> Disponible</div>
-        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.selected}`}></div> Seleccionado</div>
-        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.sold}`}></div> No disponible</div>
+        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.available}`}></div> {labels.available || 'Disponible'}</div>
+        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.selected}`}></div> {labels.selected || 'Seleccionado'}</div>
+        <div className={styles.legendItem}><div className={`${styles.dot} ${styles.sold}`}></div> {labels.unavailable || 'No disponible'}</div>
       </div>
 
       <div className={styles.grid}>

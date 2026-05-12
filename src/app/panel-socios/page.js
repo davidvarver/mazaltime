@@ -33,6 +33,12 @@ async function getPanelData(adminSession) {
       where: { isActive: false },
       orderBy: { drawDate: 'desc' },
     });
+    const coupons = loggedAdmin?.username === 'eliahu'
+      ? await prisma.coupon.findMany({
+        orderBy: [{ isActive: 'desc' }, { expiresAt: 'desc' }],
+        include: { createdByAdmin: { select: { name: true, username: true } } },
+      })
+      : [];
 
     const soldTickets = await prisma.ticket.findMany({
       where: { status: 'SOLD' },
@@ -45,11 +51,11 @@ async function getPanelData(adminSession) {
       orderBy: { updatedAt: 'desc' },
     });
 
-    return { raffle, admins, pastRaffles, loggedAdmin, buyerInsights: buildBuyerInsights(soldTickets, raffle?.id) };
+    return { raffle, admins, pastRaffles, loggedAdmin, buyerInsights: buildBuyerInsights(soldTickets, raffle?.id), coupons };
   } catch (error) {
     console.error('Admin panel database error:', error);
 
-    return { raffle: null, admins: [], pastRaffles: [], loggedAdmin: null, buyerInsights: [] };
+    return { raffle: null, admins: [], pastRaffles: [], loggedAdmin: null, buyerInsights: [], coupons: [] };
   }
 }
 
@@ -61,7 +67,7 @@ export default async function SociosPanelPage() {
     redirect('/panel-socios/login');
   }
 
-  const { raffle, admins, pastRaffles, loggedAdmin, buyerInsights } = await getPanelData(adminSession);
+  const { raffle, admins, pastRaffles, loggedAdmin, buyerInsights, coupons } = await getPanelData(adminSession);
 
   if (!loggedAdmin) {
     redirect('/panel-socios/login');
@@ -82,6 +88,7 @@ export default async function SociosPanelPage() {
         loggedAdminName={loggedAdmin.name}
         loggedAdminUsername={loggedAdmin.username}
         buyerInsights={buyerInsights}
+        coupons={coupons}
       />
     </div>
   );

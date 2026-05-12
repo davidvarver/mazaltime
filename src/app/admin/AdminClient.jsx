@@ -24,7 +24,19 @@ function normalizeRaffleForm(raffle = {}) {
   };
 }
 
-export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', loggedAdminName = '', loggedAdminUsername = '', buyerInsights = [] }) {
+function getExpiryDateValue(option, raffle) {
+  const date = new Date();
+
+  if (option === 'DRAW_DATE' && raffle?.drawDate) {
+    return getDateOnlyValue(raffle.drawDate);
+  }
+
+  const days = parseInt(option, 10);
+  date.setDate(date.getDate() + (Number.isInteger(days) ? days : 7));
+  return date.toISOString().slice(0, 10);
+}
+
+export default function AdminClient({ raffle: initialRaffle, tickets: initialTickets, admins, pastRaffles = [], loggedAdminId = '', loggedAdminName = '', loggedAdminUsername = '', buyerInsights = [], coupons = [] }) {
   const router = useRouter();
   const currentAdminId = loggedAdminId;
   const canManageAdmins = loggedAdminUsername === 'eliahu';
@@ -58,6 +70,13 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   const [buyerFilter, setBuyerFilter] = useState('ALL');
   const [adminList, setAdminList] = useState(admins);
   const [newAdminData, setNewAdminData] = useState({ name: '', username: '', password: '' });
+  const [couponList, setCouponList] = useState(coupons);
+  const [couponExpiryOption, setCouponExpiryOption] = useState('7');
+  const [newCouponData, setNewCouponData] = useState({
+    code: '',
+    discountPercent: 10,
+    expiresAt: getExpiryDateValue('7', initialRaffle),
+  });
 
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -344,6 +363,53 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     }
   };
 
+  const handleCouponExpiryChange = (option) => {
+    setCouponExpiryOption(option);
+    if (option !== 'CUSTOM') {
+      setNewCouponData(prev => ({ ...prev, expiresAt: getExpiryDateValue(option, raffle) }));
+    }
+  };
+
+  const handleCreateCoupon = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch('/api/admin/coupons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCouponData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear cupón');
+
+      setCouponList(prev => [data.coupon, ...prev]);
+      setNewCouponData({
+        code: '',
+        discountPercent: 10,
+        expiresAt: getExpiryDateValue(couponExpiryOption, raffle),
+      });
+      alert('Cupón creado correctamente.');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleToggleCoupon = async (coupon) => {
+    try {
+      const res = await fetch('/api/admin/coupons', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: coupon.id, isActive: !coupon.isActive }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al actualizar cupón');
+
+      setCouponList(prev => prev.map(item => item.id === coupon.id ? data.coupon : item));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const updatePastRaffleForm = (id, updates) => {
     setPastRaffleForms(prev =>
       prev.map(pastRaffle => pastRaffle.id === id ? { ...pastRaffle, ...updates } : pastRaffle)
@@ -517,6 +583,79 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                         ) : (
                           <span className={styles.ownerBadge}>Due\u00f1o</span>
                         )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            )}
+
+            {canManageAdmins && (
+              <details className={styles.adminManagementCard} open={openPanel === 'coupons'}>
+                <summary
+                  className={styles.panelSummary}
+                  onClick={e => {
+                    e.preventDefault();
+                    setOpenPanel(openPanel === 'coupons' ? '' : 'coupons');
+                  }}
+                >
+                  Cupones de descuento
+                </summary>
+                <div className={styles.sectionHeader}>
+                  <p>Solo Eliahu puede crear cupones. En la compra el cliente puede usar solo un cup&oacute;n.</p>
+                </div>
+                <div className={styles.adminManagementGrid}>
+                  <form onSubmit={handleCreateCoupon} className={styles.editForm}>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Palabra del cup&oacute;n (ej: MAZAL10)"
+                      value={newCouponData.code}
+                      onChange={e => setNewCouponData(prev => ({ ...prev, code: e.target.value.toUpperCase().replace(/\s+/g, '') }))}
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      max="90"
+                      required
+                      placeholder="% de descuento"
+                      value={newCouponData.discountPercent}
+                      onChange={e => setNewCouponData(prev => ({ ...prev, discountPercent: parseInt(e.target.value, 10) }))}
+                    />
+                    <select className={styles.select} value={couponExpiryOption} onChange={e => handleCouponExpiryChange(e.target.value)}>
+                      <option value="7">Expira en 7 d&iacute;as</option>
+                      <option value="14">Expira en 14 d&iacute;as</option>
+                      <option value="30">Expira en 30 d&iacute;as</option>
+                      <option value="DRAW_DATE">Expira el d&iacute;a del sorteo</option>
+                      <option value="CUSTOM">Elegir fecha manual</option>
+                    </select>
+                    <input
+                      type="date"
+                      required
+                      value={newCouponData.expiresAt}
+                      disabled={couponExpiryOption !== 'CUSTOM'}
+                      onChange={e => setNewCouponData(prev => ({ ...prev, expiresAt: e.target.value }))}
+                    />
+                    <button type="submit" className={styles.saveBtn}>Crear cup&oacute;n</button>
+                  </form>
+
+                  <div className={styles.adminList}>
+                    {couponList.length === 0 ? (
+                      <div className={styles.emptyState}>No hay cupones creados.</div>
+                    ) : couponList.map(coupon => (
+                      <div key={coupon.id} className={styles.adminListRow}>
+                        <div>
+                          <strong>{coupon.code}</strong>
+                          <span>
+                            {coupon.discountPercent}% descuento · expira {getDateOnlyValue(coupon.expiresAt)}
+                          </span>
+                          <span className={coupon.isActive ? styles.ownerBadge : styles.customerINACTIVE}>
+                            {coupon.isActive ? 'Activo' : 'Desactivado'}
+                          </span>
+                        </div>
+                        <button type="button" className={coupon.isActive ? styles.endBtn : styles.saveBtn} onClick={() => handleToggleCoupon(coupon)}>
+                          {coupon.isActive ? 'Desactivar' : 'Activar'}
+                        </button>
                       </div>
                     ))}
                   </div>

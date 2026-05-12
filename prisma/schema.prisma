@@ -20,6 +20,7 @@ model Admin {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tickets   Ticket[]
+  coupons   Coupon[]
 }
 
 model User {
@@ -73,6 +74,8 @@ model Ticket {
   buyerPhone  String?
   notes       String?
   pricePaid   Int?    // Actual price charged for this ticket (MXN)
+  couponCode  String?
+  discountPercent Int?
   stripeSessionId String?
   reservedAt  DateTime?
   
@@ -84,4 +87,16 @@ model Ticket {
   updatedAt   DateTime @updatedAt
 
   @@unique([raffleId, number])
+}
+
+model Coupon {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  discountPercent Int
+  expiresAt DateTime
+  isActive  Boolean  @default(true)
+  createdByAdminId String?
+  createdByAdmin Admin? @relation(fields: [createdByAdminId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

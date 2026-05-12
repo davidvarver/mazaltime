@@ -44,6 +44,8 @@ export async function GET(req) {
         status: 'AVAILABLE',
         userId: null,
         pricePaid: null,
+        couponCode: null,
+        discountPercent: null,
         stripeSessionId: null,
         reservedAt: null,
       },
