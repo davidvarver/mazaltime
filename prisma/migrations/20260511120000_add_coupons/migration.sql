@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS "Coupon" (
+CREATE TABLE IF NOT EXISTS "Coupon" (
   "id" TEXT NOT NULL,
   "code" TEXT NOT NULL,
   "discountPercent" INTEGER NOT NULL,
