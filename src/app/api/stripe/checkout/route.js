@@ -6,7 +6,6 @@ import { releaseExpiredReservations } from '@/lib/ticketReservations';
 import { getTicketUnitPrice } from '@/lib/pricing';
 import { applyCouponToUnitPrice, isCouponUsable, normalizeCouponCode } from '@/lib/coupons';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 import Stripe from 'stripe';
 
 const STRIPE_SESSION_MINUTES = 31;
@@ -43,6 +42,7 @@ async function getOrCreateCheckoutUser(session, customer = {}) {
   const email = normalizeEmail(customer.email);
   const name = String(customer.name || '').trim();
   const phone = String(customer.phone || '').trim();
+  const password = String(customer.password || '');
 
   if (!email || !name || !phone) {
     throw new Error('Nombre, correo y WhatsApp son requeridos');
@@ -51,24 +51,31 @@ async function getOrCreateCheckoutUser(session, customer = {}) {
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
-    if (!existingUser.phone && phone) {
+    if ((!existingUser.phone && phone) || (!existingUser.name && name)) {
       return prisma.user.update({
         where: { id: existingUser.id },
-        data: { phone },
+        data: {
+          ...(existingUser.phone ? {} : { phone }),
+          ...(existingUser.name ? {} : { name }),
+        },
       });
     }
 
     return existingUser;
   }
 
-  const temporaryPassword = await bcrypt.hash(crypto.randomUUID(), 10);
+  if (password.length < 8) {
+    throw new Error('Crea una contraseña de mínimo 8 caracteres para registrar tu cuenta.');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   return prisma.user.create({
     data: {
       name,
       email,
       phone,
-      password: temporaryPassword,
+      password: hashedPassword,
     },
   });
 }

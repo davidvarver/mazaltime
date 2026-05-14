@@ -74,6 +74,22 @@
   font-size: 1rem;
 }
 
+.fieldHint,
+.fieldHintSuccess {
+  margin: 0.1rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.fieldHint {
+  color: var(--color-text-muted);
+}
+
+.fieldHintSuccess {
+  color: #4ade80;
+}
+
 .couponBox {
   display: grid;
   gap: 0.55rem;

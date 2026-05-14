@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getTicketUnitPrice } from '@/lib/pricing';
 import styles from './CheckoutModal.module.css';
 
 export default function CheckoutModal({ selectedNumbers, raffle, session, onClose, onSubmit }) {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
+  const [emailStatus, setEmailStatus] = useState('idle');
   const [couponCode, setCouponCode] = useState('');
   const [couponResult, setCouponResult] = useState(null);
   const [couponMessage, setCouponMessage] = useState('');
@@ -12,10 +13,46 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
   const [isLoading, setIsLoading] = useState(false);
 
   const count = selectedNumbers.length;
-  if (count === 0) return null;
-
   const originalTotal = count * getTicketUnitPrice(raffle, count);
   const total = couponResult?.discountedTotal ?? originalTotal;
+  const shouldAskPassword = !session && emailStatus === 'new';
+
+  const handleEmailChange = (event) => {
+    const email = event.target.value;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase());
+
+    setFormData({...formData, email});
+    setEmailStatus(isValidEmail ? 'checking' : 'idle');
+  };
+
+  useEffect(() => {
+    if (session) return undefined;
+
+    const email = formData.email.trim().toLowerCase();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail) return undefined;
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const res = await fetch('/api/auth/email-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'No se pudo revisar el correo');
+        setEmailStatus(data.exists ? 'existing' : 'new');
+      } catch {
+        setEmailStatus('idle');
+      }
+    }, 450);
+
+    return () => window.clearTimeout(timer);
+  }, [formData.email, session]);
+
+  if (count === 0) return null;
 
   const handleApplyCoupon = async () => {
     setIsCheckingCoupon(true);
@@ -71,12 +108,29 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
               </div>
               <div className={styles.formGroup}>
                 <label>Correo electrónico</label>
-                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="tu@correo.com" />
+                <input type="email" required value={formData.email} onChange={handleEmailChange} placeholder="tu@correo.com" />
+                {emailStatus === 'checking' && <p className={styles.fieldHint}>Revisando correo...</p>}
+                {emailStatus === 'existing' && <p className={styles.fieldHintSuccess}>Correo registrado. No necesitas crear contraseña.</p>}
+                {emailStatus === 'new' && <p className={styles.fieldHint}>Correo nuevo. Crea una contraseña para guardar tus boletos.</p>}
               </div>
               <div className={styles.formGroup}>
                 <label>Teléfono (WhatsApp)</label>
                 <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="10 dígitos" />
               </div>
+              {shouldAskPassword && (
+                <div className={styles.formGroup}>
+                  <label>Crear contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={formData.password}
+                    onChange={e => setFormData({...formData, password: e.target.value})}
+                    placeholder="Mínimo 8 caracteres"
+                  />
+                  <p className={styles.fieldHint}>Con esta contraseña podrás entrar después a Mis Boletos.</p>
+                </div>
+              )}
             </>
           )}
 
@@ -110,7 +164,7 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
             </span>
           </div>
 
-          <button type="submit" className={styles.submitBtn} disabled={isLoading}>
+          <button type="submit" className={styles.submitBtn} disabled={isLoading || emailStatus === 'checking'}>
             {isLoading ? 'Procesando...' : 'Pagar con tarjeta'}
           </button>
         </form>
