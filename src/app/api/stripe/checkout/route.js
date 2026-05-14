@@ -44,24 +44,30 @@ async function getOrCreateCheckoutUser(session, customer = {}) {
   const phone = String(customer.phone || '').trim();
   const password = String(customer.password || '');
 
-  if (!email || !name || !phone) {
-    throw new Error('Nombre, correo y WhatsApp son requeridos');
+  if (!email) {
+    throw new Error('Correo requerido');
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
-    if ((!existingUser.phone && phone) || (!existingUser.name && name)) {
+    const missingUpdates = {
+      ...(existingUser.phone || !phone ? {} : { phone }),
+      ...(existingUser.name || !name ? {} : { name }),
+    };
+
+    if (Object.keys(missingUpdates).length > 0) {
       return prisma.user.update({
         where: { id: existingUser.id },
-        data: {
-          ...(existingUser.phone ? {} : { phone }),
-          ...(existingUser.name ? {} : { name }),
-        },
+        data: missingUpdates,
       });
     }
 
     return existingUser;
+  }
+
+  if (!name || !phone) {
+    throw new Error('Nombre y WhatsApp son requeridos para registrar tu cuenta.');
   }
 
   if (password.length < 8) {
@@ -164,7 +170,7 @@ export async function POST(req) {
       mode: 'payment',
       payment_method_types: ['card'],
       locale: 'es-419',
-      success_url: `${appUrl}/mis-boletos?success=true`,
+      success_url: `${appUrl}/compra-exitosa?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/api/stripe/cancel?session_id={CHECKOUT_SESSION_ID}`,
       customer_email: checkoutUser.email,
       expires_at: Math.floor(Date.now() / 1000) + STRIPE_SESSION_MINUTES * 60,

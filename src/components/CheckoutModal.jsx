@@ -15,13 +15,16 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
   const count = selectedNumbers.length;
   const originalTotal = count * getTicketUnitPrice(raffle, count);
   const total = couponResult?.discountedTotal ?? originalTotal;
-  const shouldAskPassword = !session && emailStatus === 'new';
+  const isGuest = !session;
+  const isExistingEmail = isGuest && emailStatus === 'existing';
+  const isNewEmail = isGuest && emailStatus === 'new';
+  const canSubmit = !isLoading && emailStatus !== 'checking' && (!isGuest || emailStatus === 'existing' || emailStatus === 'new');
 
   const handleEmailChange = (event) => {
     const email = event.target.value;
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase());
 
-    setFormData({...formData, email});
+    setFormData({ ...formData, email });
     setEmailStatus(isValidEmail ? 'checking' : 'idle');
   };
 
@@ -70,11 +73,11 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Cupón inválido');
+      if (!res.ok) throw new Error(data.error || 'Cup?n inv?lido');
 
       setCouponResult(data);
       setCouponCode(data.coupon.code);
-      setCouponMessage(`Cupón aplicado: ${data.coupon.discountPercent}% de descuento.`);
+      setCouponMessage(`Cup?n aplicado: ${data.coupon.discountPercent}% de descuento.`);
     } catch (error) {
       setCouponMessage(error.message);
     } finally {
@@ -92,50 +95,53 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
   return (
     <div className={styles.overlay}>
       <div className={`${styles.modal} glass`}>
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
+        <button className={styles.closeBtn} onClick={onClose}>?</button>
         <h2>Completar compra</h2>
         <p className={styles.subtitle}>
-          Estás comprando <strong>{count}</strong> {count === 1 ? 'número' : 'números'}:
+          Est?s comprando <strong>{count}</strong> {count === 1 ? 'n?mero' : 'n?meros'}:
           <span className={styles.numbersList}> {selectedNumbers.map(n => n.toString().padStart(2, '0')).join(', ')}</span>
         </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          {!session && (
+          {isGuest && (
             <>
               <div className={styles.formGroup}>
-                <label>Nombre completo</label>
-                <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Ej. Juan Pérez" />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Correo electrónico</label>
-                <input type="email" required value={formData.email} onChange={handleEmailChange} placeholder="tu@correo.com" />
+                <label>Correo electr?nico</label>
+                <input type="email" required value={formData.email} onChange={handleEmailChange} placeholder="tu@correo.com" autoFocus />
                 {emailStatus === 'checking' && <p className={styles.fieldHint}>Revisando correo...</p>}
-                {emailStatus === 'existing' && <p className={styles.fieldHintSuccess}>Correo registrado. No necesitas crear contraseña.</p>}
-                {emailStatus === 'new' && <p className={styles.fieldHint}>Correo nuevo. Crea una contraseña para guardar tus boletos.</p>}
+                {isExistingEmail && <p className={styles.fieldHintSuccess}>Correo registrado. Continuamos sin pedir nombre, tel?fono ni contrase?a.</p>}
+                {isNewEmail && <p className={styles.fieldHint}>Correo nuevo. Completa tus datos para guardar tus boletos.</p>}
               </div>
-              <div className={styles.formGroup}>
-                <label>Teléfono (WhatsApp)</label>
-                <input type="tel" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="10 dígitos" />
-              </div>
-              {shouldAskPassword && (
-                <div className={styles.formGroup}>
-                  <label>Crear contraseña</label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    value={formData.password}
-                    onChange={e => setFormData({...formData, password: e.target.value})}
-                    placeholder="Mínimo 8 caracteres"
-                  />
-                  <p className={styles.fieldHint}>Con esta contraseña podrás entrar después a Mis Boletos.</p>
-                </div>
+
+              {isNewEmail && (
+                <>
+                  <div className={styles.formGroup}>
+                    <label>Nombre completo</label>
+                    <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Ej. Juan P?rez" />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Tel?fono (WhatsApp)</label>
+                    <input type="tel" required value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="10 d?gitos" />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Crear contrase?a</label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      value={formData.password}
+                      onChange={e => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="M?nimo 8 caracteres"
+                    />
+                    <p className={styles.fieldHint}>Con esta contrase?a podr?s entrar despu?s a Mis Boletos.</p>
+                  </div>
+                </>
               )}
             </>
           )}
 
           <div className={styles.couponBox}>
-            <label>Cupón de descuento</label>
+            <label>Cup?n de descuento</label>
             <div className={styles.couponRow}>
               <input
                 type="text"
@@ -164,7 +170,7 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
             </span>
           </div>
 
-          <button type="submit" className={styles.submitBtn} disabled={isLoading || emailStatus === 'checking'}>
+          <button type="submit" className={styles.submitBtn} disabled={!canSubmit}>
             {isLoading ? 'Procesando...' : 'Pagar con tarjeta'}
           </button>
         </form>
