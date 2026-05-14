@@ -204,6 +204,13 @@
   background: #fffcf5;
 }
 
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
 .adminListRow strong,
 .adminListRow span {
   display: block;

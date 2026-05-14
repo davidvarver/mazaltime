@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
 import { sendWhatsAppConfirmation } from '@/lib/whatsapp';
+import { sendPurchaseConfirmationEmail } from '@/lib/email';
 
 function getStripe() {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -52,35 +53,49 @@ async function markTicketsSold(session) {
     },
   });
 
-  // Send WhatsApp confirmation — fire-and-forget (never blocks)
+  // Confirmations are fire-and-forget so Stripe never retries because of email/WhatsApp.
   try {
     const [user, raffle, tickets] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId }, select: { name: true, phone: true } }),
+      prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true, phone: true } }),
       prisma.raffle.findUnique({ where: { id: raffleId }, select: { watchName: true } }),
       prisma.ticket.findMany({
         where: { raffleId, number: { in: numbers }, userId },
-        select: { pricePaid: true },
+        select: { pricePaid: true, couponCode: true },
         take: 1,
       }),
     ]);
 
-    if (user?.phone && raffle) {
+    if (user && raffle) {
       const pricePaid = tickets[0]?.pricePaid || 0;
       const totalMxn = pricePaid * numbers.length;
 
-      sendWhatsAppConfirmation({
-        buyerName:  user.name,
-        buyerPhone: user.phone,
-        watchName:  raffle.watchName,
-        numbers,
-        totalMxn,
-      }); // intentionally not awaited
+      if (user.phone) {
+        sendWhatsAppConfirmation({
+          buyerName: user.name,
+          buyerPhone: user.phone,
+          watchName: raffle.watchName,
+          numbers,
+          totalMxn,
+        });
+      }
+
+      if (user.email) {
+        sendPurchaseConfirmationEmail({
+          to: user.email,
+          buyerName: user.name,
+          watchName: raffle.watchName,
+          numbers,
+          totalMxn,
+          couponCode: tickets[0]?.couponCode || '',
+        }).catch(emailErr => {
+          console.error('[Email] Error sending purchase confirmation:', emailErr.message);
+        });
+      }
     }
-  } catch (waErr) {
-    console.error('[WhatsApp] Error preparing data:', waErr.message);
+  } catch (confirmationErr) {
+    console.error('[Confirmation] Error preparing data:', confirmationErr.message);
   }
 }
-
 
 async function releaseReservedTickets(session) {
   await prisma.ticket.updateMany({

@@ -52,6 +52,7 @@ export default function LoginPage() {
             <label>Contrase&ntilde;a</label>
             <input type="password" required value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
           </div>
+          <Link href="/recuperar-contrasena" className={styles.link}>Olvid&eacute; mi contrase&ntilde;a</Link>
           <button type="submit" disabled={loading} className={styles.submitBtn}>
             {loading ? 'Iniciando...' : 'Entrar'}
           </button>

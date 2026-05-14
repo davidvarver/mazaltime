@@ -410,6 +410,25 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
     }
   };
 
+  const handleDeleteCoupon = async (coupon) => {
+    const confirmed = confirm(`¿Eliminar permanentemente el cupón ${coupon.code}?`);
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch('/api/admin/coupons', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: coupon.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al eliminar cupón');
+
+      setCouponList(prev => prev.filter(item => item.id !== coupon.id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const updatePastRaffleForm = (id, updates) => {
     setPastRaffleForms(prev =>
       prev.map(pastRaffle => pastRaffle.id === id ? { ...pastRaffle, ...updates } : pastRaffle)
@@ -653,9 +672,14 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                             {coupon.isActive ? 'Activo' : 'Desactivado'}
                           </span>
                         </div>
-                        <button type="button" className={coupon.isActive ? styles.endBtn : styles.saveBtn} onClick={() => handleToggleCoupon(coupon)}>
-                          {coupon.isActive ? 'Desactivar' : 'Activar'}
-                        </button>
+                        <div className={styles.rowActions}>
+                          <button type="button" className={coupon.isActive ? styles.endBtn : styles.saveBtn} onClick={() => handleToggleCoupon(coupon)}>
+                            {coupon.isActive ? 'Desactivar' : 'Activar'}
+                          </button>
+                          <button type="button" className={styles.endBtn} onClick={() => handleDeleteCoupon(coupon)}>
+                            Eliminar
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

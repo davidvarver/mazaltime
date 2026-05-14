@@ -107,3 +107,22 @@ export async function PATCH(req) {
     return NextResponse.json({ error: 'Error al actualizar cupón.' }, { status: 500 });
   }
 }
+
+export async function DELETE(req) {
+  try {
+    const { admin, error } = await getAuthorizedAdmin(req);
+    if (error) return error;
+    if (!requireEliahu(admin)) return NextResponse.json({ error: 'Solo Eliahu puede eliminar cupones.' }, { status: 403 });
+
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Cupón inválido.' }, { status: 400 });
+    }
+
+    await prisma.coupon.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Coupons DELETE error:', error);
+    return NextResponse.json({ error: 'Error al eliminar cupón.' }, { status: 500 });
+  }
+}
