@@ -50,6 +50,43 @@
   margin: 0 auto;
 }
 
+.successBanner {
+  margin: clamp(1.25rem, 3vw, 2rem) auto 0;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(212, 175, 55, 0.22), transparent 18rem),
+    linear-gradient(135deg, #ffffff 0%, #fff8e8 100%);
+  box-shadow: 0 22px 52px rgba(23, 38, 50, 0.1);
+  text-align: center;
+}
+
+.successBanner span {
+  color: var(--gold-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.successBanner h2 {
+  margin: 0.35rem 0;
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.successBanner p {
+  max-width: 680px;
+  margin: 0.7rem auto 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
 .hero {
   padding: clamp(2rem, 5vw, 4rem) 0 1.5rem;
   text-align: center;

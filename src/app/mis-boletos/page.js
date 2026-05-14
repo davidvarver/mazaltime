@@ -1,4 +1,4 @@
-import { getServerSession } from 'next-auth';
+﻿import { getServerSession } from 'next-auth';
 import { authOptions } from '../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
@@ -11,8 +11,10 @@ import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 
 export const revalidate = 0;
 
-export default async function MisBoletosPage() {
+export default async function MisBoletosPage({ searchParams }) {
   const session = await getServerSession(authOptions);
+  const params = await searchParams;
+  const isSuccess = params?.success === 'true';
 
   if (!session) {
     redirect('/login');
@@ -53,15 +55,23 @@ export default async function MisBoletosPage() {
       </header>
 
       <main className={styles.main}>
+        {isSuccess && (
+          <section className={styles.successBanner}>
+            <span>Compra exitosa</span>
+            <h2>Gracias por participar.</h2>
+            <p>Tu pago fue confirmado y tus numeros ya quedaron registrados. Tambien te mandamos la confirmacion por correo.</p>
+          </section>
+        )}
+
         <section className={styles.hero}>
           <span>Participaciones</span>
           <h1>Mis boletos</h1>
-          <p>Revisa tus números confirmados y el sorteo al que pertenecen.</p>
+          <p>Revisa tus numeros confirmados y el sorteo al que pertenecen.</p>
         </section>
 
         {raffles.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>Aún no has comprado boletos para ninguna rifa.</p>
+            <p>Aun no has comprado boletos para ninguna rifa.</p>
             <Link href="/" className={styles.btnPrimary}>Ver rifa activa</Link>
           </div>
         ) : (
@@ -74,12 +84,12 @@ export default async function MisBoletosPage() {
                     <h2>{getRaffleWatchTitle(raffle)}</h2>
                   </div>
                   <p className={styles.drawDate}>
-                    Sorteo: {formatDateOnly(raffle.drawDate)} · {raffle.zodiacSign}
+                    Sorteo: {formatDateOnly(raffle.drawDate)} - {raffle.zodiacSign}
                   </p>
                 </div>
 
                 <div className={styles.ticketsSection}>
-                  <h3>Tus números ({tickets.length})</h3>
+                  <h3>Tus numeros ({tickets.length})</h3>
                   <div className={styles.numbersGrid}>
                     {tickets.map(t => (
                       <div key={t.id} className={`${styles.numberBadge} ${styles[t.status.toLowerCase()]}`}>

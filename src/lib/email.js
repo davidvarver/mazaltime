@@ -1,4 +1,4 @@
-function getAppUrl() {
+﻿function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://mazaltime.com.mx';
 }
 
@@ -17,7 +17,7 @@ function formatNumbers(numbers = []) {
 export async function sendEmail({ to, subject, html, text }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn('[Email] RESEND_API_KEY no configurado. No se envió:', subject);
+    console.warn('[Email] RESEND_API_KEY no configurado. No se envio:', subject);
     return { skipped: true };
   }
 
@@ -47,15 +47,15 @@ export async function sendEmail({ to, subject, html, text }) {
 export async function sendPasswordResetEmail({ to, name, resetUrl }) {
   return sendEmail({
     to,
-    subject: 'Recupera tu contraseña de Mazal Time',
-    text: `Hola ${name || ''}. Usa este enlace para cambiar tu contraseña: ${resetUrl}. El enlace vence en 1 hora.`,
+    subject: 'Recupera tu contrasena de Mazal Time',
+    text: `Hola ${name || ''}. Usa este enlace para cambiar tu contrasena: ${resetUrl}. El enlace vence en 1 hora.`,
     html: `
       <div style="font-family:Arial,sans-serif;color:#172632;line-height:1.6">
-        <h1 style="margin:0 0 12px;color:#172632">Recupera tu contraseña</h1>
-        <p>Hola ${name || ''}, recibimos una solicitud para cambiar la contraseña de tu cuenta en Mazal Time.</p>
+        <h1 style="margin:0 0 12px;color:#172632">Recupera tu contrasena</h1>
+        <p>Hola ${name || ''}, recibimos una solicitud para cambiar la contrasena de tu cuenta en Mazal Time.</p>
         <p>Este enlace vence en 1 hora:</p>
-        <p><a href="${resetUrl}" style="display:inline-block;background:#d4af37;color:#0c2d3f;padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none">Cambiar contraseña</a></p>
-        <p>Si tú no pediste este cambio, puedes ignorar este correo.</p>
+        <p><a href="${resetUrl}" style="display:inline-block;background:#d4af37;color:#0c2d3f;padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none">Cambiar contrasena</a></p>
+        <p>Si tu no pediste este cambio, puedes ignorar este correo.</p>
       </div>
     `,
   });
@@ -66,19 +66,19 @@ export async function sendPurchaseConfirmationEmail({ to, buyerName, watchName, 
 
   return sendEmail({
     to,
-    subject: 'Confirmación de boletos Mazal Time',
-    text: `Hola ${buyerName || ''}. Tu compra está confirmada para ${watchName}. Números: ${formatNumbers(numbers)}. Total: ${money(totalMxn)}.`,
+    subject: 'Confirmacion de boletos Mazal Time',
+    text: `Hola ${buyerName || ''}. Tu compra esta confirmada para ${watchName}. Numeros: ${formatNumbers(numbers)}. Total: ${money(totalMxn)}.`,
     html: `
       <div style="font-family:Arial,sans-serif;color:#172632;line-height:1.6">
-        <h1 style="margin:0 0 12px;color:#172632">Tus boletos están confirmados</h1>
-        <p>Hola ${buyerName || ''}, tu compra en Mazal Time quedó confirmada.</p>
+        <h1 style="margin:0 0 12px;color:#172632">Tus boletos estan confirmados</h1>
+        <p>Hola ${buyerName || ''}, tu compra en Mazal Time quedo confirmada.</p>
         <div style="border:1px solid #efe1c8;border-radius:18px;padding:18px;background:#fffcf5">
           <p><strong>Rifa:</strong> ${watchName}</p>
-          <p><strong>Números:</strong> ${formatNumbers(numbers)}</p>
+          <p><strong>Numeros:</strong> ${formatNumbers(numbers)}</p>
           <p><strong>Total pagado:</strong> ${money(totalMxn)}</p>
-          ${couponCode ? `<p><strong>Cupón:</strong> ${couponCode}</p>` : ''}
+          ${couponCode ? `<p><strong>Cupon:</strong> ${couponCode}</p>` : ''}
         </div>
-        <p>Puedes revisar tus boletos aquí:</p>
+        <p>Puedes revisar tus boletos aqui:</p>
         <p><a href="${appUrl}/mis-boletos" style="display:inline-block;background:#0c2d3f;color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;text-decoration:none">Ver mis boletos</a></p>
       </div>
     `,
