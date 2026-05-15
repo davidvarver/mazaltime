@@ -29,7 +29,7 @@ export default function NumberGrid({ tickets, onSelectNumber, labels = {} }) {
 
   return (
     <div className={styles.gridContainer}>
-      <h3 className={styles.title}>{labels.chooseTicket || 'Elige tu boleto y agrega al carrito'}</h3>
+      <h2 className={styles.title}>{labels.chooseTicket || 'Boletos disponibles para la rifa'}</h2>
       <p className={styles.subtitle}>{labels.availableNumbers || 'Números disponibles'}</p>
       <div className={styles.statusLegend}>
         <div className={styles.legendItem}><div className={`${styles.dot} ${styles.available}`}></div> {labels.available || 'Disponible'}</div>

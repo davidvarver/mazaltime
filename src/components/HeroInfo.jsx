@@ -73,7 +73,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
       </div>
 
       <div className={styles.infoContent}>
-        <h2 className={styles.subtitle}>
+        <h2 className={styles.subtitle} aria-label={`Premio activo: ${watchTitle}`}>
           {inferredBrand && <span className={styles.watchBrand}>{inferredBrand}</span>}
           <span className={styles.watchModel}>{inferredModel}</span>
         </h2>
@@ -118,7 +118,10 @@ export default function HeroInfo({ raffle, tickets = [] }) {
               <span>{raffle.zodiacSign} - Loter&iacute;a Nacional</span>
             )}
           </div>
-          <div className={styles.ruleDetail}><strong>Regla</strong><span>El sorteo se realiza al vender m&iacute;nimo el 85%</span></div>
+          <div className={styles.ruleDetail}>
+            <strong>Regla</strong>
+            <span>El sorteo se realiza al vender m&iacute;nimo el 85%. Si no se alcanza, se avisar&aacute; cualquier ajuste seg&uacute;n las bases.</span>
+          </div>
         </div>
 
         <div className={styles.datePill}>Sorteo: {fullDate}</div>

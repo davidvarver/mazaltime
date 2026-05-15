@@ -66,10 +66,28 @@ export default async function sitemap() {
       priority: 0.8,
     },
     {
+      url: `${SITE_URL}/quienes-somos`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
       url: `${SITE_URL}/bases`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.65,
+    },
+    {
+      url: `${SITE_URL}/bases-del-sorteo`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.65,
+    },
+    {
+      url: `${SITE_URL}/legalidad-del-sorteo`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
     {
       url: `${SITE_URL}/privacidad`,
@@ -78,7 +96,19 @@ export default async function sitemap() {
       priority: 0.4,
     },
     {
+      url: `${SITE_URL}/politica-de-privacidad`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
       url: `${SITE_URL}/terminos`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
+      url: `${SITE_URL}/terminos-y-condiciones`,
       lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.4,

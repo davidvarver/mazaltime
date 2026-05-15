@@ -387,12 +387,20 @@
   text-transform: uppercase;
 }
 
-.sectionIntro h2 {
+.sectionIntro h1 {
   font-family: Georgia, 'Times New Roman', serif;
   color: var(--ink);
   font-size: clamp(2rem, 4vw, 3.2rem);
   line-height: 1.05;
   margin-top: 0.35rem;
+}
+
+.sectionIntro p {
+  width: min(760px, 100%);
+  margin: 0.8rem auto 0;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+  line-height: 1.65;
 }
 
 .noRaffle {
@@ -905,8 +913,13 @@
     font-size: 0.68rem;
   }
 
-  .sectionIntro h2 {
+  .sectionIntro h1 {
     font-size: clamp(1.55rem, 8vw, 2.1rem);
+  }
+
+  .sectionIntro p {
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
 
   .raffleExperience {

@@ -39,6 +39,10 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
   const selectedPrice = getTicketUnitPrice(raffle, selectedNumbers.length);
   const selectedTotal = selectedNumbers.length * selectedPrice;
   const latestPastRaffle = pastRaffles[0];
+  const activeWatchTitle = raffle ? getRaffleWatchTitle(raffle) : '';
+  const activeRaffleSeoTitle = raffle
+    ? `Rifa de ${activeWatchTitle} en México — ${totalTickets} boletos`
+    : 'Rifas de relojes de lujo en México';
 
   const handleSelectNumber = (numbers) => {
     setSelectedNumbers(numbers);
@@ -156,7 +160,12 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
           <section id="rifa-activa" className={styles.raffleExperience}>
             <div className={styles.sectionIntro}>
               <span>{text.activeRaffle}</span>
-              <h2>{text.pickFavorite}</h2>
+              <h1>{activeRaffleSeoTitle}</h1>
+              <p>
+                {language === 'en'
+                  ? `Choose your number and join the ${activeWatchTitle} raffle with secure payment and a verifiable National Lottery result.`
+                  : `Elige tu número y participa en la rifa del ${activeWatchTitle} con pago seguro y resultado verificable por Lotería Nacional.`}
+              </p>
             </div>
 
             <HeroInfo raffle={raffle} tickets={tickets} />
@@ -207,7 +216,12 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
               <NumberGrid
                 tickets={tickets}
                 onSelectNumber={handleSelectNumber}
-                labels={text}
+                labels={{
+                  ...text,
+                  chooseTicket: language === 'en'
+                    ? `Available tickets for the ${activeWatchTitle} raffle`
+                    : `Boletos disponibles para la rifa ${activeWatchTitle}`,
+                }}
               />
             </section>
 
@@ -326,6 +340,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href="/rifas-relojes-lujo">Rifas de relojes de lujo</a>
             <a href="/como-funciona">C&oacute;mo funciona</a>
             <a href="/ganadores">Ganadores anteriores</a>
+            <a href="/quienes-somos">Quiénes somos</a>
           </div>
         </div>
         <div>
@@ -339,6 +354,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
             <a href="/privacidad">Privacidad</a>
             <a href="/terminos">T&eacute;rminos</a>
             <a href="/politica-de-reembolsos">Reembolsos</a>
+            <a href="/legalidad-del-sorteo">Legalidad del sorteo</a>
           </div>
         </div>
       </footer>

@@ -10,8 +10,8 @@ import styles from './ganadores.module.css';
 export const revalidate = 300;
 
 export const metadata = buildPageMetadata({
-  title: 'Ganadores anteriores',
-  description: 'Consulta ganadores anteriores de Mazal Time: premios, fechas, numeros ganadores y resultados verificables de rifas de relojes de lujo en Mexico.',
+  title: 'Ganadores anteriores de rifas Rolex',
+  description: 'Consulta ganadores anteriores de rifas Rolex y relojes de lujo en Mazal Time: premios, fechas, numeros ganadores y resultados verificables en Mexico.',
   path: '/ganadores',
   keywords: ['ganadores rifas relojes', 'ganadores Rolex Mexico', 'resultados Mazal Time'],
 });
@@ -42,10 +42,10 @@ export default async function WinnersPage() {
       <section className={styles.hero}>
         <Link href="/" className={styles.backLink}>Volver a Mazal Time</Link>
         <span>Resultados verificables</span>
-        <h1>Ganadores anteriores</h1>
+        <h1>Ganadores anteriores de rifas Rolex</h1>
         <p>
-          Aqui reunimos rifas finalizadas, numeros ganadores, fechas y enlaces de referencia para que puedas revisar el
-          historial de Mazal Time con claridad.
+          Aqui reunimos rifas finalizadas, numeros ganadores, fechas y enlaces de referencia para revisar el
+          historial de sorteos de Mazal Time con claridad.
         </p>
       </section>
 
@@ -76,7 +76,7 @@ export default async function WinnersPage() {
 
                 <div className={styles.cardBody}>
                   <span className={styles.status}>Finalizada</span>
-                  <h2>{watchTitle}</h2>
+                  <h2>Ganador {watchTitle} — Sorteo {formatDateOnly(raffle.drawDate)}</h2>
                   {raffle.watchDetails && <p className={styles.details}>{raffle.watchDetails}</p>}
 
                   <dl className={styles.resultList}>

@@ -3,7 +3,7 @@ import { ensureDefaultData } from '@/lib/bootstrap';
 import { releaseExpiredReservations } from '@/lib/ticketReservations';
 import HomeClient from '@/components/HomeClient';
 import JsonLd from '@/components/JsonLd';
-import { buildPageMetadata, faqJsonLd, raffleEventJsonLd, SITE_URL } from '@/lib/seo';
+import { buildPageMetadata, faqJsonLd, raffleEventJsonLd, raffleTicketProductJsonLd, SITE_URL } from '@/lib/seo';
 import { getRaffleWatchTitle } from '@/lib/raffleDisplay';
 
 export const revalidate = 0; // Disable cache for prototype so ticket updates show immediately
@@ -23,8 +23,8 @@ export async function generateMetadata() {
     const watchTitle = getRaffleWatchTitle(activeRaffle);
 
     return buildPageMetadata({
-      title: `Rifa ${watchTitle} en Mexico`,
-      description: `Participa en la rifa de ${watchTitle} de Mazal Time. Elige tus numeros, compra seguro y consulta el resultado verificable por Loteria Nacional.`,
+      title: `Rifa de ${watchTitle} en Mexico - 100 boletos`,
+      description: `Participa en la rifa de ${watchTitle} en Mexico con Mazal Time. Elige tus numeros, compra seguro y consulta el resultado verificable por Loteria Nacional.`,
       path: '/',
       image: activeRaffle.imageUrl || '/rolex-batgirl.png',
       keywords: [watchTitle, `rifa ${watchTitle}`, `rifa ${activeRaffle.watchBrand || 'Rolex'}`],
@@ -81,7 +81,12 @@ export default async function Home() {
 
   return (
     <>
-      <JsonLd data={[faqJsonLd(), breadcrumbJsonLd, raffleEventJsonLd(activeRaffle, activeRaffle?.tickets || [], '/')]} />
+      <JsonLd data={[
+        faqJsonLd(),
+        breadcrumbJsonLd,
+        raffleEventJsonLd(activeRaffle, activeRaffle?.tickets || [], '/'),
+        raffleTicketProductJsonLd(activeRaffle, activeRaffle?.tickets || [], '/'),
+      ]} />
       <HomeClient
         raffle={activeRaffle}
         initialTickets={activeRaffle?.tickets || []}

@@ -9,7 +9,7 @@ export default function PastRaffles({ pastRaffles }) {
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
         <div className={styles.dividerLine} />
-        <h2 className={styles.sectionTitle}>Ganadores Anteriores</h2>
+        <h2 className={styles.sectionTitle}>Ganadores anteriores de rifas Rolex</h2>
         <div className={styles.dividerLine} />
       </div>
 
@@ -36,7 +36,9 @@ export default function PastRaffles({ pastRaffles }) {
               </div>
               <div className={styles.cardBody}>
                 <h3 className={styles.watchName}>
-                  <Link href={`/sorteos/${raffle.id}`}>{watchTitle}</Link>
+                  <Link href={`/sorteos/${raffle.id}`}>
+                    Ganador {watchTitle} — Sorteo {formatDateOnly(raffle.drawDate)}
+                  </Link>
                 </h3>
                 <p className={styles.raffleTitle}>{raffle.title}</p>
                 <p className={styles.drawDate}>
@@ -46,7 +48,7 @@ export default function PastRaffles({ pastRaffles }) {
               </div>
               {raffle.winningNumber !== null && raffle.winningNumber !== undefined ? (
                 <div className={styles.winnerBox}>
-                  <span className={styles.winnerLabel}>Número Ganador</span>
+                  <span className={styles.winnerLabel}>Número ganador</span>
                   <span className={styles.winnerNumber}>
                     {raffle.winningNumber.toString().padStart(2, '0')}
                   </span>

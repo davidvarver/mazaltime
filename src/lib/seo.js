@@ -120,10 +120,18 @@ export function faqJsonLd() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Como funciona una rifa de Mazal Time?',
+        name: 'Como funciona una rifa de relojes en Mazal Time?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'El participante elige numeros disponibles, registra sus datos y completa el pago. Los boletos vendidos quedan confirmados para el sorteo activo.',
+          text: 'El participante elige numeros disponibles, registra sus datos y completa el pago seguro. Los boletos vendidos quedan confirmados para el sorteo activo.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Que pasa si no se vende el minimo de boletos?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'La fecha publicada es la referencia principal. Si no se alcanza el minimo operativo indicado, Mazal Time comunica cualquier ajuste con anticipacion segun las bases del sorteo.',
         },
       },
       {
@@ -131,12 +139,12 @@ export function faqJsonLd() {
         name: 'Como se decide al ganador?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'El ganador se determina con los ultimos 2 numeros del Premio Mayor de la Loteria Nacional correspondiente a la semana indicada en la rifa.',
+          text: 'El ganador se determina con los ultimos 2 numeros del Premio Mayor de la Loteria Nacional correspondiente a la semana indicada en la rifa. El resultado puede revisarse en la liga oficial publicada.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Como se entrega el reloj?',
+        name: 'Como entregamos el reloj al ganador?',
         acceptedAnswer: {
           '@type': 'Answer',
           text: 'Mazal Time coordina la entrega directamente con el ganador. Puede ser presencial o por envio asegurado segun ubicacion y acuerdo.',
