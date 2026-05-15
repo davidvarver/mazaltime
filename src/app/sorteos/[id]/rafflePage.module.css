@@ -195,6 +195,51 @@
   line-height: 1.7;
 }
 
+.trustChecklist {
+  margin-top: 1rem;
+  padding: 1.3rem;
+  border: 1px solid #efe1c8;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #fffcf5, #fff8ec);
+}
+
+.trustChecklist h2 {
+  margin: 0 0 1rem;
+  color: #172632;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.checkGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.checkGrid div {
+  padding: 0.95rem;
+  border: 1px solid rgba(234, 219, 189, 0.9);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.checkGrid strong,
+.checkGrid span {
+  display: block;
+}
+
+.checkGrid strong {
+  color: #0c2d3f;
+  font-weight: 900;
+  margin-bottom: 0.35rem;
+}
+
+.checkGrid span {
+  color: #667085;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .explainer {
   margin-top: 2rem;
   padding-top: 1.5rem;
@@ -234,7 +279,8 @@
 @media (max-width: 800px) {
   .heroGrid,
   .metaGrid,
-  .contentGrid {
+  .contentGrid,
+  .checkGrid {
     grid-template-columns: 1fr;
   }
 

@@ -131,7 +131,7 @@ export function faqJsonLd() {
         name: 'Que pasa si no se vende el minimo de boletos?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'La fecha publicada es la referencia principal. Si no se alcanza el minimo operativo indicado, Mazal Time comunica cualquier ajuste con anticipacion segun las bases del sorteo.',
+          text: 'La fecha publicada es la referencia principal. Si no se alcanza el minimo operativo indicado, Mazal Time puede reprogramar la rifa o comunicar una solucion equivalente con anticipacion segun las bases y la politica de reembolsos.',
         },
       },
       {
@@ -184,6 +184,7 @@ export function raffleEventJsonLd(raffle, tickets = [], path = '/') {
       { '@type': 'PropertyValue', name: 'Boletos totales', value: totalTickets },
       { '@type': 'PropertyValue', name: 'Boletos vendidos', value: soldTickets },
       { '@type': 'PropertyValue', name: 'Resultado verificable', value: 'Loteria Nacional' },
+      { '@type': 'PropertyValue', name: 'Minimo operativo', value: '85% de boletos vendidos salvo que la rifa indique otra regla' },
     ],
   };
 }
@@ -218,6 +219,7 @@ export function raffleTicketProductJsonLd(raffle, tickets = [], path = '/') {
       { '@type': 'PropertyValue', name: 'Premio', value: name },
       { '@type': 'PropertyValue', name: 'Boletos totales', value: totalTickets },
       { '@type': 'PropertyValue', name: 'Boletos vendidos', value: soldTickets },
+      { '@type': 'PropertyValue', name: 'Mecanica del ganador', value: 'Ultimos 2 numeros del Premio Mayor de Loteria Nacional indicado en la rifa' },
     ],
   };
 }

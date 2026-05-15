@@ -45,6 +45,14 @@ export default function PastRaffles({ pastRaffles }) {
                   Sorteo: {formatDateOnly(raffle.drawDate)}
                 </p>
                 <p className={styles.zodiac}>Signo: {raffle.zodiacSign}</p>
+                <div className={styles.verifyLinks}>
+                  <Link href={`/sorteos/${raffle.id}`}>Ver detalle</Link>
+                  {raffle.lotteryUrl && (
+                    <a href={raffle.lotteryUrl} target="_blank" rel="noreferrer">
+                      Resultado oficial
+                    </a>
+                  )}
+                </div>
               </div>
               {raffle.winningNumber !== null && raffle.winningNumber !== undefined ? (
                 <div className={styles.winnerBox}>

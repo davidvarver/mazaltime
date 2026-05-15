@@ -24,7 +24,8 @@ export default function BasesPage() {
         <h2>Responsable del sorteo</h2>
         <p>
           Mazal Time administra la publicacion de rifas, registro de boletos, confirmacion de pagos y seguimiento
-          con participantes por los canales oficiales publicados en el sitio.
+          con participantes por los canales oficiales publicados en el sitio. Los datos operativos y fiscales aplicables
+          pueden solicitarse por los canales oficiales antes de participar.
         </p>
 
         <h2>Participacion</h2>
@@ -35,10 +36,17 @@ export default function BasesPage() {
           <li>El participante debe proporcionar datos de contacto correctos para recibir avisos y confirmacion.</li>
         </ul>
 
-        <h2>Fecha y minimo de boletaje</h2>
+        <h2>Fecha, minimo de boletaje y ajustes</h2>
         <p>
-          La fecha publicada en cada rifa es la referencia principal. Si no se alcanza el minimo operativo indicado,
-          Mazal Time podra comunicar un ajuste de fecha o una solucion equivalente a los participantes registrados.
+          La fecha publicada en cada rifa es la referencia principal. La rifa se realiza al vender el minimo operativo
+          indicado en la pagina del sorteo. Si no se alcanza ese minimo antes de la fecha publicada, Mazal Time podra
+          reprogramar la rifa al siguiente sorteo de referencia disponible o comunicar una solucion equivalente a los
+          participantes registrados.
+        </p>
+        <p>
+          En caso de reprogramacion, el participante conserva sus numeros confirmados. Si una rifa se cancelara
+          definitivamente, se comunicaran las opciones disponibles conforme a la politica de reembolsos y al metodo de
+          pago utilizado.
         </p>
 
         <h2>Seleccion del ganador</h2>
@@ -47,11 +55,19 @@ export default function BasesPage() {
           Mayor de la Loteria Nacional correspondiente al sorteo indicado. El resultado se puede verificar en la fuente
           oficial o liga publicada para esa rifa.
         </p>
+        <p>
+          Si el numero ganador no estuviera vendido o confirmado, se seguira la regla especifica publicada para esa rifa
+          o se comunicara el procedimiento aplicable antes de cerrar el resultado.
+        </p>
 
         <h2>Entrega del premio</h2>
         <p>
           La entrega se coordina directamente con el ganador. Puede realizarse de forma presencial o por envio asegurado,
           segun ubicacion, disponibilidad y acuerdo con el ganador.
+        </p>
+        <p>
+          El ganador debera confirmar identidad y datos de contacto para coordinar entrega, seguro, evidencia de recepcion
+          y cualquier requisito operativo aplicable.
         </p>
 
         <h2>Restricciones</h2>

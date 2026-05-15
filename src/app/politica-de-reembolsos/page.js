@@ -35,8 +35,13 @@ export default function RefundPolicyPage() {
 
         <h2>Rifa reprogramada o cancelada</h2>
         <p>
-          Si Mazal Time reprograma una rifa por no alcanzar el minimo operativo, se notificara a los participantes. Si la
-          rifa se cancelara definitivamente, se comunicaran las opciones disponibles para los participantes confirmados.
+          Si Mazal Time reprograma una rifa por no alcanzar el minimo operativo, se notificara a los participantes por
+          los canales registrados y los boletos confirmados conservaran sus numeros para la nueva fecha de referencia.
+        </p>
+        <p>
+          Si una rifa se cancelara definitivamente, se comunicaran las opciones disponibles para los participantes
+          confirmados. La revision dependera del estado de la rifa, el metodo de pago utilizado, comisiones aplicables de
+          terceros y la informacion necesaria para ubicar la transaccion.
         </p>
 
         <h2>Aclaraciones</h2>

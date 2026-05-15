@@ -132,11 +132,12 @@ export default async function RaffleDetailPage({ params }) {
 
         <section className={styles.contentGrid}>
           <div>
-            <h2>Detalles del premio</h2>
+            <h2>Detalles del premio y autenticidad</h2>
             <p>
-              El premio publicado corresponde al reloj indicado en la rifa. Cuando el panel incluye informacion como
-              full set, brand new, referencia, medida o brazalete, esos datos aparecen arriba para que el participante
-              revise el premio con mayor claridad.
+              El premio publicado corresponde al reloj indicado en la rifa. Revisa las fotos, videos y descripcion
+              disponible antes de participar. Cuando el panel incluye informacion como full set, brand new, referencia,
+              medida, brazalete, caja, papeles o factura censurada, esos datos aparecen en esta pagina para evaluar el
+              premio con mayor claridad.
             </p>
           </div>
           <div>
@@ -148,11 +149,34 @@ export default async function RaffleDetailPage({ params }) {
           </div>
         </section>
 
+        <section className={styles.trustChecklist}>
+          <h2>Antes de comprar tu boleto</h2>
+          <div className={styles.checkGrid}>
+            <div>
+              <strong>Premio publicado</strong>
+              <span>Modelo, referencia y condicion se muestran segun la informacion cargada en la rifa.</span>
+            </div>
+            <div>
+              <strong>Evidencia del reloj</strong>
+              <span>La galeria puede incluir fotos y video del premio; si necesitas mas evidencia, solicitala por WhatsApp.</span>
+            </div>
+            <div>
+              <strong>Resultado verificable</strong>
+              <span>La mecanica usa el resultado de Loteria Nacional indicado en la rifa, con liga oficial cuando esta disponible.</span>
+            </div>
+            <div>
+              <strong>Boletos confirmados</strong>
+              <span>Solo se consideran vendidos los boletos con pago completado o venta manual validada por administracion.</span>
+            </div>
+          </div>
+        </section>
+
         <section className={styles.explainer}>
           <h2>&iquest;C&oacute;mo se decide al ganador?</h2>
           <p>
             El ganador se determina con los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la Loter&iacute;a Nacional
-            correspondiente al sorteo indicado. Este mecanismo permite que el resultado sea verificable.
+            correspondiente al sorteo indicado. Este mecanismo permite que el resultado sea verificable. Si el minimo de
+            boletaje no se alcanza antes de la fecha publicada, se comunicara cualquier ajuste conforme a las bases.
           </p>
           <div className={styles.relatedLinks}>
             <Link href="/como-funciona">Como funciona</Link>
