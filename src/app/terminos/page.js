@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import styles from '../legal.module.css';
 import { buildPageMetadata } from '@/lib/seo';
 
@@ -29,7 +29,7 @@ export default function TerminosPage() {
 
         <h2>Pagos</h2>
         <p>
-          Los pagos con tarjeta se procesan mediante Stripe. Mazal Time no almacena datos completos de tarjetas bancarias.
+          Los pagos con tarjeta se procesan mediante Conekta. Mazal Time no almacena datos completos de tarjetas bancarias.
           Si una sesion de pago no se completa, los numeros no deben considerarse vendidos.
         </p>
 

@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import styles from '../legal.module.css';
 import { buildPageMetadata } from '@/lib/seo';
 
@@ -23,7 +23,7 @@ export default function RefundPolicyPage() {
 
         <h2>Pagos no completados</h2>
         <p>
-          Si una sesion de Stripe se abandona o no queda pagada, los numeros no se registran como boletos vendidos y no hay
+          Si una sesion de Conekta se abandona o no queda pagada, los numeros no se registran como boletos vendidos y no hay
           cargo que reembolsar desde Mazal Time.
         </p>
 
@@ -47,7 +47,7 @@ export default function RefundPolicyPage() {
         <h2>Aclaraciones</h2>
         <p>
           Para revisar un pago, escribe por WhatsApp con tu nombre, correo, numero de boleto y comprobante o referencia de
-          Stripe. Esto nos permite ubicar la operacion con rapidez.
+          Conekta. Esto nos permite ubicar la operacion con rapidez.
         </p>
       </article>
     </main>

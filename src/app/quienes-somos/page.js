@@ -25,7 +25,7 @@ export default function QuienesSomosPage() {
         <h2>Que hacemos</h2>
         <p>
           Publicamos rifas con boletos numerados, informacion del reloj, fecha de referencia, regla de seleccion del
-          ganador y canales oficiales de contacto. Los pagos con tarjeta se procesan mediante Stripe y los boletos se
+          ganador y canales oficiales de contacto. Los pagos con tarjeta se procesan mediante Conekta y los boletos se
           confirman cuando el pago queda completado o cuando una venta manual es validada por administracion.
         </p>
 

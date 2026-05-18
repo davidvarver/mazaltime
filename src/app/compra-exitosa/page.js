@@ -22,15 +22,15 @@ export default function CompraExitosaPage() {
         <span className={styles.kicker}>Compra exitosa</span>
         <h1>Gracias por participar.</h1>
         <p>
-          Tu pago fue recibido. En unos instantes tus números quedarán confirmados y te mandaremos
-          la confirmación por correo electrónico.
+          Tu pago fue recibido. En unos instantes tus numeros quedaran confirmados y te mandaremos
+          la confirmacion por correo electronico.
         </p>
         <div className={styles.actions}>
           <Link href="/mis-boletos" className={styles.primary}>Ver mis boletos</Link>
           <Link href="/" className={styles.secondary}>Volver al inicio</Link>
         </div>
         <p className={styles.note}>
-          Si compraste sin iniciar sesión, entra con el correo que usaste para revisar tus boletos.
+          Si compraste sin iniciar sesion, entra con el correo que usaste para revisar tus boletos.
         </p>
       </section>
     </main>

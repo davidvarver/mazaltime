@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import styles from '../legal.module.css';
 import { buildPageMetadata } from '@/lib/seo';
 
@@ -38,7 +38,7 @@ export default function PrivacidadPage() {
 
         <h2>Procesadores externos</h2>
         <p>
-          Podemos usar proveedores como Stripe para pagos, Vercel para infraestructura y herramientas de comunicacion para
+          Podemos usar proveedores como Conekta para pagos, Vercel para infraestructura y herramientas de comunicacion para
           atencion por WhatsApp o correo. Cada proveedor procesa la informacion necesaria para prestar su servicio.
         </p>
 

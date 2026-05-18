@@ -76,7 +76,7 @@ export default function HomeClient({ raffle, initialTickets, pastRaffles = [] })
 
   const handleSubmitCheckout = async (formData, numbers, couponCode = '') => {
     try {
-      const res = await fetch('/api/stripe/checkout', {
+      const res = await fetch('/api/conekta/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
@@ -143,7 +143,7 @@ export default async function RaffleDetailPage({ params }) {
           <div>
             <h2>Compra segura</h2>
             <p>
-              Los pagos con tarjeta se procesan mediante Stripe. Mazal Time registra como vendidos solo los boletos con
+              Los pagos con tarjeta se procesan mediante Conekta. Mazal Time registra como vendidos solo los boletos con
               pago completado o ventas manuales validadas por el administrador.
             </p>
           </div>
