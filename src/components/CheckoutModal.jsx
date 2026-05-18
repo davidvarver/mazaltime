@@ -73,11 +73,11 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Cup?n inv?lido');
+      if (!res.ok) throw new Error(data.error || 'Cupón inválido');
 
       setCouponResult(data);
       setCouponCode(data.coupon.code);
-      setCouponMessage(`Cup?n aplicado: ${data.coupon.discountPercent}% de descuento.`);
+      setCouponMessage(`Cupón aplicado: ${data.coupon.discountPercent}% de descuento.`);
     } catch (error) {
       setCouponMessage(error.message);
     } finally {
@@ -95,10 +95,10 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
   return (
     <div className={styles.overlay}>
       <div className={`${styles.modal} glass`}>
-        <button className={styles.closeBtn} onClick={onClose}>?</button>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">×</button>
         <h2>Completar compra</h2>
         <p className={styles.subtitle}>
-          Est?s comprando <strong>{count}</strong> {count === 1 ? 'n?mero' : 'n?meros'}:
+          Estás comprando <strong>{count}</strong> {count === 1 ? 'número' : 'números'}:
           <span className={styles.numbersList}> {selectedNumbers.map(n => n.toString().padStart(2, '0')).join(', ')}</span>
         </p>
 
@@ -106,10 +106,10 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
           {isGuest && (
             <>
               <div className={styles.formGroup}>
-                <label>Correo electr?nico</label>
+                <label>Correo electrónico</label>
                 <input type="email" required value={formData.email} onChange={handleEmailChange} placeholder="tu@correo.com" autoFocus />
                 {emailStatus === 'checking' && <p className={styles.fieldHint}>Revisando correo...</p>}
-                {isExistingEmail && <p className={styles.fieldHintSuccess}>Correo registrado. Continuamos sin pedir nombre, tel?fono ni contrase?a.</p>}
+                {isExistingEmail && <p className={styles.fieldHintSuccess}>Correo registrado. Continuamos sin pedir nombre, teléfono ni contraseña.</p>}
                 {isNewEmail && <p className={styles.fieldHint}>Correo nuevo. Completa tus datos para guardar tus boletos.</p>}
               </div>
 
@@ -117,23 +117,23 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
                 <>
                   <div className={styles.formGroup}>
                     <label>Nombre completo</label>
-                    <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Ej. Juan P?rez" />
+                    <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Ej. Juan Pérez" />
                   </div>
                   <div className={styles.formGroup}>
-                    <label>Tel?fono (WhatsApp)</label>
-                    <input type="tel" required value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="10 d?gitos" />
+                    <label>Teléfono (WhatsApp)</label>
+                    <input type="tel" required value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="10 dígitos" />
                   </div>
                   <div className={styles.formGroup}>
-                    <label>Crear contrase?a</label>
+                    <label>Crear contraseña</label>
                     <input
                       type="password"
                       required
                       minLength={8}
                       value={formData.password}
                       onChange={e => setFormData({ ...formData, password: e.target.value })}
-                      placeholder="M?nimo 8 caracteres"
+                      placeholder="Mínimo 8 caracteres"
                     />
-                    <p className={styles.fieldHint}>Con esta contrase?a podr?s entrar despu?s a Mis Boletos.</p>
+                    <p className={styles.fieldHint}>Con esta contraseña podrás entrar después a Mis Boletos.</p>
                   </div>
                 </>
               )}
@@ -141,7 +141,7 @@ export default function CheckoutModal({ selectedNumbers, raffle, session, onClos
           )}
 
           <div className={styles.couponBox}>
-            <label>Cup?n de descuento</label>
+            <label>Cupón de descuento</label>
             <div className={styles.couponRow}>
               <input
                 type="text"
