@@ -27,6 +27,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
   const watchTitle = getRaffleWatchTitle(raffle);
   const inferredBrand = raffle.watchBrand || (watchTitle.toLowerCase().startsWith('rolex ') ? 'Rolex' : '');
   const inferredModel = raffle.watchModel || (inferredBrand ? watchTitle.replace(new RegExp(`^${inferredBrand}\\s+`, 'i'), '') : watchTitle);
+  const minSoldPercent = Number.isInteger(Number(raffle.minSoldPercent)) ? Number(raffle.minSoldPercent) : 85;
   const galleryImages = Array.isArray(raffle.galleryImages) ? raffle.galleryImages : [];
   const displayImages = [imageSrc, ...galleryImages]
     .filter(Boolean)
@@ -120,7 +121,7 @@ export default function HeroInfo({ raffle, tickets = [] }) {
           </div>
           <div className={styles.ruleDetail}>
             <strong>Regla</strong>
-            <span>El sorteo se realiza al vender m&iacute;nimo el 85%. Si no se alcanza, se avisar&aacute; cualquier ajuste seg&uacute;n las bases.</span>
+            <span>El sorteo se realiza al vender m&iacute;nimo el {minSoldPercent}%. Si no se alcanza, se avisar&aacute; cualquier ajuste seg&uacute;n las bases.</span>
           </div>
         </div>
 

@@ -48,6 +48,7 @@ model Raffle {
   price2      Int      // Price for 2+ tickets in MXN
   promoEnabled Boolean @default(true)
   promoMinTickets Int  @default(2)
+  minSoldPercent Int    @default(85)
   isActive    Boolean  @default(true)
   winningNumber Int?
   imageUrl    String?  // Uploaded watch photo URL

@@ -20,6 +20,7 @@ function normalizeRaffleForm(raffle = {}) {
     ...raffle,
     watchBrand: raffle.watchBrand || (watchName.toLowerCase().startsWith('rolex ') ? 'Rolex' : ''),
     watchModel: raffle.watchModel || inferredRolexModel,
+    minSoldPercent: raffle.minSoldPercent ?? 85,
     galleryImages: raffle.galleryImages || [],
   };
 }
@@ -54,7 +55,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
 
   // Edit raffle form
   const [editRaffleData, setEditRaffleData] = useState(initialRaffle ? normalizeRaffleForm(initialRaffle) : {
-    title: '', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: '', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, minSoldPercent: 85, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // End raffle
@@ -81,7 +82,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
   // Create raffle
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRaffleData, setNewRaffleData] = useState({
-    title: 'MAZAL TIME', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, imageUrl: '', galleryImages: [], lotteryUrl: ''
+    title: 'MAZAL TIME', watchBrand: '', watchModel: '', watchName: '', watchDetails: '', zodiacSign: '', drawDate: '', price1: 4200, price2: 4000, promoEnabled: true, promoMinTickets: 2, minSoldPercent: 85, imageUrl: '', galleryImages: [], lotteryUrl: ''
   });
 
   // --- Handlers ---
@@ -179,6 +180,29 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
         {formData.promoEnabled
           ? `En home saldrá "${formData.promoMinTickets || 2} o más" con precio promo.`
           : 'Sin promo: el home solo mostrará el precio individual.'}
+      </small>
+    </div>
+  );
+
+  const renderMinSoldPercentControl = (formData, setFormState) => (
+    <div className={styles.promoControls}>
+      <label className={styles.promoToggle}>
+        <span>Regla minima para hacer la rifa</span>
+      </label>
+      <input
+        type="number"
+        min="1"
+        max="100"
+        required
+        disabled={!canManageAdmins}
+        placeholder="Ej: 85"
+        value={formData.minSoldPercent ?? 85}
+        onChange={e => setFormState(prev => ({ ...prev, minSoldPercent: parseInt(e.target.value, 10) }))}
+      />
+      <small>
+        {canManageAdmins
+          ? 'Solo Eliahu puede cambiar este porcentaje. Se muestra en el home y en las reglas.'
+          : 'Solo Eliahu puede cambiar esta regla.'}
       </small>
     </div>
   );
@@ -709,6 +733,9 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                 <div className={styles.fieldQuarter}>
                   {renderPromoControls(editRaffleData, setEditRaffleData)}
                 </div>
+                <div className={styles.fieldQuarter}>
+                  {renderMinSoldPercentControl(editRaffleData, setEditRaffleData)}
+                </div>
                 <input className={styles.fieldFull} type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={editRaffleData.lotteryUrl || ''} onChange={e => setEditRaffleData({...editRaffleData, lotteryUrl: e.target.value})} />
                 <div className={`${styles.primaryImageUpload} ${styles.fieldHalf}`}>
                   <strong>Foto principal</strong>
@@ -1018,6 +1045,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
                   <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
                   <input type="number" required placeholder="Precio 1 Boleto (MXN)" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
                   {renderPromoControls(newRaffleData, setNewRaffleData)}
+                  {renderMinSoldPercentControl(newRaffleData, setNewRaffleData)}
                   <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
                   <div className={styles.primaryImageUpload}>
                     <strong>Foto principal</strong>
@@ -1045,6 +1073,7 @@ export default function AdminClient({ raffle: initialRaffle, tickets: initialTic
               <input type="date" required value={newRaffleData.drawDate} onChange={e => setNewRaffleData({...newRaffleData, drawDate: e.target.value})} />
               <input type="number" required placeholder="Precio 1 Boleto" value={newRaffleData.price1} onChange={e => setNewRaffleData({...newRaffleData, price1: parseInt(e.target.value)})} />
               {renderPromoControls(newRaffleData, setNewRaffleData)}
+              {renderMinSoldPercentControl(newRaffleData, setNewRaffleData)}
               <input type="url" placeholder="Link sorteo Loter&iacute;a Nacional" value={newRaffleData.lotteryUrl || ''} onChange={e => setNewRaffleData({...newRaffleData, lotteryUrl: e.target.value})} />
               <div className={styles.primaryImageUpload}>
                 <strong>Foto principal</strong>

@@ -160,6 +160,7 @@ export function raffleEventJsonLd(raffle, tickets = [], path = '/') {
   const name = [raffle.watchBrand, raffle.watchModel].filter(Boolean).join(' ') || raffle.watchName || raffle.title;
   const soldTickets = tickets.filter(ticket => ticket.status === 'SOLD').length;
   const totalTickets = tickets.length || 100;
+  const minSoldPercent = Number.isInteger(Number(raffle.minSoldPercent)) ? Number(raffle.minSoldPercent) : 85;
   const url = absoluteUrl(path);
 
   return {
@@ -184,7 +185,7 @@ export function raffleEventJsonLd(raffle, tickets = [], path = '/') {
       { '@type': 'PropertyValue', name: 'Boletos totales', value: totalTickets },
       { '@type': 'PropertyValue', name: 'Boletos vendidos', value: soldTickets },
       { '@type': 'PropertyValue', name: 'Resultado verificable', value: 'Loteria Nacional' },
-      { '@type': 'PropertyValue', name: 'Minimo operativo', value: '85% de boletos vendidos salvo que la rifa indique otra regla' },
+      { '@type': 'PropertyValue', name: 'Minimo operativo', value: `${minSoldPercent}% de boletos vendidos salvo que la rifa indique otra regla` },
     ],
   };
 }

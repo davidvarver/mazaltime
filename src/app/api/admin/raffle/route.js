@@ -14,6 +14,11 @@ function parsePromoMinTickets(value) {
   return Number.isInteger(parsed) && parsed >= 2 && parsed <= 100 ? parsed : null;
 }
 
+function parseMinSoldPercent(value) {
+  const parsed = parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed >= 1 && parsed <= 100 ? parsed : null;
+}
+
 function normalizeOptionalUrl(value) {
   if (!value) return null;
 
@@ -58,6 +63,7 @@ export async function PUT(req) {
       price2,
       promoEnabled,
       promoMinTickets,
+      minSoldPercent,
       isActive,
       winningNumber,
       imageUrl,
@@ -91,19 +97,24 @@ export async function PUT(req) {
     }
     if (price1 !== undefined) {
       const parsedPrice = parsePositivePrice(price1);
-      if (!parsedPrice) return NextResponse.json({ error: 'Precio 1 inválido' }, { status: 400 });
+      if (!parsedPrice) return NextResponse.json({ error: 'Precio 1 invalido' }, { status: 400 });
       updateData.price1 = parsedPrice;
     }
     if (price2 !== undefined) {
       const parsedPrice = parsePositivePrice(price2);
-      if (!parsedPrice) return NextResponse.json({ error: 'Precio promo inválido' }, { status: 400 });
+      if (!parsedPrice) return NextResponse.json({ error: 'Precio promo invalido' }, { status: 400 });
       updateData.price2 = parsedPrice;
     }
     if (promoEnabled !== undefined) updateData.promoEnabled = Boolean(promoEnabled);
     if (promoMinTickets !== undefined) {
       const parsedPromoMinTickets = parsePromoMinTickets(promoMinTickets);
-      if (!parsedPromoMinTickets) return NextResponse.json({ error: 'Cantidad mínima de promo inválida' }, { status: 400 });
+      if (!parsedPromoMinTickets) return NextResponse.json({ error: 'Cantidad minima de promo invalida' }, { status: 400 });
       updateData.promoMinTickets = parsedPromoMinTickets;
+    }
+    if (minSoldPercent !== undefined) {
+      const parsedMinSoldPercent = parseMinSoldPercent(minSoldPercent);
+      if (!parsedMinSoldPercent) return NextResponse.json({ error: 'Porcentaje minimo de venta invalido' }, { status: 400 });
+      updateData.minSoldPercent = parsedMinSoldPercent;
     }
     if (isActive !== undefined) updateData.isActive = isActive;
     if (winningNumber !== undefined) {
@@ -115,24 +126,24 @@ export async function PUT(req) {
         parsedWinningNumber !== null &&
         (!Number.isInteger(parsedWinningNumber) || parsedWinningNumber < 0 || parsedWinningNumber > 99)
       ) {
-        return NextResponse.json({ error: 'Número ganador inválido' }, { status: 400 });
+        return NextResponse.json({ error: 'Numero ganador invalido' }, { status: 400 });
       }
 
       updateData.winningNumber = parsedWinningNumber;
     }
     if (imageUrl !== undefined) {
       const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
-      if (imageUrl && !normalizedImageUrl) return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
+      if (imageUrl && !normalizedImageUrl) return NextResponse.json({ error: 'URL de imagen invalida' }, { status: 400 });
       updateData.imageUrl = normalizedImageUrl;
     }
     if (galleryImages !== undefined) {
       const normalizedGalleryImages = normalizeGalleryImages(galleryImages);
-      if (!normalizedGalleryImages) return NextResponse.json({ error: 'Galería de imágenes inválida' }, { status: 400 });
+      if (!normalizedGalleryImages) return NextResponse.json({ error: 'Galeria de imagenes invalida' }, { status: 400 });
       updateData.galleryImages = normalizedGalleryImages;
     }
     if (lotteryUrl !== undefined) {
       const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
-      if (lotteryUrl && !normalizedLotteryUrl) return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
+      if (lotteryUrl && !normalizedLotteryUrl) return NextResponse.json({ error: 'URL de sorteo invalida' }, { status: 400 });
       updateData.lotteryUrl = normalizedLotteryUrl;
     }
 
@@ -165,6 +176,7 @@ export async function POST(req) {
       price2,
       promoEnabled = true,
       promoMinTickets = 2,
+      minSoldPercent = 85,
       imageUrl,
       galleryImages,
       lotteryUrl,
@@ -175,7 +187,7 @@ export async function POST(req) {
     });
 
     if (activeRaffle) {
-      return NextResponse.json({ error: 'Ya existe una rifa activa. Finalízala antes de crear otra.' }, { status: 400 });
+      return NextResponse.json({ error: 'Ya existe una rifa activa. Finalizala antes de crear otra.' }, { status: 400 });
     }
 
     const parsedDrawDate = parseDateOnlyForStorage(drawDate);
@@ -187,25 +199,26 @@ export async function POST(req) {
     const parsedPrice1 = parsePositivePrice(price1);
     const parsedPrice2 = parsePositivePrice(price2);
     const parsedPromoMinTickets = parsePromoMinTickets(promoMinTickets);
+    const parsedMinSoldPercent = parseMinSoldPercent(minSoldPercent);
     const normalizedImageUrl = normalizeOptionalUrl(imageUrl);
     const normalizedGalleryImages = normalizeGalleryImages(galleryImages || []);
     const normalizedLotteryUrl = normalizeOptionalUrl(lotteryUrl);
     const composedWatchName = composeWatchName({ watchBrand, watchModel, watchName });
 
-    if (!title || !composedWatchName || !zodiacSign || !parsedPrice1 || !parsedPrice2 || !parsedPromoMinTickets) {
-      return NextResponse.json({ error: 'Datos de rifa incompletos o inválidos' }, { status: 400 });
+    if (!title || !composedWatchName || !zodiacSign || !parsedPrice1 || !parsedPrice2 || !parsedPromoMinTickets || !parsedMinSoldPercent) {
+      return NextResponse.json({ error: 'Datos de rifa incompletos o invalidos' }, { status: 400 });
     }
 
     if (lotteryUrl && !normalizedLotteryUrl) {
-      return NextResponse.json({ error: 'URL de sorteo inválida' }, { status: 400 });
+      return NextResponse.json({ error: 'URL de sorteo invalida' }, { status: 400 });
     }
 
     if (imageUrl && !normalizedImageUrl) {
-      return NextResponse.json({ error: 'URL de imagen inválida' }, { status: 400 });
+      return NextResponse.json({ error: 'URL de imagen invalida' }, { status: 400 });
     }
 
     if (!normalizedGalleryImages) {
-      return NextResponse.json({ error: 'Galería de imágenes inválida' }, { status: 400 });
+      return NextResponse.json({ error: 'Galeria de imagenes invalida' }, { status: 400 });
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -222,6 +235,7 @@ export async function POST(req) {
           price2: parsedPrice2,
           promoEnabled: Boolean(promoEnabled),
           promoMinTickets: parsedPromoMinTickets,
+          minSoldPercent: parsedMinSoldPercent,
           imageUrl: normalizedImageUrl,
           galleryImages: normalizedGalleryImages,
           lotteryUrl: normalizedLotteryUrl,
@@ -289,3 +303,4 @@ export async function DELETE(req) {
     return NextResponse.json({ error: 'Error al eliminar la rifa' }, { status: 500 });
   }
 }
+

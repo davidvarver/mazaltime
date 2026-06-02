@@ -52,6 +52,7 @@ export default async function RaffleDetailPage({ params }) {
   const totalTickets = raffle.tickets.length || 100;
   const soldTickets = raffle.tickets.filter(ticket => ticket.status === 'SOLD').length;
   const availableTickets = totalTickets - soldTickets;
+  const minSoldPercent = Number.isInteger(Number(raffle.minSoldPercent)) ? Number(raffle.minSoldPercent) : 85;
   const drawDate = formatDateOnly(raffle.drawDate, { day: 'numeric', month: 'long', year: 'numeric' });
   const mediaItems = [raffle.imageUrl || '/rolex-batgirl.png', ...(raffle.galleryImages || [])]
     .filter(Boolean)
@@ -176,7 +177,7 @@ export default async function RaffleDetailPage({ params }) {
           <p>
             El ganador se determina con los &uacute;ltimos 2 n&uacute;meros del Premio Mayor de la Loter&iacute;a Nacional
             correspondiente al sorteo indicado. Este mecanismo permite que el resultado sea verificable. Si el minimo de
-            boletaje no se alcanza antes de la fecha publicada, se comunicara cualquier ajuste conforme a las bases.
+            {minSoldPercent}% de boletaje no se alcanza antes de la fecha publicada, se comunicara cualquier ajuste conforme a las bases.
           </p>
           <div className={styles.relatedLinks}>
             <Link href="/como-funciona">Como funciona</Link>
