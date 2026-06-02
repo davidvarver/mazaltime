@@ -89,7 +89,6 @@ export async function createConektaOrder({
         unit_price: unitPrice * 100,
       },
     ],
-    shipping_lines: [{ amount: 0 }],
     checkout: {
       allowed_payment_methods: ['card'],
       type: 'HostedPayment',
